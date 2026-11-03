@@ -93,5 +93,9 @@ Next: a fresh clone following README, then every suite.
   Homebrew install (which upgraded libarchive and other shared libraries) ran at the same time. They didn't reproduce in
   isolation, under heavy CPU load, or in any later full run, and the truncated log lost the error text, so the cause is
   unconfirmed. If it recurs, capture the full pytest output (`-rfE`).
+- During the first M7 fresh install, `pnpm install` (pnpm 12) for `apps/web` stalled for 10+ minutes at
+  "Verifying lockfile against supply-chain policies" after linking 273 of 288 packages. Killed and retried, it finished
+  in seconds and didn't stall again (with or without `CI=true`). A stalled registry request is the likely cause. If
+  `make setup` hangs there, interrupt it and run it again.
 - Accessibility is checked with automated rules plus a keyboard journey. A manual screen-reader pass is still
   recommended before launch.
