@@ -110,6 +110,7 @@ def _video(ctx: Ctx, target: str) -> None:
         ctx.notice(f"Copied the existing {vcodec.upper()}{'/' + acodec.upper() if acodec and not o.mute else ''} streams "
                    "into the new container without re-encoding: fast and lossless.")
         ctx.info["remuxed"] = True
+        ffmpeg.verify_duration(ctx, out, span)
         ctx.add_output(out, target)
         return
     vf = _filters(o, vs[0].get("height"))
@@ -141,6 +142,7 @@ def _video(ctx: Ctx, target: str) -> None:
         if target in ("mp4", "mov"):
             args += ["-movflags", "+faststart"]
         ffmpeg.run(ctx, [*args, str(out)], total_s=span, stage="Encoding video")
+    ffmpeg.verify_duration(ctx, out, span)
     ctx.add_output(out, target)
 
 
@@ -250,6 +252,7 @@ def extract_audio(ctx: Ctx) -> None:
     extra = ["-ar", "48000"] if ctx.target == "opus" else []
     ffmpeg.run(ctx, [*pre, "-i", str(ctx.input.path), "-map", "0:a:0", "-vn", *post, *extra, "-map_metadata", "0",
                      *audio_codec_args(ctx.target, o.bitrate), str(out)], total_s=span, stage="Extracting audio")
+    ffmpeg.verify_duration(ctx, out, span)
     ctx.add_output(out)
 
 

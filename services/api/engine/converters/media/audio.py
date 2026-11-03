@@ -94,6 +94,7 @@ def _audio(ctx: Ctx, target: str) -> None:
     args += codec_args(target, o.bitrate)
     out = ctx.default_out(target)
     ffmpeg.run(ctx, [*args, str(out)], total_s=span, stage="Encoding audio")
+    ffmpeg.verify_duration(ctx, out, span)
     # Report what metadata survived (tag mapping differs between containers).
     if o.keep_metadata:
         before = {k.lower(): v for k, v in (info.get("format", {}).get("tags") or {}).items()}

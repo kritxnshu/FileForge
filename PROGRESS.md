@@ -46,28 +46,19 @@ Not available: Docker (Dockerfiles still shipped), bubblewrap/nsjail (macOS uses
   - Security tests: SVG/HTML SSRF + file:// canaries, XXE, billion laughs, YAML alias bomb, WEBSERVICE canary,
     Pandoc never fetching, sandbox network/home/fsize/timeout process-group kill.
 
+- M4 audio/video: `audio.convert`/`audio.edit` (8 formats, bitrate/rate/channels/trim/loudnorm, tag + cover-art
+  report), `video.convert`/`video.edit` (8 containers, stream-copy fast path, CRF presets, two-pass target size),
+  video → GIF (two-pass palette), GIF → MP4/WebM, extract audio, frame → image. FFmpeg layer in `engine/ffmpeg.py`
+  (protocol + demuxer whitelists, `-progress` output, truncation detection). 536 API tests passing.
+
 ## In progress
 
-- M4 P2 modules — **on branch `wip/m4-media`** (main stays at the last fully green commit, end of M3).
-  - Audio (`audio.convert`, `audio.edit`) and video (`video.convert`, `video.edit`, `to_gif`, `from_gif`,
-    `extract_audio`, `thumbnail`) implemented in `engine/converters/media/`, FFmpeg layer in `engine/ffmpeg.py`
-    (protocol + demuxer whitelists, real `-progress` output, playlist rejection tests).
-  - `tests/api/test_media.py`: 220 passed, **3 failing** — fix these before merging to main:
-    1. `test_gif_to_video[gif->mp4|webm]`: centre pixel of the first frame isn't red. Check whether
-       `center_pixel(path, 0.02)` seeks past frame 0 or the GIF→video output really starts on another colour.
-    2. `test_video_negative`: inspect which assertion fails (truncated MP4 error code, or the 20 s / 0.11 MB
-       "too small" target-size check).
-  - Until they pass, `verified.json` records them as failed, so the API does not advertise those pairs
-    (and `video.convert`/`video.edit` stay hidden because their negative test is failing).
-- Fixed along the way: ffprobe during detection gets read access only to the probed file's directory
-  (`sandbox.run_sync(extra_reads=...)`); `loudnorm` output re-chunked for FLAC; VP9 forced to yuv420p;
-  no `-ss 0` (mis-seeks some FLV files); MP3 bitrate capping below 32 kHz is reported to the user.
+- M4 remaining: presentations, archives, utilities.
 
 ## Next
 
-- M4: presentations (LibreOffice + chain PPTX → PDF → PNG, images → PPTX, PDF → PPTX image slides), audio + video
-  (FFmpeg with -progress, protocol whitelist, playlist rejection), archives (ZIP/TAR/7Z/RAR read, every §7 limit),
-  utilities (image ↔ base64, colour, units, bytes, QR, fonts).
+- M4: presentations (LibreOffice + chain PPTX → PDF → PNG, images → PPTX, PDF → PPTX image slides), archives
+  (ZIP/TAR/7Z/RAR read, every §7 limit), utilities (image ↔ base64, colour, units, bytes, QR, fonts).
 - M5: PDF page thumbnails for reordering, remaining pages (/formats, /privacy, /terms, /docs), history UI, a11y pass.
 - Background removal (rembg) is registered nowhere yet: decide in M6 whether to ship it (model weights license).
 
@@ -83,3 +74,4 @@ Not available: Docker (Dockerfiles still shipped), bubblewrap/nsjail (macOS uses
 - macOS does not enforce `RLIMIT_AS` (DECISIONS D5); Linux/Docker does.
 - Seatbelt profile allows LibreOffice's hard-coded `/tmp/OSL_PIPE_*` IPC socket and the `/tmp` directory entry.
 - Experimental ops are hidden unless `ENABLE_EXPERIMENTAL=true` (tests run with it on).
+- OGG output is Partial on hosts without libvorbis (FFmpeg's built-in encoder: stereo only); Full where libvorbis exists.

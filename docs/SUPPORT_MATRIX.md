@@ -10,10 +10,10 @@ its engines are installed, and its feature flag (if any) is on.
 
 | Level | Pairs |
 |---|---|
-| Full | 346 |
+| Full | 412 |
 | Partial | 14 |
 | Experimental | 13 |
-| Untested | 67 |
+| Untested | 1 |
 | Unsupported | 2 |
 
 ## Images
@@ -521,81 +521,81 @@ Trim, normalize loudness, or change the bitrate, sample rate or channels without
 
 ### Convert video (`video.convert`)
 
-Convert between video formats. When the codecs already fit, streams are copied without re-encoding. Runtime: server; queue: heavy; engines: ffmpeg, ffprobe; negative test: failed.
+Convert between video formats. When the codecs already fit, streams are copied without re-encoding. Runtime: server; queue: heavy; engines: ffmpeg, ffprobe; negative test: passed.
 
 | Source | Target | Level | Notes |
 |---|---|---|---|
-| MP4 | MOV | Untested | hidden: no passing negative test recorded |
-| MP4 | MKV | Untested | hidden: no passing negative test recorded |
-| MP4 | WebM | Untested | hidden: no passing negative test recorded |
-| MP4 | AVI | Untested | hidden: no passing negative test recorded |
-| MP4 | FLV | Untested | hidden: no passing negative test recorded |
-| MP4 | WMV | Untested | hidden: no passing negative test recorded WMV uses the older WMV2 codec, so files are larger for the same quality. |
-| MP4 | 3GP | Untested | hidden: no passing negative test recorded 3GP is for old phones: output is limited to 352 px wide by default. |
-| MOV | MP4 | Untested | hidden: no passing negative test recorded |
-| MOV | MKV | Untested | hidden: no passing negative test recorded |
-| MOV | WebM | Untested | hidden: no passing negative test recorded |
-| MOV | AVI | Untested | hidden: no passing negative test recorded |
-| MOV | FLV | Untested | hidden: no passing negative test recorded |
-| MOV | WMV | Untested | hidden: no passing negative test recorded WMV uses the older WMV2 codec, so files are larger for the same quality. |
-| MOV | 3GP | Untested | hidden: no passing negative test recorded 3GP is for old phones: output is limited to 352 px wide by default. |
-| MKV | MP4 | Untested | hidden: no passing negative test recorded |
-| MKV | MOV | Untested | hidden: no passing negative test recorded |
-| MKV | WebM | Untested | hidden: no passing negative test recorded |
-| MKV | AVI | Untested | hidden: no passing negative test recorded |
-| MKV | FLV | Untested | hidden: no passing negative test recorded |
-| MKV | WMV | Untested | hidden: no passing negative test recorded WMV uses the older WMV2 codec, so files are larger for the same quality. |
-| MKV | 3GP | Untested | hidden: no passing negative test recorded 3GP is for old phones: output is limited to 352 px wide by default. |
-| WebM | MP4 | Untested | hidden: no passing negative test recorded |
-| WebM | MOV | Untested | hidden: no passing negative test recorded |
-| WebM | MKV | Untested | hidden: no passing negative test recorded |
-| WebM | AVI | Untested | hidden: no passing negative test recorded |
-| WebM | FLV | Untested | hidden: no passing negative test recorded |
-| WebM | WMV | Untested | hidden: no passing negative test recorded WMV uses the older WMV2 codec, so files are larger for the same quality. |
-| WebM | 3GP | Untested | hidden: no passing negative test recorded 3GP is for old phones: output is limited to 352 px wide by default. |
-| AVI | MP4 | Untested | hidden: no passing negative test recorded |
-| AVI | MOV | Untested | hidden: no passing negative test recorded |
-| AVI | MKV | Untested | hidden: no passing negative test recorded |
-| AVI | WebM | Untested | hidden: no passing negative test recorded |
-| AVI | FLV | Untested | hidden: no passing negative test recorded |
-| AVI | WMV | Untested | hidden: no passing negative test recorded WMV uses the older WMV2 codec, so files are larger for the same quality. |
-| AVI | 3GP | Untested | hidden: no passing negative test recorded 3GP is for old phones: output is limited to 352 px wide by default. |
-| FLV | MP4 | Untested | hidden: no passing negative test recorded |
-| FLV | MOV | Untested | hidden: no passing negative test recorded |
-| FLV | MKV | Untested | hidden: no passing negative test recorded |
-| FLV | WebM | Untested | hidden: no passing negative test recorded |
-| FLV | AVI | Untested | hidden: no passing negative test recorded |
-| FLV | WMV | Untested | hidden: no passing negative test recorded WMV uses the older WMV2 codec, so files are larger for the same quality. |
-| FLV | 3GP | Untested | hidden: no passing negative test recorded 3GP is for old phones: output is limited to 352 px wide by default. |
-| WMV | MP4 | Untested | hidden: no passing negative test recorded |
-| WMV | MOV | Untested | hidden: no passing negative test recorded |
-| WMV | MKV | Untested | hidden: no passing negative test recorded |
-| WMV | WebM | Untested | hidden: no passing negative test recorded |
-| WMV | AVI | Untested | hidden: no passing negative test recorded |
-| WMV | FLV | Untested | hidden: no passing negative test recorded |
-| WMV | 3GP | Untested | hidden: no passing negative test recorded 3GP is for old phones: output is limited to 352 px wide by default. |
-| 3GP | MP4 | Untested | hidden: no passing negative test recorded |
-| 3GP | MOV | Untested | hidden: no passing negative test recorded |
-| 3GP | MKV | Untested | hidden: no passing negative test recorded |
-| 3GP | WebM | Untested | hidden: no passing negative test recorded |
-| 3GP | AVI | Untested | hidden: no passing negative test recorded |
-| 3GP | FLV | Untested | hidden: no passing negative test recorded |
-| 3GP | WMV | Untested | hidden: no passing negative test recorded WMV uses the older WMV2 codec, so files are larger for the same quality. |
+| MP4 | MOV | Full |  |
+| MP4 | MKV | Full |  |
+| MP4 | WebM | Full |  |
+| MP4 | AVI | Full |  |
+| MP4 | FLV | Full |  |
+| MP4 | WMV | Full | WMV uses the older WMV2 codec, so files are larger for the same quality. |
+| MP4 | 3GP | Full | 3GP is for old phones: output is limited to 352 px wide by default. |
+| MOV | MP4 | Full |  |
+| MOV | MKV | Full |  |
+| MOV | WebM | Full |  |
+| MOV | AVI | Full |  |
+| MOV | FLV | Full |  |
+| MOV | WMV | Full | WMV uses the older WMV2 codec, so files are larger for the same quality. |
+| MOV | 3GP | Full | 3GP is for old phones: output is limited to 352 px wide by default. |
+| MKV | MP4 | Full |  |
+| MKV | MOV | Full |  |
+| MKV | WebM | Full |  |
+| MKV | AVI | Full |  |
+| MKV | FLV | Full |  |
+| MKV | WMV | Full | WMV uses the older WMV2 codec, so files are larger for the same quality. |
+| MKV | 3GP | Full | 3GP is for old phones: output is limited to 352 px wide by default. |
+| WebM | MP4 | Full |  |
+| WebM | MOV | Full |  |
+| WebM | MKV | Full |  |
+| WebM | AVI | Full |  |
+| WebM | FLV | Full |  |
+| WebM | WMV | Full | WMV uses the older WMV2 codec, so files are larger for the same quality. |
+| WebM | 3GP | Full | 3GP is for old phones: output is limited to 352 px wide by default. |
+| AVI | MP4 | Full |  |
+| AVI | MOV | Full |  |
+| AVI | MKV | Full |  |
+| AVI | WebM | Full |  |
+| AVI | FLV | Full |  |
+| AVI | WMV | Full | WMV uses the older WMV2 codec, so files are larger for the same quality. |
+| AVI | 3GP | Full | 3GP is for old phones: output is limited to 352 px wide by default. |
+| FLV | MP4 | Full |  |
+| FLV | MOV | Full |  |
+| FLV | MKV | Full |  |
+| FLV | WebM | Full |  |
+| FLV | AVI | Full |  |
+| FLV | WMV | Full | WMV uses the older WMV2 codec, so files are larger for the same quality. |
+| FLV | 3GP | Full | 3GP is for old phones: output is limited to 352 px wide by default. |
+| WMV | MP4 | Full |  |
+| WMV | MOV | Full |  |
+| WMV | MKV | Full |  |
+| WMV | WebM | Full |  |
+| WMV | AVI | Full |  |
+| WMV | FLV | Full |  |
+| WMV | 3GP | Full | 3GP is for old phones: output is limited to 352 px wide by default. |
+| 3GP | MP4 | Full |  |
+| 3GP | MOV | Full |  |
+| 3GP | MKV | Full |  |
+| 3GP | WebM | Full |  |
+| 3GP | AVI | Full |  |
+| 3GP | FLV | Full |  |
+| 3GP | WMV | Full | WMV uses the older WMV2 codec, so files are larger for the same quality. |
 
 ### Trim / compress video (`video.edit`)
 
-Trim, resize, change the frame rate or quality, or compress to a target size, keeping the format. Runtime: server; queue: heavy; engines: ffmpeg, ffprobe; negative test: failed.
+Trim, resize, change the frame rate or quality, or compress to a target size, keeping the format. Runtime: server; queue: heavy; engines: ffmpeg, ffprobe; negative test: passed.
 
 | Source | Target | Level | Notes |
 |---|---|---|---|
-| MP4 | (same) | Untested | hidden: no passing negative test recorded |
-| MOV | (same) | Untested | hidden: no passing negative test recorded |
-| MKV | (same) | Untested | hidden: no passing negative test recorded |
-| WebM | (same) | Untested | hidden: no passing negative test recorded |
-| AVI | (same) | Untested | hidden: no passing negative test recorded |
-| FLV | (same) | Untested | hidden: no passing negative test recorded |
-| WMV | (same) | Untested | hidden: no passing negative test recorded |
-| 3GP | (same) | Untested | hidden: no passing negative test recorded |
+| MP4 | (same) | Full |  |
+| MOV | (same) | Full |  |
+| MKV | (same) | Full |  |
+| WebM | (same) | Full |  |
+| AVI | (same) | Full |  |
+| FLV | (same) | Full |  |
+| WMV | (same) | Full |  |
+| 3GP | (same) | Full |  |
 
 ### Video to GIF (`video.to_gif`)
 
@@ -620,8 +620,8 @@ Turn an animated GIF into a much smaller MP4 or WebM video. Runtime: server; que
 
 | Source | Target | Level | Notes |
 |---|---|---|---|
-| GIF | MP4 | Untested | hidden: no passing matrix test recorded |
-| GIF | WebM | Untested | hidden: no passing matrix test recorded |
+| GIF | MP4 | Full |  |
+| GIF | WebM | Full |  |
 
 ### Extract audio (`video.extract_audio`)
 

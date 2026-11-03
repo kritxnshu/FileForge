@@ -114,6 +114,8 @@ def test_video_negative(tmp_path):
     import subprocess
 
     r = convert("video.convert", path("truncated.mp4"), "webm", formats=["mp4"])
+    assert not r.ok and r.error["code"] == "corrupt_input" and "truncated" in r.error["message"]
+    r = convert("video.convert", path("truncated.mp4"), "mkv", formats=["mp4"])  # remux path too
     assert not r.ok and r.error["code"] == "corrupt_input"
     long = tmp_path / "long.mp4"  # 20 s: 0.11 MB leaves < 50 kbps for video
     subprocess.run(["ffmpeg", "-v", "error", "-y", "-f", "lavfi", "-i", "color=c=red:s=64x64:d=20", "-c:v", "libx264",
@@ -148,8 +150,14 @@ def test_gif_to_video(src, dst):
     r = convert("video.from_gif", path("animated.gif"), dst, timeout=SLOW)
     assert r.ok, r.error
     validate_media(r.out, video_codec=V_CODEC[dst], duration=0.6, tol=0.25, tone_hz=None)
-    r_, g_, b_ = center_pixel(r.out, 0.02)
-    assert r_ > 180 and g_ < 90  # first frame is red
+    r_, g_, b_ = center_pixel(r.out, 0)  # first frame (pts 0) is red; -ss drops frames before the seek point
+    assert r_ > 180 and g_ < 90
+    import json
+    import subprocess
+
+    frames = json.loads(subprocess.run(["ffprobe", "-v", "error", "-select_streams", "v:0", "-show_entries", "frame=pts_time",
+                                        "-of", "json", str(r.out)], capture_output=True, text=True).stdout)["frames"]
+    assert [round(float(f["pts_time"]), 2) for f in frames] == [0.0, 0.1, 0.3]  # GIF frame timing kept
 
 
 @pytest.mark.verifies("neg:video.from_gif")

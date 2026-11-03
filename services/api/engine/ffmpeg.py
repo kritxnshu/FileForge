@@ -93,6 +93,18 @@ def run(ctx: Ctx, args: list[str], *, total_s: float, stage: str, offset: float 
         if "invalid data" in tail or "moov atom not found" in tail or "end of file" in tail:
             raise ConversionError("corrupt_input", "This media file is damaged or truncated.")
         raise ConversionError("engine_error", "FFmpeg couldn't convert this file with these settings.")
+    if "partial file" in res.stderr_tail:
+        raise ConversionError("corrupt_input", "This file is truncated: only part of it could be read. Upload the complete file.")
+
+
+def verify_duration(ctx: Ctx, out: Path, expected: float) -> None:
+    """FFmpeg happily converts what it can read; a much shorter result means the input was cut off."""
+    if expected < 1.0:
+        return
+    got = duration(probe(ctx, out))
+    if got < expected * 0.85:
+        raise ConversionError("corrupt_input", f"This file is truncated: only {got:.1f} of its {expected:.1f} seconds could be "
+                                               "read. Upload the complete file.")
 
 
 def trim_args(start: float | None, end: float | None) -> tuple[list[str], list[str]]:
