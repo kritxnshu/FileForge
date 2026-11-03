@@ -1416,6 +1416,26 @@
    "at": "2026-11-03T10:16:54+00:00",
    "tests": 1
   },
+  "neg:pres.from_images": {
+   "status": "passed",
+   "at": "2026-11-03T10:18:55+00:00",
+   "tests": 1
+  },
+  "neg:pres.from_pdf": {
+   "status": "passed",
+   "at": "2026-11-03T10:18:55+00:00",
+   "tests": 1
+  },
+  "neg:pres.office": {
+   "status": "passed",
+   "at": "2026-11-03T10:18:55+00:00",
+   "tests": 1
+  },
+  "neg:pres.to_images": {
+   "status": "passed",
+   "at": "2026-11-03T10:18:55+00:00",
+   "tests": 1
+  },
   "neg:sheet.export": {
    "status": "passed",
    "at": "2026-11-03T10:16:54+00:00",
@@ -1614,6 +1634,126 @@
   "pdf.watermark_image:webp->pdf": {
    "status": "passed",
    "at": "2026-11-03T10:16:54+00:00",
+   "tests": 1
+  },
+  "pres.from_images:avif->pptx": {
+   "status": "passed",
+   "at": "2026-11-03T10:18:55+00:00",
+   "tests": 1
+  },
+  "pres.from_images:bmp->pptx": {
+   "status": "passed",
+   "at": "2026-11-03T10:18:55+00:00",
+   "tests": 1
+  },
+  "pres.from_images:gif->pptx": {
+   "status": "passed",
+   "at": "2026-11-03T10:18:55+00:00",
+   "tests": 1
+  },
+  "pres.from_images:heic->pptx": {
+   "status": "passed",
+   "at": "2026-11-03T10:18:55+00:00",
+   "tests": 1
+  },
+  "pres.from_images:jpg->pptx": {
+   "status": "passed",
+   "at": "2026-11-03T10:18:55+00:00",
+   "tests": 1
+  },
+  "pres.from_images:png->pptx": {
+   "status": "passed",
+   "at": "2026-11-03T10:18:55+00:00",
+   "tests": 1
+  },
+  "pres.from_images:tiff->pptx": {
+   "status": "passed",
+   "at": "2026-11-03T10:18:55+00:00",
+   "tests": 1
+  },
+  "pres.from_images:webp->pptx": {
+   "status": "passed",
+   "at": "2026-11-03T10:18:55+00:00",
+   "tests": 1
+  },
+  "pres.from_pdf:pdf->pptx": {
+   "status": "passed",
+   "at": "2026-11-03T10:18:55+00:00",
+   "tests": 1
+  },
+  "pres.office:odp->pdf": {
+   "status": "passed",
+   "at": "2026-11-03T10:18:55+00:00",
+   "tests": 1
+  },
+  "pres.office:odp->ppt": {
+   "status": "passed",
+   "at": "2026-11-03T10:18:55+00:00",
+   "tests": 1
+  },
+  "pres.office:odp->pptx": {
+   "status": "passed",
+   "at": "2026-11-03T10:18:55+00:00",
+   "tests": 1
+  },
+  "pres.office:ppt->odp": {
+   "status": "passed",
+   "at": "2026-11-03T10:18:55+00:00",
+   "tests": 1
+  },
+  "pres.office:ppt->pdf": {
+   "status": "passed",
+   "at": "2026-11-03T10:18:55+00:00",
+   "tests": 1
+  },
+  "pres.office:ppt->pptx": {
+   "status": "passed",
+   "at": "2026-11-03T10:18:55+00:00",
+   "tests": 1
+  },
+  "pres.office:pptx->odp": {
+   "status": "passed",
+   "at": "2026-11-03T10:18:55+00:00",
+   "tests": 1
+  },
+  "pres.office:pptx->pdf": {
+   "status": "passed",
+   "at": "2026-11-03T10:18:55+00:00",
+   "tests": 1
+  },
+  "pres.office:pptx->ppt": {
+   "status": "passed",
+   "at": "2026-11-03T10:18:55+00:00",
+   "tests": 1
+  },
+  "pres.to_images:odp->jpg": {
+   "status": "passed",
+   "at": "2026-11-03T10:18:55+00:00",
+   "tests": 1
+  },
+  "pres.to_images:odp->png": {
+   "status": "passed",
+   "at": "2026-11-03T10:18:55+00:00",
+   "tests": 1
+  },
+  "pres.to_images:ppt->jpg": {
+   "status": "passed",
+   "at": "2026-11-03T10:18:55+00:00",
+   "tests": 1
+  },
+  "pres.to_images:ppt->png": {
+   "status": "passed",
+   "at": "2026-11-03T10:18:55+00:00",
+   "tests": 1
+  },
+  "pres.to_images:pptx->jpg": {
+   "status": "passed",
+   "at": "2026-11-03T10:18:55+00:00",
+   "tests": 1
+  },
+  "pres.to_images:pptx->png": {
+   "status": "passed",
+   "at": "2026-11-03T10:18:55+00:00",
    "tests": 1
   },
   "sheet.export:ods->csv": {

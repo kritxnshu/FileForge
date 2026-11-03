@@ -85,6 +85,21 @@ def html_text(path: Path) -> str:
     return _norm(" ".join(p.parts))
 
 
+def pptx_text(path: Path) -> list[str]:
+    from pptx import Presentation
+
+    return [_norm(" ".join(sh.text_frame.text for sh in sl.shapes if sh.has_text_frame)) for sl in Presentation(str(path)).slides]
+
+
+def ppt_text(path: Path) -> str:
+    import olefile
+
+    with olefile.OleFileIO(str(path)) as ole:
+        check(ole.exists("PowerPoint Document"), "no PowerPoint Document stream")
+        data = ole.openstream("PowerPoint Document").read()
+    return _norm(data.decode("utf-16-le", "ignore") + " " + data.decode("latin-1", "ignore"))
+
+
 def validate_document(path: Path, fmt: str, contains: list[str]) -> None:
     if fmt == "pdf":
         return validate_pdf(path, contains=contains)
@@ -96,6 +111,14 @@ def validate_document(path: Path, fmt: str, contains: list[str]) -> None:
         text = odf_text(path)
     elif fmt == "doc":
         text = doc_text(path)
+    elif fmt == "pptx":
+        magic(path, "zip")
+        text = " ".join(pptx_text(path))
+    elif fmt == "ppt":
+        text = ppt_text(path)
+    elif fmt == "odp":
+        magic(path, "zip")
+        text = odf_text(path)
     elif fmt == "rtf":
         raw = path.read_text(encoding="latin-1")
         check(raw.startswith("{\\rtf"), "not RTF")

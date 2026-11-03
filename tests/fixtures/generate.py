@@ -483,6 +483,42 @@ def _trunc_mp4(p: Path) -> None:
     data = path("video.mp4").read_bytes()
     p.write_bytes(data[: len(data) // 3])
 
+# ---------------------------------------------------------------------------
+# presentations
+
+
+@builder("presentation.pptx")
+def _pptx(p: Path) -> None:
+    from pptx import Presentation
+    from pptx.dml.color import RGBColor
+    from pptx.util import Inches
+
+    prs = Presentation()
+    prs.slide_width, prs.slide_height = Inches(13.333), Inches(7.5)
+    s1 = prs.slides.add_slide(prs.slide_layouts[1])
+    s1.shapes.title.text = "Quarterly Report"
+    s1.placeholders[1].text = KNOWN_SENTENCE
+    s2 = prs.slides.add_slide(prs.slide_layouts[6])
+    box = s2.shapes.add_textbox(Inches(1), Inches(1), Inches(8), Inches(1))
+    box.text_frame.text = "Page 2 marker text"
+    bg = s2.background.fill
+    bg.solid()
+    bg.fore_color.rgb = RGBColor(0xFF, 0x00, 0x00)
+    prs.save(p)
+
+
+for _ext, _flt in [("ppt", "ppt:MS PowerPoint 97"), ("odp", "odp")]:
+    def _mkp(ext=_ext, flt=_flt):
+        def build(p: Path) -> None:
+            src = OUT / f"_src_{os.getpid()}_{ext}.pptx"
+            shutil.copyfile(path("presentation.pptx"), src)
+            try:
+                _lo_convert(src, p, flt)
+            finally:
+                src.unlink(missing_ok=True)
+        return build
+    builder(f"presentation.{_ext}")(_mkp())
+
 
 if __name__ == "__main__":
     for n in available():
