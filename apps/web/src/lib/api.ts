@@ -47,6 +47,7 @@ export interface Operation {
   limitations: string[];
   options_schema: JsonSchema;
   min_inputs: number;
+  combine_only: boolean;
   max_inputs: number | null;
   keywords: string[];
   pairs: Pair[];

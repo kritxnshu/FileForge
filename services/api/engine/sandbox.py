@@ -110,10 +110,15 @@ def _seatbelt_profile(job_dir: str) -> str:
 (deny network*)
 (allow network* (remote unix-socket (path-regex #"^{job}/")))
 (allow network* (local unix-socket (path-regex #"^{job}/")))
+(allow network* (remote unix-socket (path-regex #"^/private/tmp/OSL_PIPE_") (path-regex #"^/tmp/OSL_PIPE_")))
+(allow network* (local unix-socket (path-regex #"^/private/tmp/OSL_PIPE_") (path-regex #"^/tmp/OSL_PIPE_")))
 (deny file-write*)
 (allow file-write* (subpath {_sb_quote(job)}) (literal "/dev/null") (literal "/dev/zero")
        (literal "/dev/stdout") (literal "/dev/stderr") (literal "/dev/dtracehelper") (regex #"^/dev/fd/") (regex #"^/dev/tty"))
 (allow file-write* (regex #"^/private/var/folders/.*/(T|C)/"))
+; LibreOffice's single-instance pipe lives in a hard-coded /tmp; it also touches the /tmp directory entry itself
+; (root-owned + sticky, so this grants no way to alter other files there).
+(allow file-write* (regex #"^/private/tmp/OSL_PIPE_") (regex #"^/tmp/OSL_PIPE_") (literal "/private/tmp"))
 (deny file-read* (subpath {_sb_quote(home)}))
 (allow file-read* {reads})
 (allow file-read-metadata)

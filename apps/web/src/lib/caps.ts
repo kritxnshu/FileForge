@@ -40,10 +40,11 @@ export function isConversion(op: Operation): boolean {
   return op.cardinality !== "transform";
 }
 
-export function choicesFor(caps: Capabilities, format: string): Choice[] {
+export function choicesFor(caps: Capabilities, format: string, opts: { combine?: boolean } = {}): Choice[] {
   const out: Choice[] = [];
   for (const op of caps.operations) {
     if (op.runtime !== "server") continue;
+    if (op.combine_only && !opts.combine) continue;
     for (const pair of op.pairs) if (pair.source === format) out.push({ op, pair });
   }
   return out;

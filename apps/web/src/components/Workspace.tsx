@@ -136,11 +136,11 @@ export function Workspace({ preset }: { preset?: Preset }) {
   // many→one choices valid for every file (e.g. images → PDF across PNG + JPG)
   const combineChoices = useMemo(() => {
     if (groups.size < 2) return [];
-    const lists = [...choicesByFormat.values()].map((l) => l.filter((c) => c.op.cardinality === "many_to_one"));
+    const lists = [...groups.keys()].map((f) => choicesFor(caps!, f, { combine: true }).filter((c) => c.op.cardinality === "many_to_one"));
     if (!lists.length) return [];
     const keys = lists.map((l) => new Set(l.map((c) => `${c.op.id}|${c.pair.target}`)));
     return lists[0].filter((c) => keys.every((s) => s.has(`${c.op.id}|${c.pair.target}`)));
-  }, [groups, choicesByFormat]);
+  }, [groups, caps]);
 
   // apply the route preset when a matching file arrives
   useEffect(() => {

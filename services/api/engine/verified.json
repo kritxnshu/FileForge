@@ -1,5 +1,135 @@
 {
  "pairs": {
+  "doc.html_to_pdf:html->pdf": {
+   "status": "passed",
+   "at": "2026-11-03T09:20:14+00:00",
+   "tests": 1
+  },
+  "doc.html_to_pdf:md->pdf": {
+   "status": "passed",
+   "at": "2026-11-03T09:20:14+00:00",
+   "tests": 1
+  },
+  "doc.office:doc->docx": {
+   "status": "passed",
+   "at": "2026-11-03T09:20:14+00:00",
+   "tests": 1
+  },
+  "doc.office:doc->odt": {
+   "status": "passed",
+   "at": "2026-11-03T09:20:14+00:00",
+   "tests": 1
+  },
+  "doc.office:doc->pdf": {
+   "status": "passed",
+   "at": "2026-11-03T09:20:14+00:00",
+   "tests": 1
+  },
+  "doc.office:doc->rtf": {
+   "status": "passed",
+   "at": "2026-11-03T09:20:14+00:00",
+   "tests": 1
+  },
+  "doc.office:docx->doc": {
+   "status": "passed",
+   "at": "2026-11-03T09:20:14+00:00",
+   "tests": 1
+  },
+  "doc.office:docx->odt": {
+   "status": "passed",
+   "at": "2026-11-03T09:20:14+00:00",
+   "tests": 1
+  },
+  "doc.office:docx->pdf": {
+   "status": "passed",
+   "at": "2026-11-03T09:20:14+00:00",
+   "tests": 1
+  },
+  "doc.office:docx->rtf": {
+   "status": "passed",
+   "at": "2026-11-03T09:20:14+00:00",
+   "tests": 1
+  },
+  "doc.office:odt->doc": {
+   "status": "passed",
+   "at": "2026-11-03T09:20:14+00:00",
+   "tests": 1
+  },
+  "doc.office:odt->docx": {
+   "status": "passed",
+   "at": "2026-11-03T09:20:14+00:00",
+   "tests": 1
+  },
+  "doc.office:odt->pdf": {
+   "status": "passed",
+   "at": "2026-11-03T09:20:14+00:00",
+   "tests": 1
+  },
+  "doc.office:odt->rtf": {
+   "status": "passed",
+   "at": "2026-11-03T09:20:14+00:00",
+   "tests": 1
+  },
+  "doc.office:rtf->doc": {
+   "status": "passed",
+   "at": "2026-11-03T09:20:14+00:00",
+   "tests": 1
+  },
+  "doc.office:rtf->docx": {
+   "status": "passed",
+   "at": "2026-11-03T09:20:14+00:00",
+   "tests": 1
+  },
+  "doc.office:rtf->odt": {
+   "status": "passed",
+   "at": "2026-11-03T09:20:14+00:00",
+   "tests": 1
+  },
+  "doc.office:rtf->pdf": {
+   "status": "passed",
+   "at": "2026-11-03T09:20:14+00:00",
+   "tests": 1
+  },
+  "doc.office:txt->pdf": {
+   "status": "passed",
+   "at": "2026-11-03T09:20:14+00:00",
+   "tests": 1
+  },
+  "doc.pandoc:docx->md": {
+   "status": "passed",
+   "at": "2026-11-03T09:20:14+00:00",
+   "tests": 1
+  },
+  "doc.pandoc:html->docx": {
+   "status": "passed",
+   "at": "2026-11-03T09:20:14+00:00",
+   "tests": 1
+  },
+  "doc.pandoc:html->md": {
+   "status": "passed",
+   "at": "2026-11-03T09:20:14+00:00",
+   "tests": 1
+  },
+  "doc.pandoc:html->odt": {
+   "status": "passed",
+   "at": "2026-11-03T09:20:14+00:00",
+   "tests": 1
+  },
+  "doc.pandoc:md->docx": {
+   "status": "passed",
+   "at": "2026-11-03T09:20:14+00:00",
+   "tests": 1
+  },
+  "doc.pandoc:md->html": {
+   "status": "passed",
+   "at": "2026-11-03T09:20:14+00:00",
+   "tests": 1
+  },
+  "doc.pandoc:md->odt": {
+   "status": "passed",
+   "at": "2026-11-03T09:20:14+00:00",
+   "tests": 1
+  },
   "image.compress:avif->avif": {
    "status": "passed",
    "at": "2026-11-03T09:05:31+00:00",
@@ -500,6 +630,21 @@
    "at": "2026-11-03T09:05:31+00:00",
    "tests": 1
   },
+  "neg:doc.html_to_pdf": {
+   "status": "passed",
+   "at": "2026-11-03T09:20:14+00:00",
+   "tests": 1
+  },
+  "neg:doc.office": {
+   "status": "passed",
+   "at": "2026-11-03T09:20:14+00:00",
+   "tests": 1
+  },
+  "neg:doc.pandoc": {
+   "status": "passed",
+   "at": "2026-11-03T09:20:14+00:00",
+   "tests": 1
+  },
   "neg:image.compress": {
    "status": "passed",
    "at": "2026-11-03T09:05:31+00:00",
@@ -533,6 +678,236 @@
   "neg:image.trace": {
    "status": "passed",
    "at": "2026-11-03T09:05:31+00:00",
+   "tests": 1
+  },
+  "neg:pdf.compress": {
+   "status": "passed",
+   "at": "2026-11-03T09:20:14+00:00",
+   "tests": 1
+  },
+  "neg:pdf.delete_pages": {
+   "status": "passed",
+   "at": "2026-11-03T09:20:14+00:00",
+   "tests": 1
+  },
+  "neg:pdf.extract_pages": {
+   "status": "passed",
+   "at": "2026-11-03T09:20:14+00:00",
+   "tests": 1
+  },
+  "neg:pdf.from_images": {
+   "status": "passed",
+   "at": "2026-11-03T09:20:14+00:00",
+   "tests": 1
+  },
+  "neg:pdf.merge": {
+   "status": "passed",
+   "at": "2026-11-03T09:20:14+00:00",
+   "tests": 1
+  },
+  "neg:pdf.protect": {
+   "status": "passed",
+   "at": "2026-11-03T09:20:14+00:00",
+   "tests": 1
+  },
+  "neg:pdf.reorder": {
+   "status": "passed",
+   "at": "2026-11-03T09:20:14+00:00",
+   "tests": 1
+  },
+  "neg:pdf.rotate": {
+   "status": "passed",
+   "at": "2026-11-03T09:20:14+00:00",
+   "tests": 1
+  },
+  "neg:pdf.split": {
+   "status": "passed",
+   "at": "2026-11-03T09:20:14+00:00",
+   "tests": 1
+  },
+  "neg:pdf.to_docx": {
+   "status": "passed",
+   "at": "2026-11-03T09:20:14+00:00",
+   "tests": 1
+  },
+  "neg:pdf.to_images": {
+   "status": "passed",
+   "at": "2026-11-03T09:20:14+00:00",
+   "tests": 4
+  },
+  "neg:pdf.to_tables": {
+   "status": "passed",
+   "at": "2026-11-03T09:20:14+00:00",
+   "tests": 1
+  },
+  "neg:pdf.to_text": {
+   "status": "passed",
+   "at": "2026-11-03T09:20:14+00:00",
+   "tests": 1
+  },
+  "neg:pdf.unlock": {
+   "status": "passed",
+   "at": "2026-11-03T09:20:14+00:00",
+   "tests": 4
+  },
+  "neg:pdf.watermark": {
+   "status": "passed",
+   "at": "2026-11-03T09:20:14+00:00",
+   "tests": 1
+  },
+  "neg:pdf.watermark_image": {
+   "status": "passed",
+   "at": "2026-11-03T09:20:14+00:00",
+   "tests": 1
+  },
+  "pdf.compress:pdf->pdf": {
+   "status": "passed",
+   "at": "2026-11-03T09:20:14+00:00",
+   "tests": 2
+  },
+  "pdf.delete_pages:pdf->pdf": {
+   "status": "passed",
+   "at": "2026-11-03T09:20:14+00:00",
+   "tests": 1
+  },
+  "pdf.extract_pages:pdf->pdf": {
+   "status": "passed",
+   "at": "2026-11-03T09:20:14+00:00",
+   "tests": 1
+  },
+  "pdf.from_images:avif->pdf": {
+   "status": "passed",
+   "at": "2026-11-03T09:20:14+00:00",
+   "tests": 1
+  },
+  "pdf.from_images:bmp->pdf": {
+   "status": "passed",
+   "at": "2026-11-03T09:20:14+00:00",
+   "tests": 1
+  },
+  "pdf.from_images:gif->pdf": {
+   "status": "passed",
+   "at": "2026-11-03T09:20:14+00:00",
+   "tests": 1
+  },
+  "pdf.from_images:heic->pdf": {
+   "status": "passed",
+   "at": "2026-11-03T09:20:14+00:00",
+   "tests": 2
+  },
+  "pdf.from_images:jpg->pdf": {
+   "status": "passed",
+   "at": "2026-11-03T09:20:14+00:00",
+   "tests": 2
+  },
+  "pdf.from_images:png->pdf": {
+   "status": "passed",
+   "at": "2026-11-03T09:20:14+00:00",
+   "tests": 1
+  },
+  "pdf.from_images:tiff->pdf": {
+   "status": "passed",
+   "at": "2026-11-03T09:20:14+00:00",
+   "tests": 1
+  },
+  "pdf.from_images:webp->pdf": {
+   "status": "passed",
+   "at": "2026-11-03T09:20:14+00:00",
+   "tests": 1
+  },
+  "pdf.merge:pdf->pdf": {
+   "status": "passed",
+   "at": "2026-11-03T09:20:14+00:00",
+   "tests": 1
+  },
+  "pdf.protect:pdf->pdf": {
+   "status": "passed",
+   "at": "2026-11-03T09:20:14+00:00",
+   "tests": 1
+  },
+  "pdf.reorder:pdf->pdf": {
+   "status": "passed",
+   "at": "2026-11-03T09:20:14+00:00",
+   "tests": 1
+  },
+  "pdf.rotate:pdf->pdf": {
+   "status": "passed",
+   "at": "2026-11-03T09:20:14+00:00",
+   "tests": 1
+  },
+  "pdf.split:pdf->pdf": {
+   "status": "passed",
+   "at": "2026-11-03T09:20:14+00:00",
+   "tests": 3
+  },
+  "pdf.to_docx:pdf->docx": {
+   "status": "passed",
+   "at": "2026-11-03T09:20:14+00:00",
+   "tests": 1
+  },
+  "pdf.to_images:pdf->jpg": {
+   "status": "passed",
+   "at": "2026-11-03T09:20:14+00:00",
+   "tests": 2
+  },
+  "pdf.to_images:pdf->png": {
+   "status": "passed",
+   "at": "2026-11-03T09:20:14+00:00",
+   "tests": 2
+  },
+  "pdf.to_tables:pdf->csv": {
+   "status": "passed",
+   "at": "2026-11-03T09:20:14+00:00",
+   "tests": 1
+  },
+  "pdf.to_tables:pdf->xlsx": {
+   "status": "passed",
+   "at": "2026-11-03T09:20:14+00:00",
+   "tests": 1
+  },
+  "pdf.to_text:pdf->html": {
+   "status": "passed",
+   "at": "2026-11-03T09:20:14+00:00",
+   "tests": 1
+  },
+  "pdf.to_text:pdf->md": {
+   "status": "passed",
+   "at": "2026-11-03T09:20:14+00:00",
+   "tests": 1
+  },
+  "pdf.to_text:pdf->txt": {
+   "status": "passed",
+   "at": "2026-11-03T09:20:14+00:00",
+   "tests": 1
+  },
+  "pdf.unlock:pdf->pdf": {
+   "status": "passed",
+   "at": "2026-11-03T09:20:14+00:00",
+   "tests": 6
+  },
+  "pdf.watermark:pdf->pdf": {
+   "status": "passed",
+   "at": "2026-11-03T09:20:14+00:00",
+   "tests": 1
+  },
+  "pdf.watermark_image:jpg->pdf": {
+   "status": "passed",
+   "at": "2026-11-03T09:20:14+00:00",
+   "tests": 1
+  },
+  "pdf.watermark_image:pdf->pdf": {
+   "status": "passed",
+   "at": "2026-11-03T09:20:14+00:00",
+   "tests": 1
+  },
+  "pdf.watermark_image:png->pdf": {
+   "status": "passed",
+   "at": "2026-11-03T09:20:14+00:00",
+   "tests": 1
+  },
+  "pdf.watermark_image:webp->pdf": {
+   "status": "passed",
+   "at": "2026-11-03T09:20:14+00:00",
    "tests": 1
   }
  },

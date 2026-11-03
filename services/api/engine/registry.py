@@ -98,7 +98,8 @@ class Operation:
     max_inputs: int | None = None
     slug: str | None = None  # route slug for transforms ("pdf-merge"); pairs default to "<src>-to-<dst>"
     keywords: tuple[str, ...] = ()
-    explicit_pairs: tuple[tuple[str, str], ...] | None = None  # when not every input×output combination is valid
+    explicit_pairs: tuple[tuple[str, str], ...] | None = None
+    combine_only: bool = False  # many→one op that needs files of different formats together (offered only as "combine")  # when not every input×output combination is valid
 
     def pairs(self) -> list[tuple[str, str]]:
         if self.explicit_pairs is not None:

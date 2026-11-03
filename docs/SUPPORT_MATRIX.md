@@ -10,10 +10,10 @@ its engines are installed, and its feature flag (if any) is on.
 
 | Level | Pairs |
 |---|---|
-| Full | 87 |
-| Partial | 0 |
+| Full | 136 |
+| Partial | 7 |
 | Experimental | 13 |
-| Untested | 0 |
+| Untested | 1 |
 | Unsupported | 2 |
 
 ## Images
@@ -170,6 +170,219 @@ Known limitations: Tracing approximates shapes; photos produce large, stylized S
 | GIF | SVG | Experimental |  |
 | BMP | SVG | Experimental |  |
 | TIFF | SVG | Experimental |  |
+
+## Documents & PDF
+
+### HTML to PDF (`doc.html_to_pdf`)
+
+Print HTML or Markdown to PDF with a browser engine. Scripts don't run and nothing is fetched from the network. Runtime: server; queue: fast; engines: chromium; negative test: passed.
+
+Known limitations: External images, stylesheets and fonts aren't loaded; JavaScript doesn't run.
+
+| Source | Target | Level | Notes |
+|---|---|---|---|
+| HTML | PDF | Full |  |
+| Markdown | PDF | Full |  |
+
+### Convert document (`doc.office`)
+
+Convert Word, OpenDocument and RTF documents with LibreOffice, keeping text, styles, tables and images. Runtime: server; queue: heavy; engines: soffice; negative test: passed.
+
+| Source | Target | Level | Notes |
+|---|---|---|---|
+| Word (DOCX) | PDF | Full |  |
+| Word 97-2003 (DOC) | PDF | Full |  |
+| OpenDocument Text | PDF | Full |  |
+| RTF | PDF | Full |  |
+| Plain text | PDF | Full |  |
+| Word (DOCX) | Word 97-2003 (DOC) | Full | The old .doc format may simplify some newer layout features. |
+| Word (DOCX) | OpenDocument Text | Full |  |
+| Word (DOCX) | RTF | Full | RTF can't hold some modern features (e.g. comments threads, SmartArt). |
+| Word 97-2003 (DOC) | Word (DOCX) | Full |  |
+| Word 97-2003 (DOC) | OpenDocument Text | Full |  |
+| Word 97-2003 (DOC) | RTF | Full | RTF can't hold some modern features (e.g. comments threads, SmartArt). |
+| OpenDocument Text | Word (DOCX) | Full |  |
+| OpenDocument Text | Word 97-2003 (DOC) | Full | The old .doc format may simplify some newer layout features. |
+| OpenDocument Text | RTF | Full | RTF can't hold some modern features (e.g. comments threads, SmartArt). |
+| RTF | Word (DOCX) | Full |  |
+| RTF | Word 97-2003 (DOC) | Full | The old .doc format may simplify some newer layout features. |
+| RTF | OpenDocument Text | Full |  |
+
+### Convert Markdown / HTML (`doc.pandoc`)
+
+Convert between Markdown, HTML and Word/OpenDocument with Pandoc. External files and URLs are never fetched. Runtime: server; queue: fast; engines: pandoc; negative test: passed.
+
+| Source | Target | Level | Notes |
+|---|---|---|---|
+| Markdown | HTML | Full |  |
+| HTML | Markdown | Full | Styling, scripts and forms are dropped; structure and links are kept. |
+| Markdown | Word (DOCX) | Full |  |
+| Markdown | OpenDocument Text | Full |  |
+| HTML | Word (DOCX) | Full | Images that point to other files or URLs aren't included. |
+| HTML | OpenDocument Text | Full | Images that point to other files or URLs aren't included. |
+| Word (DOCX) | Markdown | Full | Images and complex layout (columns, text boxes) are dropped. |
+
+### PDF to text (`pdf.to_text`)
+
+Extract the text of a PDF as plain text, Markdown or HTML. Runtime: server; queue: fast; engines: pdfplumber, pypdf; negative test: passed.
+
+Known limitations: Extracts text only; layout, images and fonts are not preserved. Scanned PDFs have no text to extract.
+
+| Source | Target | Level | Notes |
+|---|---|---|---|
+| PDF | Plain text | Partial |  |
+| PDF | Markdown | Partial |  |
+| PDF | HTML | Partial |  |
+
+### PDF to Word (`pdf.to_docx`)
+
+Turn a text-based PDF into an editable Word document with its paragraphs, headings and tables. Runtime: server; queue: fast; engines: pdfplumber, python-docx, pypdf; negative test: passed.
+
+Known limitations: Text-based PDFs only; scanned PDFs are not supported. Text, headings and tables are rebuilt; images, columns, fonts and exact layout are not preserved.
+
+| Source | Target | Level | Notes |
+|---|---|---|---|
+| PDF | Word (DOCX) | Partial |  |
+
+### Make PDF searchable (OCR) (`pdf.ocr`)
+
+Recognize text in scanned PDFs and add an invisible, searchable text layer. Runtime: server; queue: heavy, flag `ENABLE_OCR`; engines: ocrmypdf, tesseract; negative test: missing.
+
+Known limitations: Accuracy depends on scan quality and language.
+
+| Source | Target | Level | Notes |
+|---|---|---|---|
+| PDF | (same) | Untested | hidden: engine missing: tesseract |
+
+### PDF to images (`pdf.to_images`)
+
+Render each PDF page as a PNG or JPG image at the resolution you choose. Runtime: server; queue: fast; engines: pypdfium2; negative test: passed.
+
+| Source | Target | Level | Notes |
+|---|---|---|---|
+| PDF | PNG | Full |  |
+| PDF | JPG | Full |  |
+
+### Images to PDF (`pdf.from_images`)
+
+Combine images into a PDF, one image per page. JPGs are embedded without re-compression. Runtime: server; queue: fast; engines: img2pdf, pillow; negative test: passed.
+
+| Source | Target | Level | Notes |
+|---|---|---|---|
+| PNG | PDF | Full |  |
+| JPG | PDF | Full |  |
+| WebP | PDF | Full |  |
+| GIF | PDF | Full |  |
+| BMP | PDF | Full |  |
+| TIFF | PDF | Full |  |
+| HEIC | PDF | Full |  |
+| AVIF | PDF | Full |  |
+
+### Merge PDFs (`pdf.merge`)
+
+Combine several PDFs into one, in the order you choose. Runtime: server; queue: fast; engines: pypdf; negative test: passed.
+
+| Source | Target | Level | Notes |
+|---|---|---|---|
+| PDF | (same) | Full |  |
+
+### Split PDF (`pdf.split`)
+
+Split a PDF into single pages, page ranges, or equal chunks. Runtime: server; queue: fast; engines: pypdf; negative test: passed.
+
+| Source | Target | Level | Notes |
+|---|---|---|---|
+| PDF | (same) | Full |  |
+
+### Extract pages (`pdf.extract_pages`)
+
+Make a new PDF from just the pages you pick. Runtime: server; queue: fast; engines: pypdf; negative test: passed.
+
+| Source | Target | Level | Notes |
+|---|---|---|---|
+| PDF | (same) | Full |  |
+
+### Delete pages (`pdf.delete_pages`)
+
+Remove pages from a PDF. Runtime: server; queue: fast; engines: pypdf; negative test: passed.
+
+| Source | Target | Level | Notes |
+|---|---|---|---|
+| PDF | (same) | Full |  |
+
+### Reorder pages (`pdf.reorder`)
+
+Change the order of pages in a PDF. Runtime: server; queue: fast; engines: pypdf; negative test: passed.
+
+| Source | Target | Level | Notes |
+|---|---|---|---|
+| PDF | (same) | Full |  |
+
+### Rotate pages (`pdf.rotate`)
+
+Rotate all or some pages of a PDF by 90, 180 or 270 degrees. Runtime: server; queue: fast; engines: pypdf; negative test: passed.
+
+| Source | Target | Level | Notes |
+|---|---|---|---|
+| PDF | (same) | Full |  |
+
+### Add text watermark (`pdf.watermark`)
+
+Stamp text such as CONFIDENTIAL or DRAFT on every page, with your choice of size, color and opacity. Runtime: server; queue: fast; engines: pypdf, reportlab; negative test: passed.
+
+| Source | Target | Level | Notes |
+|---|---|---|---|
+| PDF | (same) | Full |  |
+
+### Add image watermark (`pdf.watermark_image`)
+
+Stamp a logo or image on PDF pages. Add one PDF and one image together. Runtime: server; queue: fast; engines: pypdf, reportlab, pillow; negative test: passed.
+
+| Source | Target | Level | Notes |
+|---|---|---|---|
+| PDF | (same) | Full |  |
+| PNG | PDF | Full |  |
+| JPG | PDF | Full |  |
+| WebP | PDF | Full |  |
+
+### Password-protect PDF (`pdf.protect`)
+
+Encrypt a PDF with AES-256 so it needs a password to open, and choose what readers may do. Runtime: server; queue: fast; engines: pikepdf; negative test: passed.
+
+| Source | Target | Level | Notes |
+|---|---|---|---|
+| PDF | (same) | Full |  |
+
+### Remove PDF password (`pdf.unlock`)
+
+Remove the password from a PDF you can open. Requires the correct password — nothing is guessed or cracked. Runtime: server; queue: fast; engines: pikepdf; negative test: passed.
+
+| Source | Target | Level | Notes |
+|---|---|---|---|
+| PDF | (same) | Full |  |
+
+### Compress PDF (`pdf.compress`)
+
+Shrink a PDF by downsampling and recompressing images and optimizing its structure. Runtime: server; queue: fast; engines: pikepdf, pillow; negative test: passed.
+
+Known limitations: Savings depend on the content: text-only PDFs shrink little. Images with transparency or unusual color spaces are left as they are.
+
+| Source | Target | Level | Notes |
+|---|---|---|---|
+| PDF | (same) | Partial |  |
+
+## Spreadsheets
+
+### PDF tables to spreadsheet (`pdf.to_tables`)
+
+Find tables in a text-based PDF and export them to Excel (one sheet per table) or CSV. Runtime: server; queue: fast; engines: pdfplumber, openpyxl, pypdf; negative test: passed.
+
+Known limitations: Works on text-based PDFs with ruled or clearly aligned tables; merged cells may split.
+
+| Source | Target | Level | Notes |
+|---|---|---|---|
+| PDF | Excel (XLSX) | Partial |  |
+| PDF | CSV | Partial |  |
 
 ## Unsupported
 

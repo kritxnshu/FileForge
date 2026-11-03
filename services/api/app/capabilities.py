@@ -14,11 +14,9 @@ _cache: tuple[float, dict, dict] | None = None
 
 
 def _slug(op: registry.Operation, src: str, dst: str) -> str:
-    if op.cardinality == "transform":
+    if op.cardinality == "transform" or (op.slug and (src == dst or op.cardinality == "many_to_one")):
         base = op.slug or op.id.replace(".", "-")
-        return f"{base}-{src}" if len(op.inputs) > 1 else base
-    if op.cardinality == "many_to_one" and op.slug:
-        return f"{op.slug}-{src}" if len(op.inputs) > 1 else op.slug
+        return f"{base}-{src}" if len({s for s, _ in op.pairs()}) > 1 else base
     return f"{src}-to-{dst}"
 
 
@@ -62,6 +60,7 @@ def build() -> tuple[dict[str, Any], dict[tuple[str, str, str], registry.PairInf
             "limitations": list(op.limitations),
             "options_schema": op.options.model_json_schema(),
             "min_inputs": op.min_inputs,
+            "combine_only": op.combine_only,
             "max_inputs": op.max_inputs,
             "keywords": list(op.keywords),
             "pairs": pairs,
