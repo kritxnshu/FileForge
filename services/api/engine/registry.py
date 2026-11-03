@@ -98,8 +98,11 @@ class Operation:
     max_inputs: int | None = None
     slug: str | None = None  # route slug for transforms ("pdf-merge"); pairs default to "<src>-to-<dst>"
     keywords: tuple[str, ...] = ()
+    explicit_pairs: tuple[tuple[str, str], ...] | None = None  # when not every input×output combination is valid
 
     def pairs(self) -> list[tuple[str, str]]:
+        if self.explicit_pairs is not None:
+            return [p for p in self.explicit_pairs if p not in self.exclude_pairs]
         if self.cardinality == "transform":
             out = [(f, f) for f in self.inputs]
         else:

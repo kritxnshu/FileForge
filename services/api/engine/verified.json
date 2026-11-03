@@ -1,5 +1,35 @@
 {
  "pairs": {
+  "image.compress:avif->avif": {
+   "status": "passed",
+   "at": "2026-11-03T09:05:31+00:00",
+   "tests": 1
+  },
+  "image.compress:gif->gif": {
+   "status": "passed",
+   "at": "2026-11-03T09:05:31+00:00",
+   "tests": 1
+  },
+  "image.compress:jpg->jpg": {
+   "status": "passed",
+   "at": "2026-11-03T09:05:31+00:00",
+   "tests": 2
+  },
+  "image.compress:png->png": {
+   "status": "passed",
+   "at": "2026-11-03T09:05:31+00:00",
+   "tests": 1
+  },
+  "image.compress:tiff->tiff": {
+   "status": "passed",
+   "at": "2026-11-03T09:05:31+00:00",
+   "tests": 1
+  },
+  "image.compress:webp->webp": {
+   "status": "passed",
+   "at": "2026-11-03T09:05:31+00:00",
+   "tests": 1
+  },
   "image.convert:avif->bmp": {
    "status": "passed",
    "at": "2026-11-03T09:02:02+00:00",
@@ -320,10 +350,190 @@
    "at": "2026-11-03T09:02:02+00:00",
    "tests": 1
   },
+  "image.metadata:avif->avif": {
+   "status": "passed",
+   "at": "2026-11-03T09:05:31+00:00",
+   "tests": 1
+  },
+  "image.metadata:bmp->bmp": {
+   "status": "passed",
+   "at": "2026-11-03T09:05:31+00:00",
+   "tests": 1
+  },
+  "image.metadata:jpg->jpg": {
+   "status": "passed",
+   "at": "2026-11-03T09:05:31+00:00",
+   "tests": 1
+  },
+  "image.metadata:png->png": {
+   "status": "passed",
+   "at": "2026-11-03T09:05:31+00:00",
+   "tests": 1
+  },
+  "image.metadata:tiff->tiff": {
+   "status": "passed",
+   "at": "2026-11-03T09:05:31+00:00",
+   "tests": 1
+  },
+  "image.metadata:webp->webp": {
+   "status": "passed",
+   "at": "2026-11-03T09:05:31+00:00",
+   "tests": 1
+  },
+  "image.resize:avif->avif": {
+   "status": "passed",
+   "at": "2026-11-03T09:05:31+00:00",
+   "tests": 1
+  },
+  "image.resize:bmp->bmp": {
+   "status": "passed",
+   "at": "2026-11-03T09:05:31+00:00",
+   "tests": 1
+  },
+  "image.resize:gif->gif": {
+   "status": "passed",
+   "at": "2026-11-03T09:05:31+00:00",
+   "tests": 2
+  },
+  "image.resize:jpg->jpg": {
+   "status": "passed",
+   "at": "2026-11-03T09:05:31+00:00",
+   "tests": 1
+  },
+  "image.resize:png->png": {
+   "status": "passed",
+   "at": "2026-11-03T09:05:31+00:00",
+   "tests": 2
+  },
+  "image.resize:tiff->tiff": {
+   "status": "passed",
+   "at": "2026-11-03T09:05:31+00:00",
+   "tests": 1
+  },
+  "image.resize:webp->webp": {
+   "status": "passed",
+   "at": "2026-11-03T09:05:31+00:00",
+   "tests": 1
+  },
+  "image.svg_render:svg->jpg": {
+   "status": "passed",
+   "at": "2026-11-03T09:05:31+00:00",
+   "tests": 1
+  },
+  "image.svg_render:svg->pdf": {
+   "status": "passed",
+   "at": "2026-11-03T09:05:31+00:00",
+   "tests": 1
+  },
+  "image.svg_render:svg->png": {
+   "status": "passed",
+   "at": "2026-11-03T09:05:31+00:00",
+   "tests": 2
+  },
+  "image.svg_render:svg->webp": {
+   "status": "passed",
+   "at": "2026-11-03T09:05:31+00:00",
+   "tests": 1
+  },
+  "image.to_heic:avif->heic": {
+   "status": "passed",
+   "at": "2026-11-03T09:05:31+00:00",
+   "tests": 1
+  },
+  "image.to_heic:bmp->heic": {
+   "status": "passed",
+   "at": "2026-11-03T09:05:31+00:00",
+   "tests": 1
+  },
+  "image.to_heic:gif->heic": {
+   "status": "passed",
+   "at": "2026-11-03T09:05:31+00:00",
+   "tests": 1
+  },
+  "image.to_heic:jpg->heic": {
+   "status": "passed",
+   "at": "2026-11-03T09:05:31+00:00",
+   "tests": 1
+  },
+  "image.to_heic:png->heic": {
+   "status": "passed",
+   "at": "2026-11-03T09:05:31+00:00",
+   "tests": 1
+  },
+  "image.to_heic:tiff->heic": {
+   "status": "passed",
+   "at": "2026-11-03T09:05:31+00:00",
+   "tests": 1
+  },
+  "image.to_heic:webp->heic": {
+   "status": "passed",
+   "at": "2026-11-03T09:05:31+00:00",
+   "tests": 1
+  },
+  "image.trace:bmp->svg": {
+   "status": "passed",
+   "at": "2026-11-03T09:05:31+00:00",
+   "tests": 1
+  },
+  "image.trace:gif->svg": {
+   "status": "passed",
+   "at": "2026-11-03T09:05:31+00:00",
+   "tests": 1
+  },
+  "image.trace:jpg->svg": {
+   "status": "passed",
+   "at": "2026-11-03T09:05:31+00:00",
+   "tests": 1
+  },
+  "image.trace:png->svg": {
+   "status": "passed",
+   "at": "2026-11-03T09:05:31+00:00",
+   "tests": 1
+  },
+  "image.trace:tiff->svg": {
+   "status": "passed",
+   "at": "2026-11-03T09:05:31+00:00",
+   "tests": 1
+  },
+  "image.trace:webp->svg": {
+   "status": "passed",
+   "at": "2026-11-03T09:05:31+00:00",
+   "tests": 1
+  },
+  "neg:image.compress": {
+   "status": "passed",
+   "at": "2026-11-03T09:05:31+00:00",
+   "tests": 1
+  },
   "neg:image.convert": {
    "status": "passed",
    "at": "2026-11-03T09:02:02+00:00",
    "tests": 3
+  },
+  "neg:image.metadata": {
+   "status": "passed",
+   "at": "2026-11-03T09:05:31+00:00",
+   "tests": 1
+  },
+  "neg:image.resize": {
+   "status": "passed",
+   "at": "2026-11-03T09:05:31+00:00",
+   "tests": 1
+  },
+  "neg:image.svg_render": {
+   "status": "passed",
+   "at": "2026-11-03T09:05:31+00:00",
+   "tests": 1
+  },
+  "neg:image.to_heic": {
+   "status": "passed",
+   "at": "2026-11-03T09:05:31+00:00",
+   "tests": 1
+  },
+  "neg:image.trace": {
+   "status": "passed",
+   "at": "2026-11-03T09:05:31+00:00",
+   "tests": 1
   }
  },
  "generated_by": "pytest (tests/api/conftest.py)"

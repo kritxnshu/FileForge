@@ -10,9 +10,9 @@ its engines are installed, and its feature flag (if any) is on.
 
 | Level | Pairs |
 |---|---|
-| Full | 64 |
+| Full | 87 |
 | Partial | 0 |
-| Experimental | 0 |
+| Experimental | 13 |
 | Untested | 0 |
 | Unsupported | 2 |
 
@@ -88,6 +88,88 @@ Works across all common raster formats, keeping transparency and animation where
 | HEIC | TIFF | Full |  |
 | HEIC | ICO | Full |  |
 | HEIC | AVIF | Full |  |
+
+### Resize image (`image.resize`)
+
+Change an image's pixel dimensions by percentage, width, height or a bounding box. Runtime: server; queue: fast; engines: pillow; negative test: passed.
+
+| Source | Target | Level | Notes |
+|---|---|---|---|
+| PNG | (same) | Full |  |
+| JPG | (same) | Full |  |
+| WebP | (same) | Full |  |
+| GIF | (same) | Full |  |
+| BMP | (same) | Full |  |
+| TIFF | (same) | Full |  |
+| AVIF | (same) | Full |  |
+
+### Compress image (`image.compress`)
+
+Make an image file smaller by re-encoding it, optionally shrinking it and removing metadata. Runtime: server; queue: fast; engines: pillow; negative test: passed.
+
+| Source | Target | Level | Notes |
+|---|---|---|---|
+| PNG | (same) | Full |  |
+| JPG | (same) | Full |  |
+| WebP | (same) | Full |  |
+| GIF | (same) | Full |  |
+| AVIF | (same) | Full |  |
+| TIFF | (same) | Full |  |
+
+### Strip metadata / set DPI (`image.metadata`)
+
+Remove EXIF data such as GPS location and camera details, or set the print resolution. Runtime: server; queue: fast; engines: pillow; negative test: passed.
+
+| Source | Target | Level | Notes |
+|---|---|---|---|
+| JPG | (same) | Full |  |
+| PNG | (same) | Full |  |
+| WebP | (same) | Full |  |
+| TIFF | (same) | Full |  |
+| AVIF | (same) | Full |  |
+| BMP | (same) | Full |  |
+
+### Convert to HEIC (`image.to_heic`)
+
+Encode images as HEIC (HEVC). Experimental: encoder support and patent licensing vary by platform. Runtime: server; queue: fast, flag `ENABLE_EXPERIMENTAL`; engines: pillow, pillow-heif; negative test: passed.
+
+Known limitations: HEVC encoding is subject to patent licensing; some viewers can't open these files.
+
+| Source | Target | Level | Notes |
+|---|---|---|---|
+| PNG | HEIC | Experimental |  |
+| JPG | HEIC | Experimental |  |
+| WebP | HEIC | Experimental |  |
+| GIF | HEIC | Experimental |  |
+| BMP | HEIC | Experimental |  |
+| TIFF | HEIC | Experimental |  |
+| AVIF | HEIC | Experimental |  |
+
+### Render SVG (`image.svg_render`)
+
+Render SVG vector graphics to PNG, JPG or WebP at any size, or to a vector PDF. External files and URLs are never loaded. Runtime: server; queue: fast; engines: resvg, pillow; negative test: passed.
+
+| Source | Target | Level | Notes |
+|---|---|---|---|
+| SVG | PNG | Full |  |
+| SVG | JPG | Full |  |
+| SVG | WebP | Full |  |
+| SVG | PDF | Full | Rendered by a browser engine; SVG filters and fonts may differ slightly. |
+
+### Trace to vector (`image.trace`)
+
+Trace a raster image into SVG paths (vector tracing). Works best on logos and flat graphics. Runtime: server; queue: fast, flag `ENABLE_EXPERIMENTAL`; engines: vtracer, pillow; negative test: passed.
+
+Known limitations: Tracing approximates shapes; photos produce large, stylized SVGs.
+
+| Source | Target | Level | Notes |
+|---|---|---|---|
+| PNG | SVG | Experimental |  |
+| JPG | SVG | Experimental |  |
+| WebP | SVG | Experimental |  |
+| GIF | SVG | Experimental |  |
+| BMP | SVG | Experimental |  |
+| TIFF | SVG | Experimental |  |
 
 ## Unsupported
 

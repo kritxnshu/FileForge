@@ -148,8 +148,8 @@ def _svg(p: Path) -> None:
     p.write_text(
         f'<svg xmlns="http://www.w3.org/2000/svg" width="{IMG}" height="{IMG}" viewBox="0 0 {IMG} {IMG}">'
         f'<rect x="0" y="0" width="{IMG // 2}" height="{IMG}" fill="#ff0000"/>'
-        f'<rect x="{IMG // 2}" y="0" width="{IMG // 2}" height="{IMG}" fill="#0000ff"/>'
-        f'<rect x="{IMG - 16}" y="0" width="16" height="16" fill="#ffffff" fill-opacity="0"/>'
+        f'<rect x="{IMG // 2}" y="16" width="{IMG // 2}" height="{IMG - 16}" fill="#0000ff"/>'
+        f'<rect x="{IMG // 2}" y="0" width="{IMG // 2 - 16}" height="16" fill="#0000ff"/>'
         f'<text x="2" y="60" font-size="6" fill="#ffffff">{KNOWN_SENTENCE[:9]}</text></svg>'
     )
 
