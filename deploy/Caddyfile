@@ -1,0 +1,35 @@
+# One origin: /api/* → FastAPI (uploads stream straight there), everything else → Next.js.
+# Dev:  UC_SITE_ADDRESS=:8080 (default, plain HTTP)
+# Prod: UC_SITE_ADDRESS=convert.example.com  (Caddy obtains and renews TLS automatically)
+{
+	admin off
+	{$UC_CADDY_GLOBAL}
+}
+
+{$UC_SITE_ADDRESS::8080} {
+	header {
+		-Server
+		Strict-Transport-Security "max-age=31536000; includeSubDomains"
+		X-Content-Type-Options nosniff
+		Referrer-Policy no-referrer
+		Permissions-Policy "camera=(), microphone=(), geolocation=(), interest-cohort=()"
+	}
+
+	handle /api/* {
+		request_body {
+			max_size {$UC_MAX_REQUEST_MB:1100}MB
+		}
+		reverse_proxy {$UC_API_UPSTREAM:127.0.0.1:8000} {
+			flush_interval -1
+			transport http {
+				read_timeout 30m
+				write_timeout 30m
+			}
+		}
+	}
+
+	handle {
+		encode zstd gzip
+		reverse_proxy {$UC_WEB_UPSTREAM:127.0.0.1:3000}
+	}
+}

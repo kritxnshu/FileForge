@@ -1,0 +1,330 @@
+{
+ "pairs": {
+  "image.convert:avif->bmp": {
+   "status": "passed",
+   "at": "2026-11-03T08:57:49+00:00",
+   "tests": 1
+  },
+  "image.convert:avif->gif": {
+   "status": "passed",
+   "at": "2026-11-03T08:57:49+00:00",
+   "tests": 1
+  },
+  "image.convert:avif->ico": {
+   "status": "passed",
+   "at": "2026-11-03T08:57:49+00:00",
+   "tests": 1
+  },
+  "image.convert:avif->jpg": {
+   "status": "passed",
+   "at": "2026-11-03T08:57:49+00:00",
+   "tests": 1
+  },
+  "image.convert:avif->png": {
+   "status": "passed",
+   "at": "2026-11-03T08:57:49+00:00",
+   "tests": 1
+  },
+  "image.convert:avif->tiff": {
+   "status": "passed",
+   "at": "2026-11-03T08:57:49+00:00",
+   "tests": 1
+  },
+  "image.convert:avif->webp": {
+   "status": "passed",
+   "at": "2026-11-03T08:57:49+00:00",
+   "tests": 1
+  },
+  "image.convert:bmp->avif": {
+   "status": "passed",
+   "at": "2026-11-03T08:57:49+00:00",
+   "tests": 1
+  },
+  "image.convert:bmp->gif": {
+   "status": "passed",
+   "at": "2026-11-03T08:57:49+00:00",
+   "tests": 1
+  },
+  "image.convert:bmp->ico": {
+   "status": "passed",
+   "at": "2026-11-03T08:57:49+00:00",
+   "tests": 1
+  },
+  "image.convert:bmp->jpg": {
+   "status": "passed",
+   "at": "2026-11-03T08:57:49+00:00",
+   "tests": 1
+  },
+  "image.convert:bmp->png": {
+   "status": "passed",
+   "at": "2026-11-03T08:57:49+00:00",
+   "tests": 1
+  },
+  "image.convert:bmp->tiff": {
+   "status": "passed",
+   "at": "2026-11-03T08:57:49+00:00",
+   "tests": 1
+  },
+  "image.convert:bmp->webp": {
+   "status": "passed",
+   "at": "2026-11-03T08:57:49+00:00",
+   "tests": 1
+  },
+  "image.convert:gif->avif": {
+   "status": "passed",
+   "at": "2026-11-03T08:57:49+00:00",
+   "tests": 1
+  },
+  "image.convert:gif->bmp": {
+   "status": "passed",
+   "at": "2026-11-03T08:57:49+00:00",
+   "tests": 1
+  },
+  "image.convert:gif->ico": {
+   "status": "passed",
+   "at": "2026-11-03T08:57:49+00:00",
+   "tests": 1
+  },
+  "image.convert:gif->jpg": {
+   "status": "passed",
+   "at": "2026-11-03T08:57:49+00:00",
+   "tests": 1
+  },
+  "image.convert:gif->png": {
+   "status": "passed",
+   "at": "2026-11-03T08:57:49+00:00",
+   "tests": 2
+  },
+  "image.convert:gif->tiff": {
+   "status": "passed",
+   "at": "2026-11-03T08:57:49+00:00",
+   "tests": 1
+  },
+  "image.convert:gif->webp": {
+   "status": "passed",
+   "at": "2026-11-03T08:57:49+00:00",
+   "tests": 3
+  },
+  "image.convert:heic->avif": {
+   "status": "passed",
+   "at": "2026-11-03T08:57:49+00:00",
+   "tests": 1
+  },
+  "image.convert:heic->bmp": {
+   "status": "passed",
+   "at": "2026-11-03T08:57:49+00:00",
+   "tests": 1
+  },
+  "image.convert:heic->gif": {
+   "status": "passed",
+   "at": "2026-11-03T08:57:49+00:00",
+   "tests": 1
+  },
+  "image.convert:heic->ico": {
+   "status": "passed",
+   "at": "2026-11-03T08:57:49+00:00",
+   "tests": 1
+  },
+  "image.convert:heic->jpg": {
+   "status": "passed",
+   "at": "2026-11-03T08:57:49+00:00",
+   "tests": 3
+  },
+  "image.convert:heic->png": {
+   "status": "passed",
+   "at": "2026-11-03T08:57:49+00:00",
+   "tests": 1
+  },
+  "image.convert:heic->tiff": {
+   "status": "passed",
+   "at": "2026-11-03T08:57:49+00:00",
+   "tests": 1
+  },
+  "image.convert:heic->webp": {
+   "status": "passed",
+   "at": "2026-11-03T08:57:49+00:00",
+   "tests": 1
+  },
+  "image.convert:ico->avif": {
+   "status": "passed",
+   "at": "2026-11-03T08:57:49+00:00",
+   "tests": 1
+  },
+  "image.convert:ico->bmp": {
+   "status": "passed",
+   "at": "2026-11-03T08:57:49+00:00",
+   "tests": 1
+  },
+  "image.convert:ico->gif": {
+   "status": "passed",
+   "at": "2026-11-03T08:57:49+00:00",
+   "tests": 1
+  },
+  "image.convert:ico->jpg": {
+   "status": "passed",
+   "at": "2026-11-03T08:57:49+00:00",
+   "tests": 1
+  },
+  "image.convert:ico->png": {
+   "status": "passed",
+   "at": "2026-11-03T08:57:49+00:00",
+   "tests": 1
+  },
+  "image.convert:ico->tiff": {
+   "status": "passed",
+   "at": "2026-11-03T08:57:49+00:00",
+   "tests": 1
+  },
+  "image.convert:ico->webp": {
+   "status": "passed",
+   "at": "2026-11-03T08:57:49+00:00",
+   "tests": 1
+  },
+  "image.convert:jpg->avif": {
+   "status": "passed",
+   "at": "2026-11-03T08:57:49+00:00",
+   "tests": 1
+  },
+  "image.convert:jpg->bmp": {
+   "status": "passed",
+   "at": "2026-11-03T08:57:49+00:00",
+   "tests": 1
+  },
+  "image.convert:jpg->gif": {
+   "status": "passed",
+   "at": "2026-11-03T08:57:49+00:00",
+   "tests": 1
+  },
+  "image.convert:jpg->ico": {
+   "status": "passed",
+   "at": "2026-11-03T08:57:49+00:00",
+   "tests": 1
+  },
+  "image.convert:jpg->png": {
+   "status": "passed",
+   "at": "2026-11-03T08:57:49+00:00",
+   "tests": 3
+  },
+  "image.convert:jpg->tiff": {
+   "status": "passed",
+   "at": "2026-11-03T08:57:49+00:00",
+   "tests": 1
+  },
+  "image.convert:jpg->webp": {
+   "status": "passed",
+   "at": "2026-11-03T08:57:49+00:00",
+   "tests": 1
+  },
+  "image.convert:png->avif": {
+   "status": "passed",
+   "at": "2026-11-03T08:57:49+00:00",
+   "tests": 1
+  },
+  "image.convert:png->bmp": {
+   "status": "passed",
+   "at": "2026-11-03T08:57:49+00:00",
+   "tests": 1
+  },
+  "image.convert:png->gif": {
+   "status": "passed",
+   "at": "2026-11-03T08:57:49+00:00",
+   "tests": 1
+  },
+  "image.convert:png->ico": {
+   "status": "passed",
+   "at": "2026-11-03T08:57:49+00:00",
+   "tests": 2
+  },
+  "image.convert:png->jpg": {
+   "status": "passed",
+   "at": "2026-11-03T08:57:49+00:00",
+   "tests": 3
+  },
+  "image.convert:png->tiff": {
+   "status": "passed",
+   "at": "2026-11-03T08:57:49+00:00",
+   "tests": 1
+  },
+  "image.convert:png->webp": {
+   "status": "passed",
+   "at": "2026-11-03T08:57:49+00:00",
+   "tests": 1
+  },
+  "image.convert:tiff->avif": {
+   "status": "passed",
+   "at": "2026-11-03T08:57:49+00:00",
+   "tests": 1
+  },
+  "image.convert:tiff->bmp": {
+   "status": "passed",
+   "at": "2026-11-03T08:57:49+00:00",
+   "tests": 1
+  },
+  "image.convert:tiff->gif": {
+   "status": "passed",
+   "at": "2026-11-03T08:57:49+00:00",
+   "tests": 1
+  },
+  "image.convert:tiff->ico": {
+   "status": "passed",
+   "at": "2026-11-03T08:57:49+00:00",
+   "tests": 1
+  },
+  "image.convert:tiff->jpg": {
+   "status": "passed",
+   "at": "2026-11-03T08:57:49+00:00",
+   "tests": 1
+  },
+  "image.convert:tiff->png": {
+   "status": "passed",
+   "at": "2026-11-03T08:57:49+00:00",
+   "tests": 1
+  },
+  "image.convert:tiff->webp": {
+   "status": "passed",
+   "at": "2026-11-03T08:57:49+00:00",
+   "tests": 1
+  },
+  "image.convert:webp->avif": {
+   "status": "passed",
+   "at": "2026-11-03T08:57:49+00:00",
+   "tests": 1
+  },
+  "image.convert:webp->bmp": {
+   "status": "passed",
+   "at": "2026-11-03T08:57:49+00:00",
+   "tests": 1
+  },
+  "image.convert:webp->gif": {
+   "status": "passed",
+   "at": "2026-11-03T08:57:49+00:00",
+   "tests": 3
+  },
+  "image.convert:webp->ico": {
+   "status": "passed",
+   "at": "2026-11-03T08:57:49+00:00",
+   "tests": 1
+  },
+  "image.convert:webp->jpg": {
+   "status": "passed",
+   "at": "2026-11-03T08:57:49+00:00",
+   "tests": 1
+  },
+  "image.convert:webp->png": {
+   "status": "passed",
+   "at": "2026-11-03T08:57:49+00:00",
+   "tests": 1
+  },
+  "image.convert:webp->tiff": {
+   "status": "passed",
+   "at": "2026-11-03T08:57:49+00:00",
+   "tests": 1
+  },
+  "neg:image.convert": {
+   "status": "passed",
+   "at": "2026-11-03T08:57:49+00:00",
+   "tests": 3
+  }
+ },
+ "generated_by": "pytest (tests/api/conftest.py)"
+}

@@ -1,0 +1,163 @@
+@import "tailwindcss";
+
+/* Theme tokens. Light is default; dark follows the OS unless the user picks one. */
+:root {
+  --paper: #f4f6f8;
+  --surface: #ffffff;
+  --surface-2: #eef1f4;
+  --ink: #142027;
+  --muted: #556570;
+  --line: #dde3e8;
+  --line-strong: #c5ced5;
+  --accent: #0b7f6a;
+  --accent-ink: #ffffff;
+  --accent-soft: #d5f2ea;
+  --accent-glow: #7fe0c8;
+  --warn: #8a5a00;
+  --warn-soft: #fff1d6;
+  --danger: #b42318;
+  --danger-soft: #fde7e4;
+  --focus: #0b7f6a;
+  color-scheme: light;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --paper: #0f171c;
+    --surface: #16222a;
+    --surface-2: #1c2a33;
+    --ink: #e7eef1;
+    --muted: #9aacb6;
+    --line: #253540;
+    --line-strong: #34495a;
+    --accent: #3fd5b2;
+    --accent-ink: #062a22;
+    --accent-soft: #12352e;
+    --accent-glow: #1d7f69;
+    --warn: #f5c56b;
+    --warn-soft: #3a2d12;
+    --danger: #ff8a7a;
+    --danger-soft: #3d1d1a;
+    --focus: #3fd5b2;
+    color-scheme: dark;
+  }
+}
+
+:root[data-theme="dark"] {
+  --paper: #0f171c;
+  --surface: #16222a;
+  --surface-2: #1c2a33;
+  --ink: #e7eef1;
+  --muted: #9aacb6;
+  --line: #253540;
+  --line-strong: #34495a;
+  --accent: #3fd5b2;
+  --accent-ink: #062a22;
+  --accent-soft: #12352e;
+  --accent-glow: #1d7f69;
+  --warn: #f5c56b;
+  --warn-soft: #3a2d12;
+  --danger: #ff8a7a;
+  --danger-soft: #3d1d1a;
+  --focus: #3fd5b2;
+  color-scheme: dark;
+}
+
+@theme inline {
+  --color-paper: var(--paper);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-ink: var(--ink);
+  --color-muted: var(--muted);
+  --color-line: var(--line);
+  --color-line-strong: var(--line-strong);
+  --color-accent: var(--accent);
+  --color-accent-ink: var(--accent-ink);
+  --color-accent-soft: var(--accent-soft);
+  --color-warn: var(--warn);
+  --color-warn-soft: var(--warn-soft);
+  --color-danger: var(--danger);
+  --color-danger-soft: var(--danger-soft);
+  --font-sans: var(--font-text), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-display-face), var(--font-text), ui-sans-serif, sans-serif;
+  --radius-zone: 28px;
+  --radius-panel: 16px;
+  --radius-control: 10px;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-sans);
+  font-size: 16px;
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+.font-display {
+  font-family: var(--font-display);
+  font-variation-settings: "wdth" 82;
+  letter-spacing: -0.02em;
+}
+
+:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
+  border-radius: 6px;
+}
+
+::selection {
+  background: var(--accent-soft);
+}
+
+/* The drop zone is the one place colour is spent. */
+.dropzone-surface {
+  background:
+    radial-gradient(120% 140% at 0% 0%, color-mix(in oklab, var(--accent-soft) 85%, transparent) 0%, transparent 55%),
+    radial-gradient(90% 120% at 100% 100%, color-mix(in oklab, var(--accent-glow) 22%, transparent) 0%, transparent 60%),
+    var(--surface);
+}
+
+.indeterminate {
+  position: relative;
+  overflow: hidden;
+}
+.indeterminate::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  width: 35%;
+  background: var(--accent);
+  border-radius: inherit;
+  animation: slide 1.2s ease-in-out infinite;
+}
+@keyframes slide {
+  from { transform: translateX(-100%); }
+  to { transform: translateX(300%); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+  .indeterminate::after {
+    width: 100%;
+    opacity: 0.45;
+    animation: none;
+  }
+}
+
+.sr-only-focusable:not(:focus) {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+}

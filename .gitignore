@@ -1,0 +1,10 @@
+.data/
+node_modules/
+.next/
+services/api/.venv/
+__pycache__/
+*.pyc
+tests/fixtures/generated/
+apps/web/test-results/
+apps/web/playwright-report/
+.DS_Store
