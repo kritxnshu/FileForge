@@ -10,7 +10,7 @@ its engines are installed, and its feature flag (if any) is on.
 
 | Level | Pairs |
 |---|---|
-| Full | 136 |
+| Full | 161 |
 | Partial | 7 |
 | Experimental | 13 |
 | Untested | 1 |
@@ -383,6 +383,59 @@ Known limitations: Works on text-based PDFs with ruled or clearly aligned tables
 |---|---|---|---|
 | PDF | Excel (XLSX) | Partial |  |
 | PDF | CSV | Partial |  |
+
+### Export sheet data (`sheet.export`)
+
+Export spreadsheet data to CSV, TSV or JSON — one sheet, or every sheet as separate files. Runtime: server; queue: fast; engines: openpyxl, pandas; negative test: passed.
+
+| Source | Target | Level | Notes |
+|---|---|---|---|
+| Excel (XLSX) | CSV | Full |  |
+| Excel (XLSX) | TSV | Full |  |
+| Excel (XLSX) | JSON | Full |  |
+| Excel 97-2003 (XLS) | CSV | Full |  |
+| Excel 97-2003 (XLS) | TSV | Full |  |
+| Excel 97-2003 (XLS) | JSON | Full |  |
+| OpenDocument Spreadsheet | CSV | Full |  |
+| OpenDocument Spreadsheet | TSV | Full |  |
+| OpenDocument Spreadsheet | JSON | Full |  |
+
+### Make a spreadsheet (`sheet.import`)
+
+Turn CSV, TSV or JSON data into an Excel or OpenDocument spreadsheet. Delimiter and encoding are detected. Runtime: server; queue: fast; engines: openpyxl; negative test: passed.
+
+| Source | Target | Level | Notes |
+|---|---|---|---|
+| CSV | Excel (XLSX) | Full |  |
+| CSV | OpenDocument Spreadsheet | Full |  |
+| TSV | Excel (XLSX) | Full |  |
+| TSV | OpenDocument Spreadsheet | Full |  |
+| JSON | Excel (XLSX) | Full | JSON must be an array of objects; nested objects become dotted columns. |
+| JSON | OpenDocument Spreadsheet | Full | JSON must be an array of objects; nested objects become dotted columns. |
+
+### Convert spreadsheet (`sheet.office`)
+
+Convert between Excel and OpenDocument spreadsheets with LibreOffice. All sheets are kept. Runtime: server; queue: heavy; engines: soffice; negative test: passed.
+
+| Source | Target | Level | Notes |
+|---|---|---|---|
+| Excel (XLSX) | Excel 97-2003 (XLS) | Full | XLS is limited to 65,536 rows and 256 columns per sheet. |
+| Excel (XLSX) | OpenDocument Spreadsheet | Full |  |
+| Excel 97-2003 (XLS) | Excel (XLSX) | Full |  |
+| Excel 97-2003 (XLS) | OpenDocument Spreadsheet | Full |  |
+| OpenDocument Spreadsheet | Excel (XLSX) | Full |  |
+| OpenDocument Spreadsheet | Excel 97-2003 (XLS) | Full | XLS is limited to 65,536 rows and 256 columns per sheet. |
+
+### Spreadsheet to PDF (`sheet.to_pdf`)
+
+Print every sheet of a spreadsheet (or a CSV) to PDF with LibreOffice. Runtime: server; queue: heavy; engines: soffice; negative test: passed.
+
+| Source | Target | Level | Notes |
+|---|---|---|---|
+| Excel (XLSX) | PDF | Full |  |
+| Excel 97-2003 (XLS) | PDF | Full |  |
+| OpenDocument Spreadsheet | PDF | Full |  |
+| CSV | PDF | Full |  |
 
 ## Unsupported
 

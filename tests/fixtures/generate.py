@@ -345,6 +345,72 @@ def _corrupt_pdf(p: Path) -> None:
     p.write_bytes(b"%PDF-1.7\n1 0 obj << /Type /Catalog /Pages 2 0 R >>\nendobj\n" + b"garbage" * 50)
 
 
+# ---------------------------------------------------------------------------
+# spreadsheets
+
+
+@builder("spreadsheet.xlsx")
+def _xlsx(p: Path) -> None:
+    """Two sheets; 'Fruit' has a formula column whose cached results are computed by LibreOffice."""
+    from openpyxl import Workbook
+
+    wb = Workbook()
+    ws = wb.active
+    ws.title = "Fruit"
+    ws.append(KNOWN_TABLE[0] + ["Total"])
+    for i, r in enumerate(KNOWN_TABLE[1:], start=2):
+        ws.append(r + [f"=B{i}*C{i}"])
+    ws2 = wb.create_sheet("Notes")
+    ws2.append(["Note"])
+    ws2.append([KNOWN_SENTENCE])
+    src = OUT / f"_src_{os.getpid()}.xlsx"
+    wb.save(src)
+    try:
+        _lo_convert(src, p, "xlsx:Calc MS Excel 2007 XML")  # recalculates and stores cached values
+    finally:
+        src.unlink(missing_ok=True)
+
+
+for _ext, _flt in [("xls", "xls:MS Excel 97"), ("ods", "ods")]:
+    def _mk2(ext=_ext, flt=_flt):
+        def build(p: Path) -> None:
+            src = OUT / f"_src_{os.getpid()}_{ext}.xlsx"
+            shutil.copyfile(path("spreadsheet.xlsx"), src)
+            try:
+                _lo_convert(src, p, flt)
+            finally:
+                src.unlink(missing_ok=True)
+        return build
+    builder(f"spreadsheet.{_ext}")(_mk2())
+
+
+@builder("data.csv")
+def _csv(p: Path) -> None:
+    p.write_text('Name,Qty,Price,Note\nApple,3,1.5,"crisp, red"\nBanana,12,0.25,=HYPERLINK("http://x")\n'
+                 'Cherry,7,4.0,-5\nDürüm,1,2.5,@SUM(A1)\n', encoding="utf-8")
+
+
+@builder("data-semicolon.csv")
+def _csv_semi(p: Path) -> None:
+    p.write_bytes("Name;Qty;Price\nApple;3;1,5\nBanana;12;0,25\nCaf\xe9;7;4\n".encode("cp1252"))
+
+
+@builder("data.tsv")
+def _tsv(p: Path) -> None:
+    p.write_text("Name\tQty\tPrice\nApple\t3\t1.5\nBanana\t12\t0.25\nCherry\t7\t4.0\n", encoding="utf-8")
+
+
+@builder("data.json")
+def _json(p: Path) -> None:
+    import json
+
+    p.write_text(json.dumps([
+        {"name": "Apple", "qty": 3, "price": 1.5, "origin": {"country": "NZ", "farm": {"id": 7}}, "tags": ["red", "crisp"]},
+        {"name": "Banana", "qty": 12, "price": 0.25, "origin": {"country": "EC"}},
+        {"name": "Cherry", "qty": 7, "price": 4.0},
+    ], indent=1), encoding="utf-8")
+
+
 
 if __name__ == "__main__":
     for n in available():

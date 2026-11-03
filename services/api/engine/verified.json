@@ -760,6 +760,26 @@
    "at": "2026-11-03T09:20:14+00:00",
    "tests": 1
   },
+  "neg:sheet.export": {
+   "status": "passed",
+   "at": "2026-11-03T09:22:37+00:00",
+   "tests": 2
+  },
+  "neg:sheet.import": {
+   "status": "passed",
+   "at": "2026-11-03T09:22:37+00:00",
+   "tests": 1
+  },
+  "neg:sheet.office": {
+   "status": "passed",
+   "at": "2026-11-03T09:22:37+00:00",
+   "tests": 1
+  },
+  "neg:sheet.to_pdf": {
+   "status": "passed",
+   "at": "2026-11-03T09:22:37+00:00",
+   "tests": 1
+  },
   "pdf.compress:pdf->pdf": {
    "status": "passed",
    "at": "2026-11-03T09:20:14+00:00",
@@ -909,6 +929,131 @@
    "status": "passed",
    "at": "2026-11-03T09:20:14+00:00",
    "tests": 1
+  },
+  "sheet.export:ods->csv": {
+   "status": "passed",
+   "at": "2026-11-03T09:22:37+00:00",
+   "tests": 1
+  },
+  "sheet.export:ods->json": {
+   "status": "passed",
+   "at": "2026-11-03T09:22:37+00:00",
+   "tests": 2
+  },
+  "sheet.export:ods->tsv": {
+   "status": "passed",
+   "at": "2026-11-03T09:22:37+00:00",
+   "tests": 1
+  },
+  "sheet.export:xls->csv": {
+   "status": "passed",
+   "at": "2026-11-03T09:22:37+00:00",
+   "tests": 1
+  },
+  "sheet.export:xls->json": {
+   "status": "passed",
+   "at": "2026-11-03T09:22:37+00:00",
+   "tests": 1
+  },
+  "sheet.export:xls->tsv": {
+   "status": "passed",
+   "at": "2026-11-03T09:22:37+00:00",
+   "tests": 1
+  },
+  "sheet.export:xlsx->csv": {
+   "status": "passed",
+   "at": "2026-11-03T09:22:37+00:00",
+   "tests": 3
+  },
+  "sheet.export:xlsx->json": {
+   "status": "passed",
+   "at": "2026-11-03T09:22:37+00:00",
+   "tests": 1
+  },
+  "sheet.export:xlsx->tsv": {
+   "status": "passed",
+   "at": "2026-11-03T09:22:37+00:00",
+   "tests": 1
+  },
+  "sheet.import:csv->ods": {
+   "status": "passed",
+   "at": "2026-11-03T09:22:37+00:00",
+   "tests": 1
+  },
+  "sheet.import:csv->xlsx": {
+   "status": "passed",
+   "at": "2026-11-03T09:22:37+00:00",
+   "tests": 2
+  },
+  "sheet.import:json->ods": {
+   "status": "passed",
+   "at": "2026-11-03T09:22:37+00:00",
+   "tests": 1
+  },
+  "sheet.import:json->xlsx": {
+   "status": "passed",
+   "at": "2026-11-03T09:22:37+00:00",
+   "tests": 1
+  },
+  "sheet.import:tsv->ods": {
+   "status": "passed",
+   "at": "2026-11-03T09:22:37+00:00",
+   "tests": 1
+  },
+  "sheet.import:tsv->xlsx": {
+   "status": "passed",
+   "at": "2026-11-03T09:22:37+00:00",
+   "tests": 1
+  },
+  "sheet.office:ods->xls": {
+   "status": "passed",
+   "at": "2026-11-03T09:22:37+00:00",
+   "tests": 1
+  },
+  "sheet.office:ods->xlsx": {
+   "status": "passed",
+   "at": "2026-11-03T09:22:37+00:00",
+   "tests": 1
+  },
+  "sheet.office:xls->ods": {
+   "status": "passed",
+   "at": "2026-11-03T09:22:37+00:00",
+   "tests": 1
+  },
+  "sheet.office:xls->xlsx": {
+   "status": "passed",
+   "at": "2026-11-03T09:22:37+00:00",
+   "tests": 1
+  },
+  "sheet.office:xlsx->ods": {
+   "status": "passed",
+   "at": "2026-11-03T09:22:37+00:00",
+   "tests": 1
+  },
+  "sheet.office:xlsx->xls": {
+   "status": "passed",
+   "at": "2026-11-03T09:22:37+00:00",
+   "tests": 1
+  },
+  "sheet.to_pdf:csv->pdf": {
+   "status": "passed",
+   "at": "2026-11-03T09:22:37+00:00",
+   "tests": 1
+  },
+  "sheet.to_pdf:ods->pdf": {
+   "status": "passed",
+   "at": "2026-11-03T09:22:37+00:00",
+   "tests": 1
+  },
+  "sheet.to_pdf:xls->pdf": {
+   "status": "passed",
+   "at": "2026-11-03T09:22:37+00:00",
+   "tests": 1
+  },
+  "sheet.to_pdf:xlsx->pdf": {
+   "status": "passed",
+   "at": "2026-11-03T09:22:37+00:00",
+   "tests": 2
   }
  },
  "generated_by": "pytest (tests/api/conftest.py)"
