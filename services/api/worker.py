@@ -24,7 +24,7 @@ from arq.worker import func
 
 from app import store
 from app.config import settings
-from app.storage import LocalStorage, stem_of
+from app.storage import LocalStorage, sanitize_filename, stem_of
 from engine import child_cmd, registry, sandbox
 from engine.formats import FORMATS
 
@@ -51,6 +51,9 @@ def _output_names(orig_names: list[str], outputs: list[dict], op: registry.Opera
     if op.cardinality == "many_to_one" and len(orig_names) > 1:
         stem = {"pdf.merge": "merged"}.get(op.id, stem)
     for o in outputs:
+        if o.get("name"):
+            o["name"] = sanitize_filename(o["name"])
+            continue
         ext = FORMATS[o["format"]].ext if o["format"] in FORMATS else "bin"
         inner = Path(o["path"]).name
         inner_stem = inner[: -(len(ext) + 1)] if inner.endswith("." + ext) else inner.rsplit(".", 1)[0]
@@ -94,7 +97,8 @@ async def run_job(ctx: dict[str, Any], job_id: str) -> str:
             os.link(src, dst)
         except OSError:
             shutil.copyfile(src, dst)
-        inputs.append({"path": str(dst), "format": f["format"], "size": int(f["size"]), "stem": "output" if len(j["file_ids"]) == 1 else f"file{n + 1}"})
+        inputs.append({"path": str(dst), "format": f["format"], "size": int(f["size"]), "name": sanitize_filename(f["name"]),
+                       "stem": "output" if len(j["file_ids"]) == 1 else f"file{n + 1}"})
         names.append(f["name"])
 
     queue = j.get("queue", "fast")

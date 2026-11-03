@@ -30,6 +30,7 @@ class InputFile:
     size: int
     index: int
     stem: str = "file"  # safe stem used for multi-output naming inside the job only
+    name: str = ""  # sanitized original filename: metadata only (e.g. a name *inside* a ZIP), never a disk path
 
 
 @dataclass
@@ -37,6 +38,7 @@ class Output:
     path: Path
     format: str
     label: str | None = None
+    name: str | None = None  # download name override (sanitized again by the worker)
 
 
 @dataclass
@@ -49,6 +51,7 @@ class Ctx:
     job_dir: Path
     timeout_s: float
     emit: Callable[[dict], None]
+    limits: dict = field(default_factory=dict)
     outputs: list[Output] = field(default_factory=list)
     notices: list[str] = field(default_factory=list)
     warnings: list[str] = field(default_factory=list)
@@ -99,10 +102,15 @@ class Ctx:
         f = FORMATS[fmt or self.target]
         return self.out_path(f"output{suffix}.{f.ext}")
 
-    def add_output(self, path: Path, fmt: str | None = None, label: str | None = None) -> Output:
-        if not path.exists() or path.stat().st_size == 0:
+    def limit(self, key: str, default: int) -> int:
+        env = os.environ.get(key.upper())
+        return int(self.limits.get(key) or (env if env else default))
+
+    def add_output(self, path: Path, fmt: str | None = None, label: str | None = None, name: str | None = None,
+                   allow_empty: bool = False) -> Output:
+        if not path.exists() or (path.stat().st_size == 0 and not allow_empty):
             raise ConversionError("engine_error", "The converter produced an empty file.")
-        o = Output(path, fmt or self.target, label)
+        o = Output(path, fmt or self.target, label, name)
         self.outputs.append(o)
         return o
 

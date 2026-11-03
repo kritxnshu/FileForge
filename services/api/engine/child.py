@@ -38,8 +38,9 @@ def main(job_dir_arg: str) -> int:
             raise ConversionError("unsupported", "This operation isn't available.")
         options = op.options.model_validate(spec.get("options") or {})
         ctx = Ctx(
-            inputs=[InputFile(Path(i["path"]), i["format"], i["size"], n, i.get("stem", f"file{n + 1}"))
+            inputs=[InputFile(Path(i["path"]), i["format"], i["size"], n, i.get("stem", f"file{n + 1}"), i.get("name", ""))
                     for n, i in enumerate(spec["inputs"])],
+            limits=spec.get("limits", {}),
             target=spec["target"],
             options=options,
             out_dir=job_dir / "out",
@@ -56,7 +57,7 @@ def main(job_dir_arg: str) -> int:
             raise ConversionError("engine_error", "The conversion produced no output.")
         emit({"t": "progress", "stage": "Finalizing"})
         write_json(job_dir / "result.json", {
-            "outputs": [{"path": str(o.path.relative_to(job_dir)), "format": o.format, "label": o.label,
+            "outputs": [{"path": str(o.path.relative_to(job_dir)), "format": o.format, "label": o.label, "name": o.name,
                          "size": o.path.stat().st_size} for o in ctx.outputs],
             "notices": ctx.notices,
             "warnings": ctx.warnings,

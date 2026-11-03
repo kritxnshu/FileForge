@@ -264,6 +264,7 @@ ENGINE_PROBES.update(
         "python-pptx": _py_version("pptx"),
         "fonttools": _py_version("fontTools", "version"),
         "py7zr": _py_version("py7zr"),
+        "libarchive": _py_version("libarchive.ffi", "version_number"),
         "segno": _py_version("segno"),
         "ffmpeg": _which_version("ffmpeg", ["-version"], "UC_FFMPEG"),
         "ffprobe": _which_version("ffprobe", ["-version"], "UC_FFPROBE"),

@@ -122,7 +122,8 @@ def detect_format(p: Path) -> str:
 
 
 def convert(op_id: str, inputs: list[Path] | Path, target: str | None = None, options: dict | None = None,
-            timeout: float = 120, formats: list[str] | None = None) -> Converted:
+            timeout: float = 120, formats: list[str] | None = None, limits: dict | None = None,
+            names: list[str] | None = None) -> Converted:
     if isinstance(inputs, Path):
         inputs = [inputs]
     op = registry.get(op_id)
@@ -135,11 +136,12 @@ def convert(op_id: str, inputs: list[Path] | Path, target: str | None = None, op
         dst = job / "in" / f"{n}.{FORMATS[fmt].ext}"
         shutil.copyfile(src, dst)
         specs.append({"path": str(dst), "format": fmt, "size": dst.stat().st_size,
+                      "name": names[n] if names else src.name,
                       "stem": "output" if len(inputs) == 1 else f"file{n + 1}"})
     tgt = target or specs[0]["format"]
     (job / "spec.json").write_text(json.dumps({"operation": op_id, "target": tgt, "options": options or {},
                                                "inputs": specs, "timeout_s": timeout,
-                                               "limits": {"max_image_pixels": 100_000_000}}))
+                                               "limits": {"max_image_pixels": 100_000_000, **(limits or {})}}))
     progress: list[dict] = []
 
     def line(b: bytes) -> None:

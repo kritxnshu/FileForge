@@ -105,3 +105,15 @@ def test_detect_text_formats(tmp_path, text, ext, fmt):
     p = tmp_path / "f"
     p.write_text(text)
     assert detect(p, ext, probe_dir=tmp_path).format == fmt
+
+
+def test_every_format_has_a_fixture_detected_by_content():
+    from fixtures.generate import FIXTURE_FOR
+
+    missing = sorted(set(FORMATS) - set(FIXTURE_FOR) - {"bin"})
+    assert not missing, f"formats without a fixture: {missing}"
+    for fmt, name in FIXTURE_FOR.items():
+        # detected from content, with a misleading extension-free name
+        d = detect(path(name), "upload" if fmt not in ("md", "txt", "sql", "css", "js", "yaml", "toml") else name,
+                   probe_dir=TMP)
+        assert d.format == fmt, (fmt, name, d.format, d.error)

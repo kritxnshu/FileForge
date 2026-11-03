@@ -39,6 +39,7 @@ dependencies = [
   "markdown-it-py>=3.0",
   "zipstream-ng>=1.7",
   "vtracer>=0.6",
+  "libarchive-c>=5.3",
 ]
 
 [dependency-groups]

@@ -1,5 +1,835 @@
 {
  "pairs": {
+  "archive.convert:7z->tar": {
+   "status": "passed",
+   "at": "2026-11-03T10:25:37+00:00",
+   "tests": 1
+  },
+  "archive.convert:7z->tbz2": {
+   "status": "passed",
+   "at": "2026-11-03T10:25:37+00:00",
+   "tests": 1
+  },
+  "archive.convert:7z->tgz": {
+   "status": "passed",
+   "at": "2026-11-03T10:25:37+00:00",
+   "tests": 1
+  },
+  "archive.convert:7z->txz": {
+   "status": "passed",
+   "at": "2026-11-03T10:25:37+00:00",
+   "tests": 1
+  },
+  "archive.convert:7z->zip": {
+   "status": "passed",
+   "at": "2026-11-03T10:25:37+00:00",
+   "tests": 1
+  },
+  "archive.convert:rar->7z": {
+   "status": "passed",
+   "at": "2026-11-03T10:25:37+00:00",
+   "tests": 1
+  },
+  "archive.convert:rar->tar": {
+   "status": "passed",
+   "at": "2026-11-03T10:25:37+00:00",
+   "tests": 1
+  },
+  "archive.convert:rar->tbz2": {
+   "status": "passed",
+   "at": "2026-11-03T10:25:37+00:00",
+   "tests": 1
+  },
+  "archive.convert:rar->tgz": {
+   "status": "passed",
+   "at": "2026-11-03T10:25:37+00:00",
+   "tests": 1
+  },
+  "archive.convert:rar->txz": {
+   "status": "passed",
+   "at": "2026-11-03T10:25:37+00:00",
+   "tests": 1
+  },
+  "archive.convert:rar->zip": {
+   "status": "passed",
+   "at": "2026-11-03T10:25:37+00:00",
+   "tests": 1
+  },
+  "archive.convert:tar->7z": {
+   "status": "passed",
+   "at": "2026-11-03T10:25:37+00:00",
+   "tests": 1
+  },
+  "archive.convert:tar->tbz2": {
+   "status": "passed",
+   "at": "2026-11-03T10:25:37+00:00",
+   "tests": 1
+  },
+  "archive.convert:tar->tgz": {
+   "status": "passed",
+   "at": "2026-11-03T10:25:37+00:00",
+   "tests": 1
+  },
+  "archive.convert:tar->txz": {
+   "status": "passed",
+   "at": "2026-11-03T10:25:37+00:00",
+   "tests": 1
+  },
+  "archive.convert:tar->zip": {
+   "status": "passed",
+   "at": "2026-11-03T10:25:37+00:00",
+   "tests": 1
+  },
+  "archive.convert:tbz2->7z": {
+   "status": "passed",
+   "at": "2026-11-03T10:25:37+00:00",
+   "tests": 1
+  },
+  "archive.convert:tbz2->tar": {
+   "status": "passed",
+   "at": "2026-11-03T10:25:37+00:00",
+   "tests": 1
+  },
+  "archive.convert:tbz2->tgz": {
+   "status": "passed",
+   "at": "2026-11-03T10:25:37+00:00",
+   "tests": 1
+  },
+  "archive.convert:tbz2->txz": {
+   "status": "passed",
+   "at": "2026-11-03T10:25:37+00:00",
+   "tests": 1
+  },
+  "archive.convert:tbz2->zip": {
+   "status": "passed",
+   "at": "2026-11-03T10:25:37+00:00",
+   "tests": 1
+  },
+  "archive.convert:tgz->7z": {
+   "status": "passed",
+   "at": "2026-11-03T10:25:37+00:00",
+   "tests": 1
+  },
+  "archive.convert:tgz->tar": {
+   "status": "passed",
+   "at": "2026-11-03T10:25:37+00:00",
+   "tests": 1
+  },
+  "archive.convert:tgz->tbz2": {
+   "status": "passed",
+   "at": "2026-11-03T10:25:37+00:00",
+   "tests": 1
+  },
+  "archive.convert:tgz->txz": {
+   "status": "passed",
+   "at": "2026-11-03T10:25:37+00:00",
+   "tests": 1
+  },
+  "archive.convert:tgz->zip": {
+   "status": "passed",
+   "at": "2026-11-03T10:25:37+00:00",
+   "tests": 1
+  },
+  "archive.convert:txz->7z": {
+   "status": "passed",
+   "at": "2026-11-03T10:25:37+00:00",
+   "tests": 1
+  },
+  "archive.convert:txz->tar": {
+   "status": "passed",
+   "at": "2026-11-03T10:25:37+00:00",
+   "tests": 1
+  },
+  "archive.convert:txz->tbz2": {
+   "status": "passed",
+   "at": "2026-11-03T10:25:37+00:00",
+   "tests": 1
+  },
+  "archive.convert:txz->tgz": {
+   "status": "passed",
+   "at": "2026-11-03T10:25:37+00:00",
+   "tests": 1
+  },
+  "archive.convert:txz->zip": {
+   "status": "passed",
+   "at": "2026-11-03T10:25:37+00:00",
+   "tests": 1
+  },
+  "archive.convert:zip->7z": {
+   "status": "passed",
+   "at": "2026-11-03T10:25:37+00:00",
+   "tests": 1
+  },
+  "archive.convert:zip->tar": {
+   "status": "passed",
+   "at": "2026-11-03T10:25:37+00:00",
+   "tests": 1
+  },
+  "archive.convert:zip->tbz2": {
+   "status": "passed",
+   "at": "2026-11-03T10:25:37+00:00",
+   "tests": 1
+  },
+  "archive.convert:zip->tgz": {
+   "status": "passed",
+   "at": "2026-11-03T10:25:37+00:00",
+   "tests": 1
+  },
+  "archive.convert:zip->txz": {
+   "status": "passed",
+   "at": "2026-11-03T10:25:37+00:00",
+   "tests": 1
+  },
+  "archive.create_zip:3gp->zip": {
+   "status": "passed",
+   "at": "2026-11-03T10:25:37+00:00",
+   "tests": 1
+  },
+  "archive.create_zip:7z->zip": {
+   "status": "passed",
+   "at": "2026-11-03T10:25:37+00:00",
+   "tests": 1
+  },
+  "archive.create_zip:aac->zip": {
+   "status": "passed",
+   "at": "2026-11-03T10:25:37+00:00",
+   "tests": 1
+  },
+  "archive.create_zip:avi->zip": {
+   "status": "passed",
+   "at": "2026-11-03T10:25:37+00:00",
+   "tests": 1
+  },
+  "archive.create_zip:avif->zip": {
+   "status": "passed",
+   "at": "2026-11-03T10:25:37+00:00",
+   "tests": 1
+  },
+  "archive.create_zip:bmp->zip": {
+   "status": "passed",
+   "at": "2026-11-03T10:25:37+00:00",
+   "tests": 1
+  },
+  "archive.create_zip:css->zip": {
+   "status": "passed",
+   "at": "2026-11-03T10:25:37+00:00",
+   "tests": 1
+  },
+  "archive.create_zip:csv->zip": {
+   "status": "passed",
+   "at": "2026-11-03T10:25:37+00:00",
+   "tests": 1
+  },
+  "archive.create_zip:doc->zip": {
+   "status": "passed",
+   "at": "2026-11-03T10:25:37+00:00",
+   "tests": 1
+  },
+  "archive.create_zip:docx->zip": {
+   "status": "passed",
+   "at": "2026-11-03T10:25:37+00:00",
+   "tests": 1
+  },
+  "archive.create_zip:epub->zip": {
+   "status": "passed",
+   "at": "2026-11-03T10:25:37+00:00",
+   "tests": 1
+  },
+  "archive.create_zip:flac->zip": {
+   "status": "passed",
+   "at": "2026-11-03T10:25:37+00:00",
+   "tests": 1
+  },
+  "archive.create_zip:flv->zip": {
+   "status": "passed",
+   "at": "2026-11-03T10:25:37+00:00",
+   "tests": 1
+  },
+  "archive.create_zip:gif->zip": {
+   "status": "passed",
+   "at": "2026-11-03T10:25:37+00:00",
+   "tests": 1
+  },
+  "archive.create_zip:gz->zip": {
+   "status": "passed",
+   "at": "2026-11-03T10:25:37+00:00",
+   "tests": 1
+  },
+  "archive.create_zip:heic->zip": {
+   "status": "passed",
+   "at": "2026-11-03T10:25:37+00:00",
+   "tests": 1
+  },
+  "archive.create_zip:html->zip": {
+   "status": "passed",
+   "at": "2026-11-03T10:25:37+00:00",
+   "tests": 1
+  },
+  "archive.create_zip:ico->zip": {
+   "status": "passed",
+   "at": "2026-11-03T10:25:37+00:00",
+   "tests": 1
+  },
+  "archive.create_zip:jpg->zip": {
+   "status": "passed",
+   "at": "2026-11-03T10:25:37+00:00",
+   "tests": 1
+  },
+  "archive.create_zip:js->zip": {
+   "status": "passed",
+   "at": "2026-11-03T10:25:37+00:00",
+   "tests": 1
+  },
+  "archive.create_zip:json->zip": {
+   "status": "passed",
+   "at": "2026-11-03T10:25:37+00:00",
+   "tests": 1
+  },
+  "archive.create_zip:m4a->zip": {
+   "status": "passed",
+   "at": "2026-11-03T10:25:37+00:00",
+   "tests": 1
+  },
+  "archive.create_zip:md->zip": {
+   "status": "passed",
+   "at": "2026-11-03T10:25:37+00:00",
+   "tests": 1
+  },
+  "archive.create_zip:mkv->zip": {
+   "status": "passed",
+   "at": "2026-11-03T10:25:37+00:00",
+   "tests": 1
+  },
+  "archive.create_zip:mov->zip": {
+   "status": "passed",
+   "at": "2026-11-03T10:25:37+00:00",
+   "tests": 1
+  },
+  "archive.create_zip:mp3->zip": {
+   "status": "passed",
+   "at": "2026-11-03T10:25:37+00:00",
+   "tests": 1
+  },
+  "archive.create_zip:mp4->zip": {
+   "status": "passed",
+   "at": "2026-11-03T10:25:37+00:00",
+   "tests": 1
+  },
+  "archive.create_zip:odp->zip": {
+   "status": "passed",
+   "at": "2026-11-03T10:25:37+00:00",
+   "tests": 1
+  },
+  "archive.create_zip:ods->zip": {
+   "status": "passed",
+   "at": "2026-11-03T10:25:37+00:00",
+   "tests": 1
+  },
+  "archive.create_zip:odt->zip": {
+   "status": "passed",
+   "at": "2026-11-03T10:25:37+00:00",
+   "tests": 1
+  },
+  "archive.create_zip:ogg->zip": {
+   "status": "passed",
+   "at": "2026-11-03T10:25:37+00:00",
+   "tests": 1
+  },
+  "archive.create_zip:opus->zip": {
+   "status": "passed",
+   "at": "2026-11-03T10:25:37+00:00",
+   "tests": 1
+  },
+  "archive.create_zip:otf->zip": {
+   "status": "passed",
+   "at": "2026-11-03T10:25:37+00:00",
+   "tests": 1
+  },
+  "archive.create_zip:pdf->zip": {
+   "status": "passed",
+   "at": "2026-11-03T10:25:37+00:00",
+   "tests": 1
+  },
+  "archive.create_zip:png->zip": {
+   "status": "passed",
+   "at": "2026-11-03T10:25:37+00:00",
+   "tests": 1
+  },
+  "archive.create_zip:ppt->zip": {
+   "status": "passed",
+   "at": "2026-11-03T10:25:37+00:00",
+   "tests": 1
+  },
+  "archive.create_zip:pptx->zip": {
+   "status": "passed",
+   "at": "2026-11-03T10:25:37+00:00",
+   "tests": 1
+  },
+  "archive.create_zip:rar->zip": {
+   "status": "passed",
+   "at": "2026-11-03T10:25:37+00:00",
+   "tests": 1
+  },
+  "archive.create_zip:rtf->zip": {
+   "status": "passed",
+   "at": "2026-11-03T10:25:37+00:00",
+   "tests": 1
+  },
+  "archive.create_zip:sql->zip": {
+   "status": "passed",
+   "at": "2026-11-03T10:25:37+00:00",
+   "tests": 1
+  },
+  "archive.create_zip:svg->zip": {
+   "status": "passed",
+   "at": "2026-11-03T10:25:37+00:00",
+   "tests": 1
+  },
+  "archive.create_zip:tar->zip": {
+   "status": "passed",
+   "at": "2026-11-03T10:25:37+00:00",
+   "tests": 1
+  },
+  "archive.create_zip:tbz2->zip": {
+   "status": "passed",
+   "at": "2026-11-03T10:25:37+00:00",
+   "tests": 1
+  },
+  "archive.create_zip:tgz->zip": {
+   "status": "passed",
+   "at": "2026-11-03T10:25:37+00:00",
+   "tests": 1
+  },
+  "archive.create_zip:tiff->zip": {
+   "status": "passed",
+   "at": "2026-11-03T10:25:37+00:00",
+   "tests": 1
+  },
+  "archive.create_zip:toml->zip": {
+   "status": "passed",
+   "at": "2026-11-03T10:25:37+00:00",
+   "tests": 1
+  },
+  "archive.create_zip:tsv->zip": {
+   "status": "passed",
+   "at": "2026-11-03T10:25:37+00:00",
+   "tests": 1
+  },
+  "archive.create_zip:ttf->zip": {
+   "status": "passed",
+   "at": "2026-11-03T10:25:37+00:00",
+   "tests": 1
+  },
+  "archive.create_zip:txt->zip": {
+   "status": "passed",
+   "at": "2026-11-03T10:25:37+00:00",
+   "tests": 1
+  },
+  "archive.create_zip:txz->zip": {
+   "status": "passed",
+   "at": "2026-11-03T10:25:37+00:00",
+   "tests": 1
+  },
+  "archive.create_zip:wav->zip": {
+   "status": "passed",
+   "at": "2026-11-03T10:25:37+00:00",
+   "tests": 1
+  },
+  "archive.create_zip:webm->zip": {
+   "status": "passed",
+   "at": "2026-11-03T10:25:37+00:00",
+   "tests": 1
+  },
+  "archive.create_zip:webp->zip": {
+   "status": "passed",
+   "at": "2026-11-03T10:25:37+00:00",
+   "tests": 1
+  },
+  "archive.create_zip:wma->zip": {
+   "status": "passed",
+   "at": "2026-11-03T10:25:37+00:00",
+   "tests": 1
+  },
+  "archive.create_zip:wmv->zip": {
+   "status": "passed",
+   "at": "2026-11-03T10:25:37+00:00",
+   "tests": 1
+  },
+  "archive.create_zip:woff->zip": {
+   "status": "passed",
+   "at": "2026-11-03T10:25:37+00:00",
+   "tests": 1
+  },
+  "archive.create_zip:woff2->zip": {
+   "status": "passed",
+   "at": "2026-11-03T10:25:37+00:00",
+   "tests": 1
+  },
+  "archive.create_zip:xls->zip": {
+   "status": "passed",
+   "at": "2026-11-03T10:25:37+00:00",
+   "tests": 1
+  },
+  "archive.create_zip:xlsx->zip": {
+   "status": "passed",
+   "at": "2026-11-03T10:25:37+00:00",
+   "tests": 1
+  },
+  "archive.create_zip:xml->zip": {
+   "status": "passed",
+   "at": "2026-11-03T10:25:37+00:00",
+   "tests": 1
+  },
+  "archive.create_zip:yaml->zip": {
+   "status": "passed",
+   "at": "2026-11-03T10:25:37+00:00",
+   "tests": 1
+  },
+  "archive.create_zip:zip->zip": {
+   "status": "passed",
+   "at": "2026-11-03T10:25:37+00:00",
+   "tests": 1
+  },
+  "archive.extract:7z->7z": {
+   "status": "passed",
+   "at": "2026-11-03T10:25:37+00:00",
+   "tests": 3
+  },
+  "archive.extract:rar->rar": {
+   "status": "passed",
+   "at": "2026-11-03T10:25:37+00:00",
+   "tests": 1
+  },
+  "archive.extract:tar->tar": {
+   "status": "passed",
+   "at": "2026-11-03T10:25:37+00:00",
+   "tests": 1
+  },
+  "archive.extract:tbz2->tbz2": {
+   "status": "passed",
+   "at": "2026-11-03T10:25:37+00:00",
+   "tests": 1
+  },
+  "archive.extract:tgz->tgz": {
+   "status": "passed",
+   "at": "2026-11-03T10:25:37+00:00",
+   "tests": 1
+  },
+  "archive.extract:txz->txz": {
+   "status": "passed",
+   "at": "2026-11-03T10:25:37+00:00",
+   "tests": 1
+  },
+  "archive.extract:zip->zip": {
+   "status": "passed",
+   "at": "2026-11-03T10:25:37+00:00",
+   "tests": 3
+  },
+  "archive.gunzip:gz->gz": {
+   "status": "passed",
+   "at": "2026-11-03T10:25:37+00:00",
+   "tests": 1
+  },
+  "archive.gzip:3gp->gz": {
+   "status": "passed",
+   "at": "2026-11-03T10:25:37+00:00",
+   "tests": 1
+  },
+  "archive.gzip:7z->gz": {
+   "status": "passed",
+   "at": "2026-11-03T10:25:37+00:00",
+   "tests": 1
+  },
+  "archive.gzip:aac->gz": {
+   "status": "passed",
+   "at": "2026-11-03T10:25:37+00:00",
+   "tests": 1
+  },
+  "archive.gzip:avi->gz": {
+   "status": "passed",
+   "at": "2026-11-03T10:25:37+00:00",
+   "tests": 1
+  },
+  "archive.gzip:avif->gz": {
+   "status": "passed",
+   "at": "2026-11-03T10:25:37+00:00",
+   "tests": 1
+  },
+  "archive.gzip:bmp->gz": {
+   "status": "passed",
+   "at": "2026-11-03T10:25:37+00:00",
+   "tests": 1
+  },
+  "archive.gzip:css->gz": {
+   "status": "passed",
+   "at": "2026-11-03T10:25:37+00:00",
+   "tests": 1
+  },
+  "archive.gzip:csv->gz": {
+   "status": "passed",
+   "at": "2026-11-03T10:25:37+00:00",
+   "tests": 1
+  },
+  "archive.gzip:doc->gz": {
+   "status": "passed",
+   "at": "2026-11-03T10:25:37+00:00",
+   "tests": 1
+  },
+  "archive.gzip:docx->gz": {
+   "status": "passed",
+   "at": "2026-11-03T10:25:37+00:00",
+   "tests": 1
+  },
+  "archive.gzip:epub->gz": {
+   "status": "passed",
+   "at": "2026-11-03T10:25:37+00:00",
+   "tests": 1
+  },
+  "archive.gzip:flac->gz": {
+   "status": "passed",
+   "at": "2026-11-03T10:25:37+00:00",
+   "tests": 1
+  },
+  "archive.gzip:flv->gz": {
+   "status": "passed",
+   "at": "2026-11-03T10:25:37+00:00",
+   "tests": 1
+  },
+  "archive.gzip:gif->gz": {
+   "status": "passed",
+   "at": "2026-11-03T10:25:37+00:00",
+   "tests": 1
+  },
+  "archive.gzip:heic->gz": {
+   "status": "passed",
+   "at": "2026-11-03T10:25:37+00:00",
+   "tests": 1
+  },
+  "archive.gzip:html->gz": {
+   "status": "passed",
+   "at": "2026-11-03T10:25:37+00:00",
+   "tests": 1
+  },
+  "archive.gzip:ico->gz": {
+   "status": "passed",
+   "at": "2026-11-03T10:25:37+00:00",
+   "tests": 1
+  },
+  "archive.gzip:jpg->gz": {
+   "status": "passed",
+   "at": "2026-11-03T10:25:37+00:00",
+   "tests": 1
+  },
+  "archive.gzip:js->gz": {
+   "status": "passed",
+   "at": "2026-11-03T10:25:37+00:00",
+   "tests": 1
+  },
+  "archive.gzip:json->gz": {
+   "status": "passed",
+   "at": "2026-11-03T10:25:37+00:00",
+   "tests": 1
+  },
+  "archive.gzip:m4a->gz": {
+   "status": "passed",
+   "at": "2026-11-03T10:25:37+00:00",
+   "tests": 1
+  },
+  "archive.gzip:md->gz": {
+   "status": "passed",
+   "at": "2026-11-03T10:25:37+00:00",
+   "tests": 1
+  },
+  "archive.gzip:mkv->gz": {
+   "status": "passed",
+   "at": "2026-11-03T10:25:37+00:00",
+   "tests": 1
+  },
+  "archive.gzip:mov->gz": {
+   "status": "passed",
+   "at": "2026-11-03T10:25:37+00:00",
+   "tests": 1
+  },
+  "archive.gzip:mp3->gz": {
+   "status": "passed",
+   "at": "2026-11-03T10:25:37+00:00",
+   "tests": 1
+  },
+  "archive.gzip:mp4->gz": {
+   "status": "passed",
+   "at": "2026-11-03T10:25:37+00:00",
+   "tests": 1
+  },
+  "archive.gzip:odp->gz": {
+   "status": "passed",
+   "at": "2026-11-03T10:25:37+00:00",
+   "tests": 1
+  },
+  "archive.gzip:ods->gz": {
+   "status": "passed",
+   "at": "2026-11-03T10:25:37+00:00",
+   "tests": 1
+  },
+  "archive.gzip:odt->gz": {
+   "status": "passed",
+   "at": "2026-11-03T10:25:37+00:00",
+   "tests": 1
+  },
+  "archive.gzip:ogg->gz": {
+   "status": "passed",
+   "at": "2026-11-03T10:25:37+00:00",
+   "tests": 1
+  },
+  "archive.gzip:opus->gz": {
+   "status": "passed",
+   "at": "2026-11-03T10:25:37+00:00",
+   "tests": 1
+  },
+  "archive.gzip:otf->gz": {
+   "status": "passed",
+   "at": "2026-11-03T10:25:37+00:00",
+   "tests": 1
+  },
+  "archive.gzip:pdf->gz": {
+   "status": "passed",
+   "at": "2026-11-03T10:25:37+00:00",
+   "tests": 1
+  },
+  "archive.gzip:png->gz": {
+   "status": "passed",
+   "at": "2026-11-03T10:25:37+00:00",
+   "tests": 1
+  },
+  "archive.gzip:ppt->gz": {
+   "status": "passed",
+   "at": "2026-11-03T10:25:37+00:00",
+   "tests": 1
+  },
+  "archive.gzip:pptx->gz": {
+   "status": "passed",
+   "at": "2026-11-03T10:25:37+00:00",
+   "tests": 1
+  },
+  "archive.gzip:rar->gz": {
+   "status": "passed",
+   "at": "2026-11-03T10:25:37+00:00",
+   "tests": 1
+  },
+  "archive.gzip:rtf->gz": {
+   "status": "passed",
+   "at": "2026-11-03T10:25:37+00:00",
+   "tests": 1
+  },
+  "archive.gzip:sql->gz": {
+   "status": "passed",
+   "at": "2026-11-03T10:25:37+00:00",
+   "tests": 1
+  },
+  "archive.gzip:svg->gz": {
+   "status": "passed",
+   "at": "2026-11-03T10:25:37+00:00",
+   "tests": 1
+  },
+  "archive.gzip:tar->gz": {
+   "status": "passed",
+   "at": "2026-11-03T10:25:37+00:00",
+   "tests": 1
+  },
+  "archive.gzip:tbz2->gz": {
+   "status": "passed",
+   "at": "2026-11-03T10:25:37+00:00",
+   "tests": 1
+  },
+  "archive.gzip:tiff->gz": {
+   "status": "passed",
+   "at": "2026-11-03T10:25:37+00:00",
+   "tests": 1
+  },
+  "archive.gzip:toml->gz": {
+   "status": "passed",
+   "at": "2026-11-03T10:25:37+00:00",
+   "tests": 1
+  },
+  "archive.gzip:tsv->gz": {
+   "status": "passed",
+   "at": "2026-11-03T10:25:37+00:00",
+   "tests": 1
+  },
+  "archive.gzip:ttf->gz": {
+   "status": "passed",
+   "at": "2026-11-03T10:25:37+00:00",
+   "tests": 1
+  },
+  "archive.gzip:txt->gz": {
+   "status": "passed",
+   "at": "2026-11-03T10:25:37+00:00",
+   "tests": 1
+  },
+  "archive.gzip:txz->gz": {
+   "status": "passed",
+   "at": "2026-11-03T10:25:37+00:00",
+   "tests": 1
+  },
+  "archive.gzip:wav->gz": {
+   "status": "passed",
+   "at": "2026-11-03T10:25:37+00:00",
+   "tests": 1
+  },
+  "archive.gzip:webm->gz": {
+   "status": "passed",
+   "at": "2026-11-03T10:25:37+00:00",
+   "tests": 1
+  },
+  "archive.gzip:webp->gz": {
+   "status": "passed",
+   "at": "2026-11-03T10:25:37+00:00",
+   "tests": 1
+  },
+  "archive.gzip:wma->gz": {
+   "status": "passed",
+   "at": "2026-11-03T10:25:37+00:00",
+   "tests": 1
+  },
+  "archive.gzip:wmv->gz": {
+   "status": "passed",
+   "at": "2026-11-03T10:25:37+00:00",
+   "tests": 1
+  },
+  "archive.gzip:woff->gz": {
+   "status": "passed",
+   "at": "2026-11-03T10:25:37+00:00",
+   "tests": 1
+  },
+  "archive.gzip:woff2->gz": {
+   "status": "passed",
+   "at": "2026-11-03T10:25:37+00:00",
+   "tests": 1
+  },
+  "archive.gzip:xls->gz": {
+   "status": "passed",
+   "at": "2026-11-03T10:25:37+00:00",
+   "tests": 1
+  },
+  "archive.gzip:xlsx->gz": {
+   "status": "passed",
+   "at": "2026-11-03T10:25:37+00:00",
+   "tests": 1
+  },
+  "archive.gzip:xml->gz": {
+   "status": "passed",
+   "at": "2026-11-03T10:25:37+00:00",
+   "tests": 1
+  },
+  "archive.gzip:yaml->gz": {
+   "status": "passed",
+   "at": "2026-11-03T10:25:37+00:00",
+   "tests": 1
+  },
+  "archive.gzip:zip->gz": {
+   "status": "passed",
+   "at": "2026-11-03T10:25:37+00:00",
+   "tests": 1
+  },
   "audio.convert:aac->flac": {
    "status": "passed",
    "at": "2026-11-03T10:16:54+00:00",
@@ -1216,6 +2046,31 @@
   "image.trace:webp->svg": {
    "status": "passed",
    "at": "2026-11-03T10:16:54+00:00",
+   "tests": 1
+  },
+  "neg:archive.convert": {
+   "status": "passed",
+   "at": "2026-11-03T10:25:37+00:00",
+   "tests": 7
+  },
+  "neg:archive.create_zip": {
+   "status": "passed",
+   "at": "2026-11-03T10:25:37+00:00",
+   "tests": 1
+  },
+  "neg:archive.extract": {
+   "status": "passed",
+   "at": "2026-11-03T10:25:37+00:00",
+   "tests": 14
+  },
+  "neg:archive.gunzip": {
+   "status": "passed",
+   "at": "2026-11-03T10:25:37+00:00",
+   "tests": 1
+  },
+  "neg:archive.gzip": {
+   "status": "passed",
+   "at": "2026-11-03T10:25:37+00:00",
    "tests": 1
   },
   "neg:audio.convert": {

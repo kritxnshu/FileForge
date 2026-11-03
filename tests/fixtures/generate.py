@@ -519,6 +519,194 @@ for _ext, _flt in [("ppt", "ppt:MS PowerPoint 97"), ("odp", "odp")]:
         return build
     builder(f"presentation.{_ext}")(_mkp())
 
+# ---------------------------------------------------------------------------
+# archives
+
+ARCHIVE_FILES = [("hello.txt", (KNOWN_SENTENCE + "\n").encode()),
+                 ("folder/data.csv", b"Name,Qty\nApple,3\nBanana,12\n"),
+                 ("folder/sub/blocks.png", None)]
+
+
+def archive_members() -> list[tuple[str, bytes]]:
+    return [(n, d if d is not None else path("image.png").read_bytes()) for n, d in ARCHIVE_FILES]
+
+
+def rar4(files: list[tuple[str, bytes]]) -> bytes:
+    """Minimal RAR 4.x archive with stored (uncompressed) entries: enough to exercise RAR reading."""
+    import struct
+    import zlib
+
+    def block(htype: int, flags: int, body: bytes) -> bytes:
+        head = struct.pack("<BHH", htype, flags, 7 + len(body)) + body
+        return struct.pack("<H", zlib.crc32(head) & 0xFFFF) + head
+
+    out = b"Rar!\x1a\x07\x00" + block(0x73, 0, b"\x00" * 6)
+    for name, data in files:
+        nb = name.encode()
+        body = struct.pack("<IIBIIBBHI", len(data), len(data), 3, zlib.crc32(data) & 0xFFFFFFFF, 0x5A210000, 20, 0x30,
+                           len(nb), 0o100644) + nb
+        out += block(0x74, 0x8000, body) + data
+    return out + block(0x7B, 0x4000, b"")
+
+
+@builder("archive.zip")
+def _zip(p: Path) -> None:
+    import zipfile
+
+    with zipfile.ZipFile(p, "w", zipfile.ZIP_DEFLATED) as z:
+        for n, d in archive_members():
+            z.writestr(n, d)
+
+
+def _tar(mode: str):
+    def build(p: Path) -> None:
+        import tarfile
+
+        with tarfile.open(p, mode) as t:
+            for n, d in archive_members():
+                info = tarfile.TarInfo(n)
+                info.size = len(d)
+                t.addfile(info, io.BytesIO(d))
+    return build
+
+
+for _ext, _mode in [("tar", "w"), ("tgz", "w:gz"), ("tbz2", "w:bz2"), ("txz", "w:xz")]:
+    builder(f"archive.{_ext}")(_tar(_mode))
+
+
+@builder("archive.7z")
+def _7z(p: Path) -> None:
+    import py7zr
+
+    with py7zr.SevenZipFile(p, "w") as z:
+        for n, d in archive_members():
+            z.writestr(d, n)
+
+
+@builder("archive.rar")
+def _rar(p: Path) -> None:
+    p.write_bytes(rar4(archive_members()))
+
+
+@builder("archive.gz")
+def _gz(p: Path) -> None:
+    import gzip
+
+    with p.open("wb") as raw, gzip.GzipFile(filename="hello.txt", mode="wb", fileobj=raw, mtime=0) as g:
+        g.write((KNOWN_SENTENCE + "\n").encode())
+
+
+@builder("encrypted.zip")
+def _enc_zip(p: Path) -> None:
+    """Traditional (ZipCrypto) password 'secret', made with the zip CLI (zipfile can't write encryption)."""
+    import tempfile
+
+    with tempfile.TemporaryDirectory() as td:
+        (Path(td) / "hello.txt").write_text(KNOWN_SENTENCE + "\n")
+        subprocess.run(["zip", "-q", "-P", "secret", str(p.resolve()), "hello.txt"], cwd=td, check=True)
+
+
+@builder("encrypted.7z")
+def _enc_7z(p: Path) -> None:
+    import py7zr
+
+    with py7zr.SevenZipFile(p, "w", password="secret") as z:
+        z.writestr((KNOWN_SENTENCE + "\n").encode(), "hello.txt")
+
+# ---------------------------------------------------------------------------
+# misc text formats, EPUB, fonts
+
+
+builder("data.xml")(lambda p: p.write_text(f'<?xml version="1.0"?><report id="7"><title>Quarterly Report</title><note>{KNOWN_SENTENCE}</note></report>'))
+builder("data.yaml")(lambda p: p.write_text(f"title: Quarterly Report\nnote: {KNOWN_SENTENCE}\nitems:\n  - apple\n  - banana\n"))
+builder("data.toml")(lambda p: p.write_text(f'title = "Quarterly Report"\nnote = "{KNOWN_SENTENCE}"\n[owner]\nid = 7\n'))
+builder("query.sql")(lambda p: p.write_text("select id, name from fruit where qty > 3 order by name;\n"))
+builder("style.css")(lambda p: p.write_text("body { color: #222; margin: 0 auto; }\n.hero h1 { font-size: 3rem; }\n"))
+builder("script.js")(lambda p: p.write_text("export function add(a, b) {\n  return a + b;\n}\nconsole.log(add(2, 3));\n"))
+
+
+@builder("book.epub")
+def _epub(p: Path) -> None:
+    subprocess.run(["pandoc", "--sandbox", str(path("document.md")), "-o", str(p), "--metadata", "title=Quarterly Report"],
+                   check=True, timeout=60)
+
+
+GLYPHS = ".notdef A B C space".split()
+
+
+@builder("font.ttf")
+def _ttf(p: Path) -> None:
+    """A tiny real TrueType font (quadratic outlines) with glyphs for A, B, C and space."""
+    from fontTools.fontBuilder import FontBuilder
+    from fontTools.pens.ttGlyphPen import TTGlyphPen
+
+    fb = FontBuilder(1000, isTTF=True)
+    fb.setupGlyphOrder(GLYPHS)
+    fb.setupCharacterMap({0x41: "A", 0x42: "B", 0x43: "C", 0x20: "space"})
+    glyphs = {}
+    for g in GLYPHS:
+        pen = TTGlyphPen(None)
+        if g != "space":
+            pen.moveTo((100, 0)); pen.lineTo((100, 700)); pen.qCurveTo((500, 900), (900, 700)); pen.lineTo((900, 0)); pen.closePath()
+        glyphs[g] = pen.glyph()
+    fb.setupGlyf(glyphs)
+    fb.setupHorizontalMetrics({g: (1000, 100) for g in GLYPHS})
+    fb.setupHorizontalHeader(ascent=900, descent=-100)
+    fb.setupNameTable({"familyName": "Fixture Sans", "styleName": "Regular"})
+    fb.setupOS2(sTypoAscender=900, usWinAscent=900, usWinDescent=100)
+    fb.setupPost()
+    fb.save(str(p))
+
+
+@builder("font.otf")
+def _otf(p: Path) -> None:
+    """A tiny real OpenType/CFF font (cubic outlines)."""
+    from fontTools.fontBuilder import FontBuilder
+    from fontTools.pens.t2CharStringPen import T2CharStringPen
+
+    fb = FontBuilder(1000, isTTF=False)
+    fb.setupGlyphOrder(GLYPHS)
+    fb.setupCharacterMap({0x41: "A", 0x42: "B", 0x43: "C", 0x20: "space"})
+    charstrings = {}
+    for g in GLYPHS:
+        pen = T2CharStringPen(1000, None)
+        if g != "space":
+            pen.moveTo((100, 0)); pen.lineTo((100, 700)); pen.curveTo((300, 900), (700, 900), (900, 700)); pen.lineTo((900, 0)); pen.closePath()
+        charstrings[g] = pen.getCharString()
+    fb.setupCFF("FixtureSerif-Regular", {"FullName": "Fixture Serif"}, charstrings, {})
+    fb.setupHorizontalMetrics({g: (1000, 100) for g in GLYPHS})
+    fb.setupHorizontalHeader(ascent=900, descent=-100)
+    fb.setupNameTable({"familyName": "Fixture Serif", "styleName": "Regular"})
+    fb.setupOS2(sTypoAscender=900, usWinAscent=900, usWinDescent=100)
+    fb.setupPost()
+    fb.save(str(p))
+
+
+for _flavor in ("woff", "woff2"):
+    def _mkf(flavor=_flavor):
+        def build(p: Path) -> None:
+            from fontTools.ttLib import TTFont
+
+            f = TTFont(str(path("font.ttf")))
+            f.flavor = flavor
+            f.save(str(p))
+        return build
+    builder(f"font.{_flavor}")(_mkf())
+
+
+FIXTURE_FOR = {
+    **{f: f"image.{f}" for f in ("png", "jpg", "webp", "gif", "bmp", "tiff", "ico", "avif", "heic", "svg")},
+    **{f: f"document.{f}" for f in ("pdf", "docx", "doc", "odt", "rtf", "txt", "md", "html")},
+    **{f: f"spreadsheet.{f}" for f in ("xlsx", "xls", "ods")},
+    **{f: f"data.{f}" for f in ("csv", "tsv", "json", "xml", "yaml", "toml")},
+    **{f: f"presentation.{f}" for f in ("pptx", "ppt", "odp")},
+    **{f: f"tone.{f}" for f in ("mp3", "wav", "aac", "flac", "ogg", "m4a", "opus", "wma")},
+    **{f: f"video.{f}" for f in ("mp4", "mov", "mkv", "webm", "avi", "flv", "wmv", "3gp")},
+    **{f: f"archive.{f}" for f in ("zip", "tar", "tgz", "tbz2", "txz", "7z", "gz", "rar")},
+    **{f: f"font.{f}" for f in ("ttf", "otf", "woff", "woff2")},
+    "sql": "query.sql", "css": "style.css", "js": "script.js", "epub": "book.epub",
+}
+
 
 if __name__ == "__main__":
     for n in available():

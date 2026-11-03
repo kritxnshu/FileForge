@@ -154,7 +154,7 @@ def _binary(head: bytes, path: Path) -> tuple[str | None, str | None]:
         return "rtf", None
     if head[:6] == b"7z\xbc\xaf\x27\x1c":
         return "7z", None
-    if head[:7] == b"Rar!\x1a\x07":
+    if head[:6] == b"Rar!\x1a\x07":
         return "rar", None
     if head[:2] == b"\x1f\x8b":
         return ("tgz" if _compressed_tar(head, path, gzip.open) else "gz"), None

@@ -97,6 +97,8 @@ FORMATS: dict[str, Format] = {
         _F("otf", "OpenType font", "font", ("otf",), "font/otf"),
         _F("woff", "WOFF", "font", ("woff",), "font/woff"),
         _F("woff2", "WOFF2", "font", ("woff2",), "font/woff2"),
+        # generic output type for files extracted from archives (never an upload/detection result)
+        _F("bin", "File", "other", ("bin",), "application/octet-stream"),
     ]
 }
 
