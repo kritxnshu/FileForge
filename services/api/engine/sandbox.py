@@ -101,10 +101,10 @@ def _read_roots() -> list[str]:
     return sorted(roots)
 
 
-def _seatbelt_profile(job_dir: str) -> str:
+def _seatbelt_profile(job_dir: str, extra_reads: Sequence[str] = ()) -> str:
     home = os.path.realpath(Path.home())
     job = os.path.realpath(job_dir)
-    reads = " ".join(f"(subpath {_sb_quote(r)})" for r in [*_read_roots(), job])
+    reads = " ".join(f"(subpath {_sb_quote(r)})" for r in [*_read_roots(), job, *(os.path.realpath(x) for x in extra_reads)])
     return f"""(version 1)
 (allow default)
 (deny network*)
@@ -125,10 +125,10 @@ def _seatbelt_profile(job_dir: str) -> str:
 """
 
 
-def _wrap(cmd: Sequence[str], job_dir: Path) -> list[str]:
+def _wrap(cmd: Sequence[str], job_dir: Path, extra_reads: Sequence[str] = ()) -> list[str]:
     iso = isolation_mode()
     if iso.kind == "seatbelt":
-        return ["sandbox-exec", "-p", _seatbelt_profile(str(job_dir)), *cmd]
+        return ["sandbox-exec", "-p", _seatbelt_profile(str(job_dir), extra_reads), *cmd]
     if iso.kind == "bwrap":
         j = str(job_dir.resolve())
         return [
@@ -295,6 +295,7 @@ def run_sync(
     env: dict[str, str] | None = None,
     cwd: Path | None = None,
     capture_stdout: bool = True,
+    extra_reads: Sequence[str] = (),
 ) -> Result:
     job_dir.mkdir(parents=True, exist_ok=True)
     started = time.monotonic()
@@ -302,7 +303,7 @@ def run_sync(
     # worker's killpg() on cancel/timeout takes them down too.
     nested = os.environ.get("UC_IN_SANDBOX") == "1"
     proc = subprocess.Popen(
-        _wrap(cmd, job_dir),
+        _wrap(cmd, job_dir, extra_reads),
         stdin=subprocess.DEVNULL,
         stdout=subprocess.PIPE,
         stderr=subprocess.PIPE,

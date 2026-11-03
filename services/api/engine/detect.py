@@ -301,6 +301,7 @@ def ffprobe(path: Path, job_dir: Path, timeout_s: float = 20) -> dict | None:
          "-show_format", "-show_streams", "-of", "json", str(path)],
         job_dir=job_dir,
         limits=sandbox.Limits(timeout_s=timeout_s, memory_mb=1024),
+        extra_reads=[str(path.parent)],  # read-only access to just the file being probed
     )
     if not res.ok:
         return None

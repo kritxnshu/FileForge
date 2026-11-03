@@ -48,7 +48,20 @@ Not available: Docker (Dockerfiles still shipped), bubblewrap/nsjail (macOS uses
 
 ## In progress
 
-- M4 P2 modules.
+- M4 P2 modules — **on branch `wip/m4-media`** (main stays at the last fully green commit, end of M3).
+  - Audio (`audio.convert`, `audio.edit`) and video (`video.convert`, `video.edit`, `to_gif`, `from_gif`,
+    `extract_audio`, `thumbnail`) implemented in `engine/converters/media/`, FFmpeg layer in `engine/ffmpeg.py`
+    (protocol + demuxer whitelists, real `-progress` output, playlist rejection tests).
+  - `tests/api/test_media.py`: 220 passed, **3 failing** — fix these before merging to main:
+    1. `test_gif_to_video[gif->mp4|webm]`: centre pixel of the first frame isn't red. Check whether
+       `center_pixel(path, 0.02)` seeks past frame 0 or the GIF→video output really starts on another colour.
+    2. `test_video_negative`: inspect which assertion fails (truncated MP4 error code, or the 20 s / 0.11 MB
+       "too small" target-size check).
+  - Until they pass, `verified.json` records them as failed, so the API does not advertise those pairs
+    (and `video.convert`/`video.edit` stay hidden because their negative test is failing).
+- Fixed along the way: ffprobe during detection gets read access only to the probed file's directory
+  (`sandbox.run_sync(extra_reads=...)`); `loudnorm` output re-chunked for FLAC; VP9 forced to yuv420p;
+  no `-ss 0` (mis-seeks some FLV files); MP3 bitrate capping below 32 kHz is reported to the user.
 
 ## Next
 

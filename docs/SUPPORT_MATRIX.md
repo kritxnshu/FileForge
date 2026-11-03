@@ -10,10 +10,10 @@ its engines are installed, and its feature flag (if any) is on.
 
 | Level | Pairs |
 |---|---|
-| Full | 209 |
-| Partial | 7 |
+| Full | 346 |
+| Partial | 14 |
 | Experimental | 13 |
-| Untested | 1 |
+| Untested | 67 |
 | Unsupported | 2 |
 
 ## Images
@@ -436,6 +436,278 @@ Print every sheet of a spreadsheet (or a CSV) to PDF with LibreOffice. Runtime: 
 | Excel 97-2003 (XLS) | PDF | Full |  |
 | OpenDocument Spreadsheet | PDF | Full |  |
 | CSV | PDF | Full |  |
+
+## Audio
+
+### Convert audio (`audio.convert`)
+
+Convert between audio formats, with optional bitrate, sample rate, channels, trimming and loudness normalization. Runtime: server; queue: heavy; engines: ffmpeg, ffprobe; negative test: passed.
+
+| Source | Target | Level | Notes |
+|---|---|---|---|
+| MP3 | WAV | Full | Tags are carried over where the format supports them; cover art can't be stored in this format. |
+| MP3 | AAC | Full | Tags are carried over where the format supports them; cover art can't be stored in this format. |
+| MP3 | FLAC | Full |  |
+| MP3 | OGG Vorbis | Partial | Tags are carried over where the format supports them; cover art can't be stored in this format. |
+| MP3 | M4A | Full |  |
+| MP3 | Opus | Full | Tags are carried over where the format supports them; cover art can't be stored in this format. |
+| MP3 | WMA | Full | Tags are carried over where the format supports them; cover art can't be stored in this format. |
+| WAV | MP3 | Full |  |
+| WAV | AAC | Full | Tags are carried over where the format supports them; cover art can't be stored in this format. |
+| WAV | FLAC | Full |  |
+| WAV | OGG Vorbis | Partial | Tags are carried over where the format supports them; cover art can't be stored in this format. |
+| WAV | M4A | Full |  |
+| WAV | Opus | Full | Tags are carried over where the format supports them; cover art can't be stored in this format. |
+| WAV | WMA | Full | Tags are carried over where the format supports them; cover art can't be stored in this format. |
+| AAC | MP3 | Full |  |
+| AAC | WAV | Full | Tags are carried over where the format supports them; cover art can't be stored in this format. |
+| AAC | FLAC | Full |  |
+| AAC | OGG Vorbis | Partial | Tags are carried over where the format supports them; cover art can't be stored in this format. |
+| AAC | M4A | Full |  |
+| AAC | Opus | Full | Tags are carried over where the format supports them; cover art can't be stored in this format. |
+| AAC | WMA | Full | Tags are carried over where the format supports them; cover art can't be stored in this format. |
+| FLAC | MP3 | Full |  |
+| FLAC | WAV | Full | Tags are carried over where the format supports them; cover art can't be stored in this format. |
+| FLAC | AAC | Full | Tags are carried over where the format supports them; cover art can't be stored in this format. |
+| FLAC | OGG Vorbis | Partial | Tags are carried over where the format supports them; cover art can't be stored in this format. |
+| FLAC | M4A | Full |  |
+| FLAC | Opus | Full | Tags are carried over where the format supports them; cover art can't be stored in this format. |
+| FLAC | WMA | Full | Tags are carried over where the format supports them; cover art can't be stored in this format. |
+| OGG Vorbis | MP3 | Full |  |
+| OGG Vorbis | WAV | Full | Tags are carried over where the format supports them; cover art can't be stored in this format. |
+| OGG Vorbis | AAC | Full | Tags are carried over where the format supports them; cover art can't be stored in this format. |
+| OGG Vorbis | FLAC | Full |  |
+| OGG Vorbis | M4A | Full |  |
+| OGG Vorbis | Opus | Full | Tags are carried over where the format supports them; cover art can't be stored in this format. |
+| OGG Vorbis | WMA | Full | Tags are carried over where the format supports them; cover art can't be stored in this format. |
+| M4A | MP3 | Full |  |
+| M4A | WAV | Full | Tags are carried over where the format supports them; cover art can't be stored in this format. |
+| M4A | AAC | Full | Tags are carried over where the format supports them; cover art can't be stored in this format. |
+| M4A | FLAC | Full |  |
+| M4A | OGG Vorbis | Partial | Tags are carried over where the format supports them; cover art can't be stored in this format. |
+| M4A | Opus | Full | Tags are carried over where the format supports them; cover art can't be stored in this format. |
+| M4A | WMA | Full | Tags are carried over where the format supports them; cover art can't be stored in this format. |
+| Opus | MP3 | Full |  |
+| Opus | WAV | Full | Tags are carried over where the format supports them; cover art can't be stored in this format. |
+| Opus | AAC | Full | Tags are carried over where the format supports them; cover art can't be stored in this format. |
+| Opus | FLAC | Full |  |
+| Opus | OGG Vorbis | Partial | Tags are carried over where the format supports them; cover art can't be stored in this format. |
+| Opus | M4A | Full |  |
+| Opus | WMA | Full | Tags are carried over where the format supports them; cover art can't be stored in this format. |
+| WMA | MP3 | Full |  |
+| WMA | WAV | Full | Tags are carried over where the format supports them; cover art can't be stored in this format. |
+| WMA | AAC | Full | Tags are carried over where the format supports them; cover art can't be stored in this format. |
+| WMA | FLAC | Full |  |
+| WMA | OGG Vorbis | Partial | Tags are carried over where the format supports them; cover art can't be stored in this format. |
+| WMA | M4A | Full |  |
+| WMA | Opus | Full | Tags are carried over where the format supports them; cover art can't be stored in this format. |
+
+### Trim / adjust audio (`audio.edit`)
+
+Trim, normalize loudness, or change the bitrate, sample rate or channels without changing the format. Runtime: server; queue: heavy; engines: ffmpeg, ffprobe; negative test: passed.
+
+| Source | Target | Level | Notes |
+|---|---|---|---|
+| MP3 | (same) | Full |  |
+| WAV | (same) | Full |  |
+| AAC | (same) | Full |  |
+| FLAC | (same) | Full |  |
+| OGG Vorbis | (same) | Full |  |
+| M4A | (same) | Full |  |
+| Opus | (same) | Full |  |
+| WMA | (same) | Full |  |
+
+## Video
+
+### Convert video (`video.convert`)
+
+Convert between video formats. When the codecs already fit, streams are copied without re-encoding. Runtime: server; queue: heavy; engines: ffmpeg, ffprobe; negative test: failed.
+
+| Source | Target | Level | Notes |
+|---|---|---|---|
+| MP4 | MOV | Untested | hidden: no passing negative test recorded |
+| MP4 | MKV | Untested | hidden: no passing negative test recorded |
+| MP4 | WebM | Untested | hidden: no passing negative test recorded |
+| MP4 | AVI | Untested | hidden: no passing negative test recorded |
+| MP4 | FLV | Untested | hidden: no passing negative test recorded |
+| MP4 | WMV | Untested | hidden: no passing negative test recorded WMV uses the older WMV2 codec, so files are larger for the same quality. |
+| MP4 | 3GP | Untested | hidden: no passing negative test recorded 3GP is for old phones: output is limited to 352 px wide by default. |
+| MOV | MP4 | Untested | hidden: no passing negative test recorded |
+| MOV | MKV | Untested | hidden: no passing negative test recorded |
+| MOV | WebM | Untested | hidden: no passing negative test recorded |
+| MOV | AVI | Untested | hidden: no passing negative test recorded |
+| MOV | FLV | Untested | hidden: no passing negative test recorded |
+| MOV | WMV | Untested | hidden: no passing negative test recorded WMV uses the older WMV2 codec, so files are larger for the same quality. |
+| MOV | 3GP | Untested | hidden: no passing negative test recorded 3GP is for old phones: output is limited to 352 px wide by default. |
+| MKV | MP4 | Untested | hidden: no passing negative test recorded |
+| MKV | MOV | Untested | hidden: no passing negative test recorded |
+| MKV | WebM | Untested | hidden: no passing negative test recorded |
+| MKV | AVI | Untested | hidden: no passing negative test recorded |
+| MKV | FLV | Untested | hidden: no passing negative test recorded |
+| MKV | WMV | Untested | hidden: no passing negative test recorded WMV uses the older WMV2 codec, so files are larger for the same quality. |
+| MKV | 3GP | Untested | hidden: no passing negative test recorded 3GP is for old phones: output is limited to 352 px wide by default. |
+| WebM | MP4 | Untested | hidden: no passing negative test recorded |
+| WebM | MOV | Untested | hidden: no passing negative test recorded |
+| WebM | MKV | Untested | hidden: no passing negative test recorded |
+| WebM | AVI | Untested | hidden: no passing negative test recorded |
+| WebM | FLV | Untested | hidden: no passing negative test recorded |
+| WebM | WMV | Untested | hidden: no passing negative test recorded WMV uses the older WMV2 codec, so files are larger for the same quality. |
+| WebM | 3GP | Untested | hidden: no passing negative test recorded 3GP is for old phones: output is limited to 352 px wide by default. |
+| AVI | MP4 | Untested | hidden: no passing negative test recorded |
+| AVI | MOV | Untested | hidden: no passing negative test recorded |
+| AVI | MKV | Untested | hidden: no passing negative test recorded |
+| AVI | WebM | Untested | hidden: no passing negative test recorded |
+| AVI | FLV | Untested | hidden: no passing negative test recorded |
+| AVI | WMV | Untested | hidden: no passing negative test recorded WMV uses the older WMV2 codec, so files are larger for the same quality. |
+| AVI | 3GP | Untested | hidden: no passing negative test recorded 3GP is for old phones: output is limited to 352 px wide by default. |
+| FLV | MP4 | Untested | hidden: no passing negative test recorded |
+| FLV | MOV | Untested | hidden: no passing negative test recorded |
+| FLV | MKV | Untested | hidden: no passing negative test recorded |
+| FLV | WebM | Untested | hidden: no passing negative test recorded |
+| FLV | AVI | Untested | hidden: no passing negative test recorded |
+| FLV | WMV | Untested | hidden: no passing negative test recorded WMV uses the older WMV2 codec, so files are larger for the same quality. |
+| FLV | 3GP | Untested | hidden: no passing negative test recorded 3GP is for old phones: output is limited to 352 px wide by default. |
+| WMV | MP4 | Untested | hidden: no passing negative test recorded |
+| WMV | MOV | Untested | hidden: no passing negative test recorded |
+| WMV | MKV | Untested | hidden: no passing negative test recorded |
+| WMV | WebM | Untested | hidden: no passing negative test recorded |
+| WMV | AVI | Untested | hidden: no passing negative test recorded |
+| WMV | FLV | Untested | hidden: no passing negative test recorded |
+| WMV | 3GP | Untested | hidden: no passing negative test recorded 3GP is for old phones: output is limited to 352 px wide by default. |
+| 3GP | MP4 | Untested | hidden: no passing negative test recorded |
+| 3GP | MOV | Untested | hidden: no passing negative test recorded |
+| 3GP | MKV | Untested | hidden: no passing negative test recorded |
+| 3GP | WebM | Untested | hidden: no passing negative test recorded |
+| 3GP | AVI | Untested | hidden: no passing negative test recorded |
+| 3GP | FLV | Untested | hidden: no passing negative test recorded |
+| 3GP | WMV | Untested | hidden: no passing negative test recorded WMV uses the older WMV2 codec, so files are larger for the same quality. |
+
+### Trim / compress video (`video.edit`)
+
+Trim, resize, change the frame rate or quality, or compress to a target size, keeping the format. Runtime: server; queue: heavy; engines: ffmpeg, ffprobe; negative test: failed.
+
+| Source | Target | Level | Notes |
+|---|---|---|---|
+| MP4 | (same) | Untested | hidden: no passing negative test recorded |
+| MOV | (same) | Untested | hidden: no passing negative test recorded |
+| MKV | (same) | Untested | hidden: no passing negative test recorded |
+| WebM | (same) | Untested | hidden: no passing negative test recorded |
+| AVI | (same) | Untested | hidden: no passing negative test recorded |
+| FLV | (same) | Untested | hidden: no passing negative test recorded |
+| WMV | (same) | Untested | hidden: no passing negative test recorded |
+| 3GP | (same) | Untested | hidden: no passing negative test recorded |
+
+### Video to GIF (`video.to_gif`)
+
+Make an animated GIF from part of a video, with a palette optimized for the clip. Runtime: server; queue: heavy; engines: ffmpeg, ffprobe; negative test: passed.
+
+Known limitations: GIFs are limited to 30 seconds, 30 fps and 800 px wide.
+
+| Source | Target | Level | Notes |
+|---|---|---|---|
+| MP4 | GIF | Full |  |
+| MOV | GIF | Full |  |
+| MKV | GIF | Full |  |
+| WebM | GIF | Full |  |
+| AVI | GIF | Full |  |
+| FLV | GIF | Full |  |
+| WMV | GIF | Full |  |
+| 3GP | GIF | Full |  |
+
+### GIF to video (`video.from_gif`)
+
+Turn an animated GIF into a much smaller MP4 or WebM video. Runtime: server; queue: heavy; engines: ffmpeg, ffprobe; negative test: passed.
+
+| Source | Target | Level | Notes |
+|---|---|---|---|
+| GIF | MP4 | Untested | hidden: no passing matrix test recorded |
+| GIF | WebM | Untested | hidden: no passing matrix test recorded |
+
+### Extract audio (`video.extract_audio`)
+
+Save the soundtrack of a video as an audio file. Runtime: server; queue: heavy; engines: ffmpeg, ffprobe; negative test: passed.
+
+| Source | Target | Level | Notes |
+|---|---|---|---|
+| MP4 | MP3 | Full |  |
+| MP4 | AAC | Full |  |
+| MP4 | WAV | Full |  |
+| MP4 | FLAC | Full |  |
+| MP4 | OGG Vorbis | Full |  |
+| MP4 | M4A | Full |  |
+| MP4 | Opus | Full |  |
+| MOV | MP3 | Full |  |
+| MOV | AAC | Full |  |
+| MOV | WAV | Full |  |
+| MOV | FLAC | Full |  |
+| MOV | OGG Vorbis | Full |  |
+| MOV | M4A | Full |  |
+| MOV | Opus | Full |  |
+| MKV | MP3 | Full |  |
+| MKV | AAC | Full |  |
+| MKV | WAV | Full |  |
+| MKV | FLAC | Full |  |
+| MKV | OGG Vorbis | Full |  |
+| MKV | M4A | Full |  |
+| MKV | Opus | Full |  |
+| WebM | MP3 | Full |  |
+| WebM | AAC | Full |  |
+| WebM | WAV | Full |  |
+| WebM | FLAC | Full |  |
+| WebM | OGG Vorbis | Full |  |
+| WebM | M4A | Full |  |
+| WebM | Opus | Full |  |
+| AVI | MP3 | Full |  |
+| AVI | AAC | Full |  |
+| AVI | WAV | Full |  |
+| AVI | FLAC | Full |  |
+| AVI | OGG Vorbis | Full |  |
+| AVI | M4A | Full |  |
+| AVI | Opus | Full |  |
+| FLV | MP3 | Full |  |
+| FLV | AAC | Full |  |
+| FLV | WAV | Full |  |
+| FLV | FLAC | Full |  |
+| FLV | OGG Vorbis | Full |  |
+| FLV | M4A | Full |  |
+| FLV | Opus | Full |  |
+| WMV | MP3 | Full |  |
+| WMV | AAC | Full |  |
+| WMV | WAV | Full |  |
+| WMV | FLAC | Full |  |
+| WMV | OGG Vorbis | Full |  |
+| WMV | M4A | Full |  |
+| WMV | Opus | Full |  |
+| 3GP | MP3 | Full |  |
+| 3GP | AAC | Full |  |
+| 3GP | WAV | Full |  |
+| 3GP | FLAC | Full |  |
+| 3GP | OGG Vorbis | Full |  |
+| 3GP | M4A | Full |  |
+| 3GP | Opus | Full |  |
+
+### Video frame to image (`video.thumbnail`)
+
+Save a single frame of a video as a PNG or JPG at the time you choose. Runtime: server; queue: heavy; engines: ffmpeg, ffprobe; negative test: passed.
+
+| Source | Target | Level | Notes |
+|---|---|---|---|
+| MP4 | PNG | Full |  |
+| MP4 | JPG | Full |  |
+| MOV | PNG | Full |  |
+| MOV | JPG | Full |  |
+| MKV | PNG | Full |  |
+| MKV | JPG | Full |  |
+| WebM | PNG | Full |  |
+| WebM | JPG | Full |  |
+| AVI | PNG | Full |  |
+| AVI | JPG | Full |  |
+| FLV | PNG | Full |  |
+| FLV | JPG | Full |  |
+| WMV | PNG | Full |  |
+| WMV | JPG | Full |  |
+| 3GP | PNG | Full |  |
+| 3GP | JPG | Full |  |
 
 ## Developer Tools
 

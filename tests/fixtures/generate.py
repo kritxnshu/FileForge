@@ -411,6 +411,78 @@ def _json(p: Path) -> None:
     ], indent=1), encoding="utf-8")
 
 
+# ---------------------------------------------------------------------------
+# audio / video (FFmpeg lavfi sources: a 440 Hz tone, a solid red picture)
+
+TONE_HZ = 440
+MEDIA_SECONDS = 3
+
+
+def _ff(*args: str) -> None:
+    subprocess.run(["ffmpeg", "-hide_banner", "-loglevel", "error", "-y", *args], check=True, timeout=180)
+
+
+@builder("tone.wav")
+def _tone(p: Path) -> None:
+    _ff("-f", "lavfi", "-i", f"sine=frequency={TONE_HZ}:duration={MEDIA_SECONDS}:sample_rate=44100", "-ac", "2",
+        "-metadata", "title=Known Tone", "-metadata", "artist=Fixture Band", "-metadata", "album=Test Album",
+        "-c:a", "pcm_s16le", "-f", "wav", str(p))
+
+
+_AUDIO_ENC = {
+    "mp3": ["-c:a", "libmp3lame", "-b:a", "128k", "-id3v2_version", "3", "-f", "mp3"],
+    "aac": ["-c:a", "aac", "-b:a", "128k", "-f", "adts"],
+    "flac": ["-c:a", "flac", "-f", "flac"],
+    "ogg": ["-c:a", "vorbis", "-strict", "-2", "-ac", "2", "-f", "ogg"],
+    "m4a": ["-c:a", "aac", "-b:a", "128k", "-f", "ipod"],
+    "opus": ["-c:a", "libopus", "-b:a", "96k", "-ar", "48000", "-f", "ogg"],
+    "wma": ["-c:a", "wmav2", "-b:a", "128k", "-f", "asf"],
+}
+for _ext, _enc in _AUDIO_ENC.items():
+    def _mka(ext=_ext, enc=_enc):
+        def build(p: Path) -> None:
+            _ff("-i", str(path("tone.wav")), "-map_metadata", "0", *enc, str(p))
+        return build
+    builder(f"tone.{_ext}")(_mka())
+
+
+@builder("tagged.mp3")
+def _tagged(p: Path) -> None:
+    """MP3 with ID3 tags and embedded cover art."""
+    _ff("-i", str(path("tone.wav")), "-i", str(path("image.png")), "-map", "0:a", "-map", "1:v", "-c:a", "libmp3lame",
+        "-b:a", "128k", "-c:v", "png", "-disposition:v", "attached_pic", "-id3v2_version", "3",
+        "-metadata", "title=Known Tone", "-metadata", "artist=Fixture Band", "-metadata", "album=Test Album", str(p))
+
+
+@builder("video.mp4")
+def _video(p: Path) -> None:
+    _ff("-f", "lavfi", "-i", f"color=c=red:s=320x240:r=25:d={MEDIA_SECONDS}", "-f", "lavfi",
+        "-i", f"sine=frequency={TONE_HZ}:duration={MEDIA_SECONDS}", "-c:v", "libx264", "-pix_fmt", "yuv420p",
+        "-preset", "veryfast", "-c:a", "aac", "-b:a", "96k", "-shortest", "-movflags", "+faststart", str(p))
+
+
+_VIDEO_ENC = {
+    "mov": ["-c", "copy", "-f", "mov"],
+    "mkv": ["-c", "copy", "-f", "matroska"],
+    "webm": ["-c:v", "libvpx-vp9", "-deadline", "realtime", "-cpu-used", "8", "-b:v", "300k", "-c:a", "libopus", "-ar", "48000", "-f", "webm"],
+    "avi": ["-c:v", "mpeg4", "-q:v", "5", "-c:a", "libmp3lame", "-f", "avi"],
+    "flv": ["-c", "copy", "-f", "flv"],
+    "wmv": ["-c:v", "wmv2", "-b:v", "500k", "-c:a", "wmav2", "-f", "asf"],
+    "3gp": ["-c:v", "libx264", "-profile:v", "baseline", "-vf", "scale=176:144", "-c:a", "aac", "-ar", "22050", "-f", "3gp"],
+}
+for _ext, _enc in _VIDEO_ENC.items():
+    def _mkv(ext=_ext, enc=_enc):
+        def build(p: Path) -> None:
+            _ff("-i", str(path("video.mp4")), *enc, str(p))
+        return build
+    builder(f"video.{_ext}")(_mkv())
+
+
+@builder("truncated.mp4")
+def _trunc_mp4(p: Path) -> None:
+    data = path("video.mp4").read_bytes()
+    p.write_bytes(data[: len(data) // 3])
+
 
 if __name__ == "__main__":
     for n in available():
