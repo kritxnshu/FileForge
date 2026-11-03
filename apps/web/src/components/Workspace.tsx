@@ -1,6 +1,7 @@
 "use client";
 
 import { AlertTriangle, ArrowDown, ArrowUp, FileArchive, Loader2, Trash2, X } from "lucide-react";
+import { motion } from "motion/react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   ApiError,
@@ -97,8 +98,8 @@ function Picker({ caps, choices, value, onPick, label }: {
 export function Workspace({ preset }: { preset?: Preset }) {
   const { caps, error: capsError } = useCaps();
   const { items, remove, clear } = useWorkspace();
-  const [order, setOrder] = useState<string[]>([]);
-  const [picks, setPicks] = useState<Record<string, string>>({});
+  const [orderPref, setOrderPref] = useState<string[]>([]);
+  const [userPicks, setPicks] = useState<Record<string, string>>({});
   const [optValues, setOptValues] = useState<Record<string, OptionValues>>({});
   const [runs, setRuns] = useState<Run[]>([]);
   const [batchId, setBatchId] = useState<string | null>(null);
@@ -107,13 +108,11 @@ export function Workspace({ preset }: { preset?: Preset }) {
   const [announce, setAnnounce] = useState("");
   const stops = useRef<Record<string, () => void>>({});
 
-  // keep a user-controlled order (used for merges)
-  useEffect(() => {
-    setOrder((prev) => {
-      const keys = items.map((i) => i.key);
-      return [...prev.filter((k) => keys.includes(k)), ...keys.filter((k) => !prev.includes(k))];
-    });
-  }, [items]);
+  // the user's chosen order (used for merges), with newly added files at the end
+  const order = useMemo(() => {
+    const keys = items.map((i) => i.key);
+    return [...orderPref.filter((k) => keys.includes(k)), ...keys.filter((k) => !orderPref.includes(k))];
+  }, [orderPref, items]);
   const ordered = useMemo(() => order.map((k) => items.find((i) => i.key === k)).filter(Boolean) as Item[], [order, items]);
   const ready = useMemo(() => ordered.filter((i) => i.status === "ready" && i.server?.format), [ordered]);
   const uploading = ordered.some((i) => i.status === "uploading");
@@ -142,20 +141,22 @@ export function Workspace({ preset }: { preset?: Preset }) {
     return lists[0].filter((c) => keys.every((s) => s.has(`${c.op.id}|${c.pair.target}`)));
   }, [groups, caps]);
 
-  // apply the route preset when a matching file arrives
-  useEffect(() => {
-    if (!preset || !caps) return;
-    setPicks((prev) => {
-      let next: Record<string, string> | null = null;
+  // a conversion page's own choice, pre-picked for each matching file type until the user picks something else;
+  // file types it can't apply to are "mismatched" (e.g. an MP3 dropped on "PNG to JPG")
+  const { presetPicks, mismatched } = useMemo(() => {
+    const presetPicks: Record<string, string> = {};
+    const mismatched: string[] = [];
+    if (preset) {
       for (const [f, list] of choicesByFormat) {
-        if (prev[f]) continue;
         const match = list.find((c) => c.op.id === preset.opId && c.pair.target === preset.target)
           ?? list.find((c) => c.pair.target === preset.target && c.op.cardinality !== "transform");
-        if (match) next = { ...(next ?? prev), [f]: choiceKey(match) };
+        if (match) presetPicks[f] = choiceKey(match);
+        else mismatched.push(f);
       }
-      return next ?? prev;
-    });
-  }, [preset, caps, choicesByFormat]);
+    }
+    return { presetPicks, mismatched };
+  }, [preset, choicesByFormat]);
+  const picks = useMemo(() => ({ ...presetPicks, ...userPicks }), [presetPicks, userPicks]);
 
   const findChoice = useCallback((k: string, list: Choice[]) => list.find((c) => choiceKey(c) === k) ?? null, []);
   const combined = picks[COMBINE] ? findChoice(picks[COMBINE], combineChoices) : null;
@@ -283,15 +284,14 @@ export function Workspace({ preset }: { preset?: Preset }) {
     setPicks({});
   };
 
-  const move = (key: string, dir: -1 | 1) =>
-    setOrder((prev) => {
-      const i = prev.indexOf(key);
-      const j = i + dir;
-      if (i < 0 || j < 0 || j >= prev.length) return prev;
-      const next = [...prev];
-      [next[i], next[j]] = [next[j], next[i]];
-      return next;
-    });
+  const move = (key: string, dir: -1 | 1) => {
+    const i = order.indexOf(key);
+    const j = i + dir;
+    if (i < 0 || j < 0 || j >= order.length) return;
+    const next = [...order];
+    [next[i], next[j]] = [next[j], next[i]];
+    setOrderPref(next);
+  };
 
   if (capsError) return <p role="alert" className="rounded-[var(--radius-panel)] bg-danger-soft p-4">{capsError}</p>;
 
@@ -319,7 +319,8 @@ export function Workspace({ preset }: { preset?: Preset }) {
           <>
             <ul className="flex flex-col divide-y divide-line" data-testid="file-list">
               {ordered.map((it, idx) => (
-                <li key={it.key} className="flex items-center gap-3 py-3" data-testid="file-row" data-status={it.status}>
+                <motion.li key={it.key} initial={{ opacity: 0, y: 4 }} animate={{ opacity: 1, y: 0 }}
+                  className="flex items-center gap-3 py-3" data-testid="file-row" data-status={it.status}>
                   {ordering && it.status === "ready" && (
                     <span className="flex flex-col">
                       <button aria-label={`Move ${it.name} up`} disabled={idx === 0} onClick={() => move(it.key, -1)} className="rounded p-0.5 text-muted hover:text-ink disabled:opacity-30"><ArrowUp size={15} /></button>
@@ -344,7 +345,7 @@ export function Workspace({ preset }: { preset?: Preset }) {
                   {!runs.length && (
                     <button aria-label={`Remove ${it.name}`} onClick={() => remove(it.key)} className="rounded-md p-1.5 text-muted hover:text-ink"><X size={17} /></button>
                   )}
-                </li>
+                </motion.li>
               ))}
             </ul>
             {!runs.length && <div className="mt-4"><DropZone compact /></div>}
@@ -356,6 +357,16 @@ export function Workspace({ preset }: { preset?: Preset }) {
       {caps && groups.size > 0 && !runs.length && (
         <section aria-labelledby="target-h" className="rounded-[var(--radius-panel)] border border-line bg-surface p-4 sm:p-6">
           <h2 id="target-h" className="mb-4 font-display text-2xl font-semibold">Choose what to make</h2>
+          {preset && mismatched.length > 0 && (
+            <p className="mb-5 flex gap-2 rounded-[var(--radius-control)] bg-warn-soft p-3 text-[0.95rem]" role="status" data-testid="preset-mismatch">
+              <AlertTriangle size={17} className="mt-0.5 shrink-0 text-warn" aria-hidden="true" />
+              <span>
+                This page converts {fmtShort(caps, preset.source)} to {fmtShort(caps, preset.target)}.{" "}
+                {mismatched.map((f) => fmtLabel(caps, f)).join(" and ")} files can&apos;t be converted to {fmtShort(caps, preset.target)}, so pick
+                another option below.
+              </span>
+            </p>
+          )}
           <div className="flex flex-col gap-6">
             {combineChoices.length > 0 && (
               <div>
@@ -401,6 +412,7 @@ export function Workspace({ preset }: { preset?: Preset }) {
               <div key={c.op.id}>
                 {distinctOps.length > 1 && <p className="mb-3 font-medium">{c.op.label}</p>}
                 <OptionsForm schema={c.op.options_schema} target={c.pair.target}
+                  context={{ pdfFileId: planned.find((p) => p.choice.op.id === c.op.id)?.items.find((i) => i.server?.format === "pdf")?.server?.id }}
                   values={{ ...defaultsOf(c.op.options_schema), ...(optValues[c.op.id] ?? {}) }}
                   onChange={(v) => setOptValues((p) => ({ ...p, [c.op.id]: v }))} />
               </div>

@@ -8,8 +8,10 @@ and pdf2docx installed, pdf2docx is used instead (DECISIONS, THIRD_PARTY_LICENSE
 from __future__ import annotations
 
 import html as htmlmod
+import importlib.util
 import os
 import statistics
+import sys
 from typing import Literal
 
 from pydantic import Field
@@ -313,17 +315,25 @@ class OcrOptions(PdfPasswordOptions):
 
 def ocr(ctx: Ctx) -> None:
     o: OcrOptions = ctx.options  # type: ignore[assignment]
-    exe = which("ocrmypdf")
+    reader = open_reader(ctx.input.path, o.password)  # clear errors for damaged / wrong-password PDFs
+    if reader.is_encrypted:
+        raise ConversionError("password_required", "OCR can't run on a password-protected PDF. Remove the password "
+                              "first with “Unlock PDF”, then try again.")
+    # --skip-text OCRs only pages without text (good for mixed PDFs); a PDF that's fully text already is refused.
+    if not o.force and all((p.extract_text() or "").strip() for p in reader.pages):
+        raise ConversionError("has_text", "This PDF already has searchable text on every page. Turn on “Re-OCR pages "
+                              "that already have text” to redo it.")
     out = ctx.default_out("pdf")
-    cmd = [exe, "--output-type", "pdf", "-l", o.language, "--jobs", "1", "--quiet"]
+    # Prefer the copy installed with the API (the `ocr` dependency group) over whatever is on PATH.
+    base = [sys.executable, "-m", "ocrmypdf"] if importlib.util.find_spec("ocrmypdf") else [which("ocrmypdf")]
+    # --output-type pdf: no PDF/A conversion, so Ghostscript (AGPL) is never needed.
+    cmd = [*base, "--output-type", "pdf", "-l", o.language, "--jobs", "1", "--quiet"]
     cmd.append("--force-ocr" if o.force else "--skip-text")
     cmd += [str(ctx.input.path), str(out)]
     ctx.stage("Recognizing text")
     res = ctx.run(cmd, check=False)
-    if res.returncode == 6:
-        raise ConversionError("has_text", "This PDF already has text. Turn on “Re-OCR pages that already have text” to redo it.")
     if res.returncode != 0 or not out.exists():
-        raise ConversionError("engine_error", "OCR failed on this PDF.")
+        raise ConversionError("engine_error", "OCR couldn't process this PDF. It may be damaged; if it's very large, try fewer pages.")
     ctx.add_output(out, "pdf")
 
 

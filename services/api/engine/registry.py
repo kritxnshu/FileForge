@@ -15,6 +15,7 @@ also hide pairs.
 from __future__ import annotations
 
 import importlib
+import importlib.metadata
 import json
 import os
 import pkgutil
@@ -185,15 +186,29 @@ def _which_version(exe: str, args: list[str], env_var: str | None = None) -> Cal
     return probe
 
 
-def _py_version(mod: str, attr: str = "__version__") -> Callable[[], str | None]:
+def _py_version(mod: str, dist: str | None = None) -> Callable[[], str | None]:
+    """Available if `mod` imports; the version is the installed distribution's (`dist`, default `mod`)."""
     def probe() -> str | None:
         try:
             m = importlib.import_module(mod)
-            return str(getattr(m, attr, "present"))
         except Exception:
             return None
+        try:
+            return importlib.metadata.version(dist or mod)
+        except importlib.metadata.PackageNotFoundError:
+            return str(getattr(m, "__version__", "installed"))
 
     return probe
+
+
+def _libarchive_probe() -> str | None:
+    try:
+        from libarchive import ffi
+
+        n = int(ffi.version_number())  # e.g. 3007004 → 3.7.4
+        return f"libarchive {n // 1_000_000}.{n // 1000 % 1000}.{n % 1000}"
+    except Exception:
+        return None
 
 
 def soffice_path() -> str | None:
@@ -247,24 +262,24 @@ def _avif_probe() -> str | None:
 
 ENGINE_PROBES.update(
     {
-        "pillow": _py_version("PIL"),
+        "pillow": _py_version("PIL", "pillow"),
         "avif": _avif_probe,
-        "pillow-heif": _py_version("pillow_heif"),
-        "resvg": _py_version("resvg_py", "__name__"),
-        "vtracer": _py_version("vtracer", "__name__"),
+        "pillow-heif": _py_version("pillow_heif", "pillow-heif"),
+        "resvg": _py_version("resvg_py", "resvg-py"),
+        "vtracer": _py_version("vtracer"),
         "pypdf": _py_version("pypdf"),
         "pikepdf": _py_version("pikepdf"),
-        "pypdfium2": _py_version("pypdfium2", "V_PYPDFIUM2"),
+        "pypdfium2": _py_version("pypdfium2"),
         "pdfplumber": _py_version("pdfplumber"),
-        "reportlab": _py_version("reportlab", "Version"),
+        "reportlab": _py_version("reportlab"),
         "img2pdf": _py_version("img2pdf"),
         "openpyxl": _py_version("openpyxl"),
         "pandas": _py_version("pandas"),
-        "python-docx": _py_version("docx", "__name__"),
-        "python-pptx": _py_version("pptx"),
-        "fonttools": _py_version("fontTools", "version"),
+        "python-docx": _py_version("docx", "python-docx"),
+        "python-pptx": _py_version("pptx", "python-pptx"),
+        "fonttools": _py_version("fontTools", "fonttools"),
         "py7zr": _py_version("py7zr"),
-        "libarchive": _py_version("libarchive.ffi", "version_number"),
+        "libarchive": _libarchive_probe,
         "segno": _py_version("segno"),
         "ffmpeg": _which_version("ffmpeg", ["-version"], "UC_FFMPEG"),
         "ffprobe": _which_version("ffprobe", ["-version"], "UC_FFPROBE"),
@@ -274,7 +289,7 @@ ENGINE_PROBES.update(
         "bsdtar": _which_version("bsdtar", ["--version"]),
         "qpdf": _which_version("qpdf", ["--version"]),
         "tesseract": _which_version("tesseract", ["--version"]),
-        "ocrmypdf": _which_version("ocrmypdf", ["--version"]),
+        "ocrmypdf": lambda: _py_version("ocrmypdf")() or _which_version("ocrmypdf", ["--version"])(),
         "rembg": _py_version("rembg"),
     }
 )

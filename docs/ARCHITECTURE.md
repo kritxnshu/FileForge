@@ -24,6 +24,8 @@
 | Engine | `services/api/engine` | Format catalog, detection, registry + chain planner, sandbox runner, converters, validators. |
 | Worker | `services/api/worker.py` | arq worker. One process per queue. Supervises sandboxed child processes. |
 | Sweeper | inside the API process (`app/lifecycle.py`) | Deletes expired uploads/jobs every minute and orphaned directories at startup. |
+| Previews | `services/api/app/previews.py` | PDF page thumbnails and spreadsheet table previews. Rendered by the same sandboxed job process as a conversion (`pdf.to_images`, `sheet.export`), cached next to the file they belong to, so they're deleted with it. |
+| Web proxy | `apps/web/src/proxy.ts` | Sets a per-request nonce-based Content-Security-Policy on every page. |
 
 ## Request flow
 

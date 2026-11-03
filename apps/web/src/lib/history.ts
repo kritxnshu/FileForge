@@ -52,11 +52,11 @@ export function isExpired(e: HistoryEntry, now = Date.now() / 1000): boolean {
   return e.expiresAt != null && now > e.expiresAt;
 }
 
-export function getRecentTools(): { slug: string; title: string }[] {
+export function getRecentTools(): { slug: string; title: string; href?: string }[] {
   return read(RECENT, []);
 }
 
-export function addRecentTool(t: { slug: string; title: string }) {
+export function addRecentTool(t: { slug: string; title: string; href?: string }) {
   const list = getRecentTools().filter((x) => x.slug !== t.slug);
   write(RECENT, [t, ...list].slice(0, 8));
 }

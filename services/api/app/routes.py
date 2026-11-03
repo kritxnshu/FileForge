@@ -29,9 +29,14 @@ def storage() -> LocalStorage:
     return LocalStorage(settings().STORAGE_DIR)
 
 
+# 404s don't say whether something never existed or belongs to another session; both read as "gone".
+GONE_FILE = "This file has expired or was deleted. Upload it again."
+GONE_JOB = "This conversion has expired or was deleted. Convert the file again."
+GONE_BATCH = "These results have expired or were deleted."
+
 def _check_id(i: str) -> None:
     if not valid_id(i):
-        raise HTTPException(404, "Not found")
+        raise HTTPException(404, "Not found. Check the link, or upload your file again.")
 
 
 # ---------------------------------------------------------------------------
@@ -125,11 +130,47 @@ async def upload_raw(file_id: str, inline: bool = False, sid: str = Depends(exis
     return _file_response(path, f["format"], f["name"], inline)
 
 
+async def _thumbs_index(src, cache, base: str, sid: str, request: Request) -> dict[str, Any]:
+    from .previews import thumbnails
+    from .security import _hit
+
+    await _hit(f"thumbs:s:{sid}", 600, 1, 300)
+    info = await thumbnails(src, cache)
+    return {"pages": info["pages"], "thumbnails": [f"{base}/{n}" for n in range(info["thumbnails"])]}
+
+
+def _thumb_file(cache, n: int) -> FileResponse:
+    p = cache / f"{n}.png"
+    if n < 0 or not p.exists():
+        raise HTTPException(404, "That page preview isn't available.")
+    return FileResponse(p, media_type="image/png", headers={"X-Content-Type-Options": "nosniff", "Cache-Control": "private, max-age=600"})
+
+
+@router.get("/uploads/{file_id}/pages")
+async def upload_pages(file_id: str, request: Request, sid: str = Depends(existing_session)) -> dict[str, Any]:
+    _check_id(file_id)
+    f = await store.owned(store.k_file(file_id), sid)
+    src = storage().upload_path(file_id)
+    if not f or not src.exists():
+        raise HTTPException(404, "This file has expired or was deleted.")
+    if f["format"] != "pdf":
+        raise HTTPException(400, "Page previews are only available for PDFs.")
+    return await _thumbs_index(src, src.parent / "thumbs", f"/api/uploads/{file_id}/pages", sid, request)
+
+
+@router.get("/uploads/{file_id}/pages/{n}")
+async def upload_page(file_id: str, n: int, sid: str = Depends(existing_session)) -> FileResponse:
+    _check_id(file_id)
+    if not await store.owned(store.k_file(file_id), sid):
+        raise HTTPException(404, GONE_FILE)
+    return _thumb_file(storage().upload_path(file_id).parent / "thumbs", n)
+
+
 @router.delete("/uploads/{file_id}")
 async def delete_upload(file_id: str, sid: str = Depends(existing_session)) -> dict[str, bool]:
     _check_id(file_id)
     if not await store.owned(store.k_file(file_id), sid):
-        raise HTTPException(404, "Not found")
+        raise HTTPException(404, GONE_FILE)
     storage().delete_upload(file_id)
     await store.redis().delete(store.k_file(file_id))
     await store.redis().srem(store.k_sess(sid, "files"), file_id)
@@ -240,7 +281,7 @@ async def get_job(job_id: str, sid: str = Depends(existing_session)) -> dict[str
     _check_id(job_id)
     j = await store.owned(store.k_job(job_id), sid)
     if not j:
-        raise HTTPException(404, "Not found")
+        raise HTTPException(404, GONE_JOB)
     return store.job_public(job_id, j)
 
 
@@ -248,7 +289,7 @@ async def get_job(job_id: str, sid: str = Depends(existing_session)) -> dict[str
 async def job_events(job_id: str, request: Request, sid: str = Depends(existing_session)):
     _check_id(job_id)
     if not await store.owned(store.k_job(job_id), sid):
-        raise HTTPException(404, "Not found")
+        raise HTTPException(404, GONE_JOB)
 
     async def gen():
         pubsub = store.redis().pubsub()
@@ -283,7 +324,7 @@ async def job_events(job_id: str, request: Request, sid: str = Depends(existing_
 def _output_path(job_id: str, j: dict, n: int):
     outs = j.get("outputs") or []
     if n < 0 or n >= len(outs) or j.get("state") != "succeeded":
-        raise HTTPException(404, "Not found")
+        raise HTTPException(404, "This result has expired or was deleted.")
     o = outs[n]
     path = (storage().job_dir(job_id) / o["path"]).resolve()
     if storage().job_dir(job_id).resolve() not in path.parents or not path.exists():
@@ -296,9 +337,50 @@ async def download(job_id: str, n: int, inline: bool = False, sid: str = Depends
     _check_id(job_id)
     j = await store.owned(store.k_job(job_id), sid)
     if not j:
-        raise HTTPException(404, "Not found")
+        raise HTTPException(404, GONE_JOB)
     path, o = _output_path(job_id, j, n)
     return _file_response(path, o["format"], o["name"], inline)
+
+
+@router.get("/jobs/{job_id}/files/{n}/pages")
+async def output_pages(job_id: str, n: int, request: Request, sid: str = Depends(existing_session)) -> dict[str, Any]:
+    _check_id(job_id)
+    j = await store.owned(store.k_job(job_id), sid)
+    if not j:
+        raise HTTPException(404, GONE_JOB)
+    path, o = _output_path(job_id, j, n)
+    if o["format"] != "pdf":
+        raise HTTPException(400, "Page previews are only available for PDFs.")
+    return await _thumbs_index(path, storage().job_dir(job_id) / "thumbs" / str(n), f"/api/jobs/{job_id}/files/{n}/pages/p",
+                               sid, request)
+
+
+@router.get("/jobs/{job_id}/files/{n}/pages/p/{page}")
+async def output_page(job_id: str, n: int, page: int, sid: str = Depends(existing_session)) -> FileResponse:
+    _check_id(job_id)
+    if not await store.owned(store.k_job(job_id), sid):
+        raise HTTPException(404, GONE_JOB)
+    return _thumb_file(storage().job_dir(job_id) / "thumbs" / str(n), page)
+
+
+SHEET_FORMATS = {"xlsx", "xls", "ods"}
+
+
+@router.get("/jobs/{job_id}/files/{n}/table")
+async def output_table(job_id: str, n: int, sid: str = Depends(existing_session)) -> dict[str, Any]:
+    """The first rows of a spreadsheet result, read in a sandboxed job process."""
+    from .previews import table
+    from .security import _hit
+
+    _check_id(job_id)
+    j = await store.owned(store.k_job(job_id), sid)
+    if not j:
+        raise HTTPException(404, GONE_JOB)
+    path, o = _output_path(job_id, j, n)
+    if o["format"] not in SHEET_FORMATS:
+        raise HTTPException(400, "Table previews are only available for spreadsheets.")
+    await _hit(f"thumbs:s:{sid}", 600, 1, 300)
+    return await table(path, o["format"], storage().job_dir(job_id) / "previews" / str(n))
 
 
 async def _cancel_and_delete(job_id: str, sid: str) -> None:
@@ -324,7 +406,7 @@ async def cancel_job(job_id: str, sid: str = Depends(existing_session)) -> dict[
     _check_id(job_id)
     j = await store.owned(store.k_job(job_id), sid)
     if not j:
-        raise HTTPException(404, "Not found")
+        raise HTTPException(404, GONE_JOB)
     if j.get("state") in store.TERMINAL:
         return store.job_public(job_id, j)
     await _cancel_and_delete(job_id, sid)
@@ -337,7 +419,7 @@ async def delete_job(job_id: str, sid: str = Depends(existing_session)) -> dict[
     _check_id(job_id)
     j = await store.owned(store.k_job(job_id), sid)
     if not j:
-        raise HTTPException(404, "Not found")
+        raise HTTPException(404, GONE_JOB)
     await _cancel_and_delete(job_id, sid)
     storage().delete_job(job_id)
     await store.update(store.k_job(job_id), {"outputs": [], "state": "expired" if j.get("state") == "succeeded" else
@@ -375,7 +457,7 @@ async def get_batch(batch_id: str, sid: str = Depends(existing_session)) -> dict
     _check_id(batch_id)
     b = await store.owned(store.k_batch(batch_id), sid)
     if not b:
-        raise HTTPException(404, "Not found")
+        raise HTTPException(404, GONE_BATCH)
     jobs = []
     for jid in b.get("job_ids") or []:
         j = await store.fetch(store.k_job(jid))
@@ -391,7 +473,7 @@ async def batch_zip(batch_id: str, sid: str = Depends(existing_session)) -> Stre
     _check_id(batch_id)
     b = await store.owned(store.k_batch(batch_id), sid)
     if not b:
-        raise HTTPException(404, "Not found")
+        raise HTTPException(404, GONE_BATCH)
     zs = ZipStream(compress_type=ZIP_DEFLATED, compress_level=6, sized=False)
     used: set[str] = set()
     count = 0

@@ -33,6 +33,7 @@ class Settings(BaseSettings):
     JOB_MEMORY_HEAVY_MB: int = 4096
     WORKER_CONCURRENCY_FAST: int = max(2, (os.cpu_count() or 2))
     WORKER_CONCURRENCY_HEAVY: int = max(1, (os.cpu_count() or 2) // 4)
+    WORKER_SHUTDOWN_GRACE_S: int = 20
 
     FILE_RETENTION_MINUTES: float = 60  # fractional values are allowed (tests use seconds-long TTLs)
     SWEEP_INTERVAL_S: float = 60

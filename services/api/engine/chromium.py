@@ -49,5 +49,5 @@ def html_to_pdf(html: str, out: Path, *, page_size: str | None = "A4", width: st
             finally:
                 browser.close()
     except PwError as e:
-        raise ConversionError("engine_error", "The page renderer failed on this file.") from e
+        raise ConversionError("engine_error", "The page renderer couldn't lay out this file. It may be damaged or too large to render.") from e
     return blocked

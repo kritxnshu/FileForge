@@ -94,7 +94,7 @@ class Ctx:
     def out_path(self, name: str) -> Path:
         p = (self.out_dir / name).resolve()
         if self.out_dir.resolve() not in p.parents:
-            raise ConversionError("internal", "invalid output name")
+            raise ConversionError("internal", "The converter produced a result we couldn't save.")
         p.parent.mkdir(parents=True, exist_ok=True)
         return p
 
@@ -109,7 +109,7 @@ class Ctx:
     def add_output(self, path: Path, fmt: str | None = None, label: str | None = None, name: str | None = None,
                    allow_empty: bool = False) -> Output:
         if not path.exists() or (path.stat().st_size == 0 and not allow_empty):
-            raise ConversionError("engine_error", "The converter produced an empty file.")
+            raise ConversionError("engine_error", "The conversion produced an empty file. The input may be damaged or use features we can't convert.")
         o = Output(path, fmt or self.target, label, name)
         self.outputs.append(o)
         return o
@@ -127,7 +127,7 @@ class Ctx:
             cwd=cwd or self.work_dir,
         )
         if res.timed_out:
-            raise ConversionError("timeout", "The conversion took too long and was stopped.")
+            raise ConversionError("timeout", "The conversion took too long and was stopped. Try a smaller or simpler file.")
         if check and res.returncode != 0:
             raise ConversionError("engine_error", error_message + _tail(res.stderr_tail))
         return res

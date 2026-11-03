@@ -54,7 +54,7 @@ def main(job_dir_arg: str) -> int:
         emit({"t": "progress", "stage": "Converting"})
         op.run(ctx)
         if not ctx.outputs:
-            raise ConversionError("engine_error", "The conversion produced no output.")
+            raise ConversionError("engine_error", "The conversion produced no output. The input may be damaged or use features we can't convert.")
         emit({"t": "progress", "stage": "Finalizing"})
         write_json(job_dir / "result.json", {
             "outputs": [{"path": str(o.path.relative_to(job_dir)), "format": o.format, "label": o.label, "name": o.name,

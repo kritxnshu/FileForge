@@ -29,47 +29,42 @@ export function ClientTool({ opId, source: initialSource, target: initialTarget 
 
 function ToolBody({ caps, op, initialSource, initialTarget }: { caps: Capabilities; op: Operation; initialSource: string; initialTarget: string }) {
   const [source, setSource] = useState(initialSource);
-  const [target, setTarget] = useState(initialTarget);
+  const [pickedTarget, setTarget] = useState(initialTarget);
   const [text, setText] = useState("");
   const [bytes, setBytes] = useState<Uint8Array | undefined>();
   const [fileName, setFileName] = useState<string | undefined>();
   const [values, setValues] = useState<OptionValues>(() => defaultsOf(op.options_schema));
-  const [result, setResult] = useState<ToolResult | null>(null);
-  const [error, setError] = useState<ToolError | null>(null);
+  const [outcome, setOutcome] = useState<{ result: ToolResult | null; error: ToolError | null }>({ result: null, error: null });
   const [copied, setCopied] = useState(false);
   const input = useRef<HTMLTextAreaElement>(null);
   const fileRef = useRef<HTMLInputElement>(null);
 
   const sources = useMemo(() => [...new Set(op.pairs.map((p) => p.source))], [op]);
   const targets = useMemo(() => op.pairs.filter((p) => p.source === source).map((p) => p.target), [op, source]);
-  useEffect(() => {
-    if (!targets.includes(target)) setTarget(targets[0]);
-  }, [targets, target]);
+  const target = targets.includes(pickedTarget) ? pickedTarget : targets[0];
 
   const debouncedText = useDebounced(text, 250);
   useEffect(() => {
     let cancelled = false;
-    if (!debouncedText.trim() && !bytes) {
-      setResult(null);
-      setError(null);
-      return;
-    }
+    if (!debouncedText.trim() && !bytes) return;
     Promise.resolve()
       .then(() => TOOLS[op.id]({ text: debouncedText, bytes, fileName, source, target, options: values }))
       .then((r) => {
         if (cancelled) return;
-        setResult(r);
-        setError(null);
+        setOutcome({ result: r, error: null });
       })
       .catch((e: unknown) => {
         if (cancelled) return;
-        setResult(null);
-        setError(e instanceof ToolError ? e : new ToolError((e as Error).message ?? "Something went wrong."));
+        setOutcome({ result: null, error: e instanceof ToolError ? e : new ToolError((e as Error).message ?? "Something went wrong.") });
       });
     return () => {
       cancelled = true;
     };
   }, [debouncedText, bytes, fileName, source, target, values, op.id]);
+  // with no input there's nothing to show (an earlier result stays out of sight until the next one arrives)
+  const empty = !debouncedText.trim() && !bytes;
+  const result = empty ? null : outcome.result;
+  const error = empty ? null : outcome.error;
 
   const jumpTo = (where: { line: number; column: number }) => {
     const el = input.current;
@@ -168,7 +163,7 @@ function ToolBody({ caps, op, initialSource, initialTarget }: { caps: Capabiliti
               className="dropzone-surface flex min-h-64 flex-col items-center justify-center gap-2 rounded-[var(--radius-control)] border-2 border-dashed border-line-strong p-6 text-muted hover:text-ink">
               <FileUp size={24} aria-hidden="true" />
               <span className="font-medium">Choose a file</span>
-              <span className="text-[0.88rem]">It's read in your browser and never uploaded.</span>
+              <span className="text-[0.88rem]">It&apos;s read in your browser and never uploaded.</span>
             </button>
           ) : bytes ? (
             <div className="flex min-h-64 items-center justify-between rounded-[var(--radius-control)] border border-line bg-surface-2 p-3">

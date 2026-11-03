@@ -27,6 +27,11 @@ from engine.formats import FORMATS  # noqa: E402
 UNSUPPORTED = [
     ("Create RAR archives", "RAR is a proprietary format; RAR files can only be extracted."),
     ("Password cracking / DRM removal", "Out of scope by policy."),
+    ("Background removal (rembg)", "Not shipped (DECISIONS D13): it needs onnxruntime plus a ~170 MB model that the "
+     "no-network sandbox can't download at run time, and each model's weights licence must be reviewed by the operator "
+     "(some, such as BRIA RMBG, are non-commercial). ENABLE_BACKGROUND_REMOVAL is reserved for it."),
+    ("Scanned (image-only) PDF → DOCX / TXT / XLSX", "Text extraction needs a text layer. Run OCR first "
+     "(Experimental, ENABLE_OCR) to add one; the extractors then work on the result."),
 ]
 
 

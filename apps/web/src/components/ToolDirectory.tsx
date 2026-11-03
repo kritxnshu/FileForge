@@ -4,7 +4,7 @@ import { Search } from "lucide-react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { useMemo, useState } from "react";
-import { fmtShort, searchTools, SUPPORT_LABEL, toolEntries } from "@/lib/caps";
+import { fmtShort, sampleAcrossCategories, searchTools, SUPPORT_LABEL, toolEntries } from "@/lib/caps";
 import { useCaps } from "./providers";
 
 export function ToolDirectory({ limit }: { limit?: number }) {
@@ -19,7 +19,7 @@ export function ToolDirectory({ limit }: { limit?: number }) {
   }, [entries, q, cat]);
   if (!caps) return <p className="text-muted">Loading tools…</p>;
   const cats = caps.categories.filter((c) => entries.some((e) => e.category === c.id));
-  const shown = limit && !q && cat === "all" ? results.slice(0, limit) : results;
+  const shown = limit && !q && cat === "all" ? sampleAcrossCategories(results, limit) : results;
 
   return (
     <div data-testid="tool-directory">

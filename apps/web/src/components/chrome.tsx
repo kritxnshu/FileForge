@@ -2,8 +2,8 @@
 
 import Link from "next/link";
 import { Monitor, Moon, Sun } from "lucide-react";
-import { useEffect, useState } from "react";
-import { applyTheme, readTheme, type Theme } from "./providers";
+import { useSyncExternalStore } from "react";
+import { applyTheme, readTheme, subscribeTheme, type Theme } from "./providers";
 
 export function Logo() {
   return (
@@ -25,8 +25,7 @@ const THEMES: { id: Theme; label: string; Icon: typeof Sun }[] = [
 ];
 
 export function ThemeToggle() {
-  const [theme, setTheme] = useState<Theme>("system");
-  useEffect(() => setTheme(readTheme()), []);
+  const theme = useSyncExternalStore<Theme>(subscribeTheme, readTheme, () => "system");
   return (
     <div role="radiogroup" aria-label="Color theme" className="flex rounded-full border border-line bg-surface p-0.5">
       {THEMES.map(({ id, label, Icon }) => (
@@ -37,10 +36,7 @@ export function ThemeToggle() {
           aria-label={`${label} theme`}
           title={`${label} theme`}
           data-testid={`theme-${id}`}
-          onClick={() => {
-            setTheme(id);
-            applyTheme(id);
-          }}
+          onClick={() => applyTheme(id)}
           className={`grid h-8 w-8 place-items-center rounded-full transition-colors duration-150 ${
             theme === id ? "bg-ink text-paper" : "text-muted hover:text-ink"
           }`}

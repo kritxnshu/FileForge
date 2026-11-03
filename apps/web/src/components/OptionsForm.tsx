@@ -8,6 +8,12 @@
 import { ChevronDown } from "lucide-react";
 import { useId, useState } from "react";
 import type { JsonSchema } from "@/lib/api";
+import { PageOrder } from "./PageOrder";
+
+export interface FormContext {
+  /** An uploaded PDF the form is about (enables the page-order widget). */
+  pdfFileId?: string;
+}
 
 export type OptionValues = Record<string, unknown>;
 
@@ -45,7 +51,7 @@ export function cleanOptions(schema: JsonSchema, target: string | null, values: 
   return out;
 }
 
-function Field({ name, schema, value, onChange }: { name: string; schema: JsonSchema; value: unknown; onChange: (v: unknown) => void }) {
+function Field({ name, schema, value, onChange, context }: { name: string; schema: JsonSchema; value: unknown; onChange: (v: unknown) => void; context?: FormContext }) {
   const id = useId();
   const { schema: s, nullable } = unwrap(schema);
   const label = s.title ?? name;
@@ -55,6 +61,14 @@ function Field({ name, schema, value, onChange }: { name: string; schema: JsonSc
     "w-full rounded-[var(--radius-control)] border border-line bg-surface px-3 py-2 text-ink placeholder:text-muted focus-visible:border-accent";
 
   let control: React.ReactNode;
+  if (s["x-widget"] === "page-order" && context?.pdfFileId) {
+    return (
+      <div>
+        <span className="mb-1.5 block font-medium">{label}</span>
+        <PageOrder fileId={context.pdfFileId} value={value as string | undefined} onChange={onChange} />
+      </div>
+    );
+  }
   if (s.type === "boolean") {
     return (
       <div className="flex items-start justify-between gap-4 py-1">
@@ -167,11 +181,12 @@ function Field({ name, schema, value, onChange }: { name: string; schema: JsonSc
   );
 }
 
-export function OptionsForm({ schema, target, values, onChange }: {
+export function OptionsForm({ schema, target, values, onChange, context }: {
   schema: JsonSchema;
   target: string | null;
   values: OptionValues;
   onChange: (v: OptionValues) => void;
+  context?: FormContext;
 }) {
   const [open, setOpen] = useState(false);
   const fields = visibleFields(schema, target);
@@ -181,7 +196,7 @@ export function OptionsForm({ schema, target, values, onChange }: {
   const set = (k: string) => (v: unknown) => onChange({ ...values, [k]: v });
   return (
     <div className="flex flex-col gap-5" data-testid="options-form">
-      {basic.map(([k, s]) => <Field key={k} name={k} schema={s} value={values[k] ?? s.default} onChange={set(k)} />)}
+      {basic.map(([k, s]) => <Field key={k} name={k} schema={s} value={values[k] ?? s.default} onChange={set(k)} context={context} />)}
       {advanced.length > 0 && (
         <div className="border-t border-line pt-3">
           <button type="button" aria-expanded={open} onClick={() => setOpen(!open)}
@@ -191,7 +206,7 @@ export function OptionsForm({ schema, target, values, onChange }: {
           </button>
           {open && (
             <div className="mt-4 flex flex-col gap-5">
-              {advanced.map(([k, s]) => <Field key={k} name={k} schema={s} value={values[k] ?? s.default} onChange={set(k)} />)}
+              {advanced.map(([k, s]) => <Field key={k} name={k} schema={s} value={values[k] ?? s.default} onChange={set(k)} context={context} />)}
             </div>
           )}
         </div>

@@ -241,3 +241,27 @@ export const outputUrl = (jobId: string, n: number, inline = false) =>
   `/api/jobs/${jobId}/files/${n}${inline ? "?inline=1" : ""}`;
 export const uploadRawUrl = (fileId: string) => `/api/uploads/${fileId}/raw?inline=1`;
 export const batchZipUrl = (batchId: string) => `/api/batches/${batchId}/zip`;
+
+export interface PageIndex {
+  pages: number;
+  thumbnails: string[];
+}
+
+export async function uploadPages(fileId: string): Promise<PageIndex> {
+  return parse(await fetch(`/api/uploads/${fileId}/pages`, opts));
+}
+
+export async function outputPages(jobId: string, n: number): Promise<PageIndex> {
+  return parse(await fetch(`/api/jobs/${jobId}/files/${n}/pages`, opts));
+}
+
+export interface TablePreview {
+  sheet: string | null;
+  rows: string[][];
+  truncated: boolean;
+}
+
+/** First rows of a spreadsheet result (XLSX/XLS/ODS), read on the server in a sandboxed job process. */
+export async function outputTable(jobId: string, n: number): Promise<TablePreview> {
+  return parse(await fetch(`/api/jobs/${jobId}/files/${n}/table`, opts));
+}

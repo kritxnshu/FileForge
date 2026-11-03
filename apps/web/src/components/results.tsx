@@ -1,14 +1,17 @@
 "use client";
 
 import { AlertTriangle, CheckCircle2, Download, Info, RotateCcw, X } from "lucide-react";
+import { motion } from "motion/react";
 import { useEffect, useState } from "react";
-import { outputUrl, uploadRawUrl, type Job, type JobOutput } from "@/lib/api";
+import { outputTable, outputUrl, uploadRawUrl, type Job, type JobOutput, type TablePreview } from "@/lib/api";
 import { formatBytes, sizeDelta } from "@/lib/caps";
+import { PdfThumbs } from "./PageOrder";
 
 const BROWSER_IMAGES = new Set(["png", "jpg", "gif", "webp", "avif", "bmp", "ico", "svg"]);
 const AUDIO = new Set(["mp3", "wav", "aac", "flac", "ogg", "m4a", "opus"]);
 const VIDEO = new Set(["mp4", "webm", "mov"]);
 const TEXT = new Set(["json", "xml", "yaml", "toml", "txt", "md", "html", "csv", "tsv"]);
+const SHEETS = new Set(["xlsx", "xls", "ods"]);
 
 export interface RunView {
   jobId: string;
@@ -66,20 +69,7 @@ function TextPreview({ url, format }: { url: string; format: string }) {
   if (text === null) return null;
   if (format === "csv" || format === "tsv") {
     const delim = format === "tsv" ? "\t" : ",";
-    const rows = parseCsv(text, delim).slice(0, 101);
-    return (
-      <div className="max-h-80 overflow-auto rounded-[var(--radius-control)] border border-line">
-        <table className="w-full text-left text-[0.85rem]">
-          <tbody>
-            {rows.map((r, i) => (
-              <tr key={i} className={i === 0 ? "bg-surface-2 font-medium" : "border-t border-line"}>
-                {r.map((c, j) => <td key={j} className="whitespace-nowrap px-3 py-1.5">{c}</td>)}
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-    );
+    return <RowsTable rows={parseCsv(text, delim).slice(0, 101)} />;
   }
   // Rendered as text by React (escaped) — converted HTML/SVG is never rendered on this origin.
   return (
@@ -87,6 +77,42 @@ function TextPreview({ url, format }: { url: string; format: string }) {
       {text.length >= 64_000 ? text.slice(0, 64_000) + "\n…" : text}
     </pre>
   );
+}
+
+/** First row as the header; cells are text (React escapes them). */
+function RowsTable({ rows, caption }: { rows: string[][]; caption?: string }) {
+  return (
+    <div className="max-h-80 overflow-auto rounded-[var(--radius-control)] border border-line" data-testid="table-preview">
+      <table className="w-full text-left text-[0.85rem]">
+        {caption && <caption className="border-b border-line bg-surface px-3 py-1.5 text-left text-muted">{caption}</caption>}
+        <tbody>
+          {rows.map((r, i) => (
+            <tr key={i} className={i === 0 ? "bg-surface-2 font-medium" : "border-t border-line"}>
+              {r.map((c, j) => <td key={j} className="whitespace-nowrap px-3 py-1.5">{c}</td>)}
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  );
+}
+
+function SheetPreview({ jobId, index }: { jobId: string; index: number }) {
+  const key = `${jobId}/${index}`;
+  const [state, setState] = useState<{ key: string; data: TablePreview | null } | null>(null);
+  useEffect(() => {
+    let live = true;
+    outputTable(jobId, index)
+      .then((data) => live && setState({ key, data }))
+      .catch(() => live && setState({ key, data: null }));
+    return () => {
+      live = false;
+    };
+  }, [jobId, index, key]);
+  const data = state?.key === key ? state.data : null;
+  if (!data || !data.rows.length) return null;
+  const caption = `${data.sheet ? `“${data.sheet}”, ` : ""}${data.truncated ? `first ${data.rows.length - 1} rows` : `${data.rows.length - 1} rows`}`;
+  return <RowsTable rows={data.rows} caption={caption} />;
 }
 
 function parseCsv(text: string, d: string): string[][] {
@@ -126,6 +152,8 @@ export function Preview({ run, output }: { run: RunView; output: JobOutput }) {
   if (AUDIO.has(f)) return <audio controls preload="metadata" src={url} className="w-full" />;
   if (VIDEO.has(f)) return <video controls preload="metadata" src={url} className="max-h-80 w-full rounded-[var(--radius-control)] bg-black" />;
   if (TEXT.has(f)) return <TextPreview url={url} format={f} />;
+  if (f === "pdf") return <PdfThumbs jobId={run.jobId} index={output.index} />;
+  if (SHEETS.has(f)) return <SheetPreview jobId={run.jobId} index={output.index} />;
   return null;
 }
 
@@ -159,7 +187,8 @@ export function JobCard({ run, onCancel, onRetry }: { run: RunView; onCancel: ()
   const state = j?.state ?? "queued";
   const title = run.fileNames.length > 1 ? `${run.fileNames.length} files` : run.fileNames[0];
   return (
-    <li className="rounded-[var(--radius-panel)] border border-line bg-surface p-4 sm:p-5" data-testid="job-card" data-state={state}>
+    <motion.li initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}
+      className="rounded-[var(--radius-panel)] border border-line bg-surface p-4 sm:p-5" data-testid="job-card" data-state={state}>
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0">
           <p className="truncate font-medium" title={title}>{title}</p>
@@ -222,6 +251,6 @@ export function JobCard({ run, onCancel, onRetry }: { run: RunView; onCancel: ()
           {j.outputs.length > 50 && <li className="text-muted">…and {j.outputs.length - 50} more in the ZIP.</li>}
         </ul>
       )}
-    </li>
+    </motion.li>
   );
 }

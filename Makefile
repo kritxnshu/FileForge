@@ -1,5 +1,5 @@
 PY := services/api/.venv/bin/python
-.PHONY: setup dev test test-api test-web test-e2e matrix check-matrix fixtures
+.PHONY: setup dev test test-api test-web test-e2e lint matrix check-matrix fixtures
 
 setup:            ## install everything for native development
 	cd services/api && uv sync
@@ -16,7 +16,10 @@ fixtures:
 test-api:         ## converter matrix, negative, security, lifecycle and HTTP tests (records verified.json)
 	$(PY) -m pytest
 
-test-web:         ## client-side tool unit tests (Vitest); results become verified.json evidence
+lint:             ## TypeScript type-check + ESLint for the web app
+	cd apps/web && pnpm exec tsc --noEmit -p . && pnpm exec eslint src
+
+test-web: lint    ## client-side tool unit tests (Vitest); results become verified.json evidence
 	cd apps/web && pnpm exec vitest run
 	$(PY) scripts/merge_vitest_results.py
 

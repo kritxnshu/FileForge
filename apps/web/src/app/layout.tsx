@@ -1,7 +1,8 @@
 import type { Metadata, Viewport } from "next";
 import { Bricolage_Grotesque, Instrument_Sans } from "next/font/google";
+import { headers } from "next/headers";
 import { Footer, Header } from "@/components/chrome";
-import { CapabilitiesProvider, themeBootScript, WorkspaceProvider } from "@/components/providers";
+import { CapabilitiesProvider, MotionProvider, themeBootScript, WorkspaceProvider } from "@/components/providers";
 import { serverCaps } from "@/lib/server";
 import "./globals.css";
 
@@ -25,20 +26,23 @@ export const dynamic = "force-dynamic";
 
 export default async function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   const caps = await serverCaps();
+  const nonce = (await headers()).get("x-nonce") ?? undefined;
   return (
     <html lang="en" className={`${display.variable} ${text.variable}`} suppressHydrationWarning>
       <head>
-        <script dangerouslySetInnerHTML={{ __html: themeBootScript }} />
+        <script nonce={nonce} dangerouslySetInnerHTML={{ __html: themeBootScript }} />
       </head>
       <body className="min-h-screen">
         <CapabilitiesProvider initial={caps}>
-          <WorkspaceProvider>
-            <Header />
-            <main id="main" className="mx-auto w-full max-w-6xl px-4 sm:px-6">
-              {children}
-            </main>
-            <Footer />
-          </WorkspaceProvider>
+          <MotionProvider>
+            <WorkspaceProvider>
+              <Header />
+              <main id="main" className="mx-auto w-full max-w-6xl px-4 sm:px-6">
+                {children}
+              </main>
+              <Footer />
+            </WorkspaceProvider>
+          </MotionProvider>
         </CapabilitiesProvider>
       </body>
     </html>

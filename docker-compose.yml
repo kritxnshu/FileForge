@@ -1,0 +1,128 @@
+# Universal Converter: single-VM deployment.
+#   docker compose up -d --build          → http://localhost:8080
+#   UC_SITE_ADDRESS=convert.example.com docker compose up -d --build   → https with automatic TLS (ports 80/443)
+# See docs/DEPLOYMENT.md (TLS, isolation, scaling workers, upgrading engines) and docs/ENV.md (every variable).
+
+x-api-env: &api-env
+  STORAGE_DIR: /data
+  REDIS_URL: redis://redis:6379/0
+  PUBLIC_BASE_URL: ${PUBLIC_BASE_URL:-http://localhost:8080}
+  TRUSTED_PROXY_HOPS: "1"
+  COOKIE_SECURE: ${COOKIE_SECURE:-true}
+  LOG_LEVEL: ${LOG_LEVEL:-INFO}
+  MAX_FILE_SIZE_MB: ${MAX_FILE_SIZE_MB:-100}
+  MAX_VIDEO_SIZE_MB: ${MAX_VIDEO_SIZE_MB:-500}
+  MAX_BATCH_FILES: ${MAX_BATCH_FILES:-20}
+  MAX_BATCH_TOTAL_MB: ${MAX_BATCH_TOTAL_MB:-1000}
+  MAX_IMAGE_PIXELS: ${MAX_IMAGE_PIXELS:-100000000}
+  ARCHIVE_MAX_ENTRIES: ${ARCHIVE_MAX_ENTRIES:-10000}
+  ARCHIVE_MAX_UNCOMPRESSED_MB: ${ARCHIVE_MAX_UNCOMPRESSED_MB:-2000}
+  ARCHIVE_MAX_RATIO: ${ARCHIVE_MAX_RATIO:-100}
+  JOB_TIMEOUT_FAST_S: ${JOB_TIMEOUT_FAST_S:-60}
+  JOB_TIMEOUT_HEAVY_S: ${JOB_TIMEOUT_HEAVY_S:-900}
+  WORKER_CONCURRENCY_FAST: ${WORKER_CONCURRENCY_FAST:-4}
+  WORKER_CONCURRENCY_HEAVY: ${WORKER_CONCURRENCY_HEAVY:-1}
+  WORKER_SHUTDOWN_GRACE_S: ${WORKER_SHUTDOWN_GRACE_S:-20}
+  FILE_RETENTION_MINUTES: ${FILE_RETENTION_MINUTES:-60}
+  RATE_LIMIT_JOBS_PER_10MIN: ${RATE_LIMIT_JOBS_PER_10MIN:-30}
+  ENABLE_AGPL_ENGINES: ${ENABLE_AGPL_ENGINES:-false}
+  ENABLE_OCR: ${ENABLE_OCR:-false}
+  ENABLE_BACKGROUND_REMOVAL: ${ENABLE_BACKGROUND_REMOVAL:-false}
+  ENABLE_EXPERIMENTAL: ${ENABLE_EXPERIMENTAL:-false}
+
+# Hardening shared by every service that touches uploads.
+x-hardened: &hardened
+  read_only: true
+  tmpfs: ["/tmp:size=512m,mode=1777"]
+  cap_drop: [ALL]
+  security_opt: ["no-new-privileges:true"]
+  restart: unless-stopped
+
+services:
+  # Valkey: the BSD-3-licensed, protocol-compatible fork of Redis (Redis 7.4+ is RSALv2/SSPL, 8.x adds AGPLv3).
+  # Nothing in it needs to survive a restart: no persistence.
+  redis:
+    image: valkey/valkey:8.0-alpine
+    command: ["valkey-server", "--save", "", "--appendonly", "no", "--maxmemory", "256mb", "--maxmemory-policy", "noeviction"]
+    networks: [internal]
+    read_only: true
+    tmpfs: ["/data"]
+    cap_drop: [ALL]
+    security_opt: ["no-new-privileges:true"]
+    restart: unless-stopped
+
+  api:
+    <<: *hardened
+    build: { context: ., dockerfile: services/api/Dockerfile, args: { WITH_OCR: "${WITH_OCR:-false}" } }
+    image: universal-converter-api
+    environment: *api-env
+    volumes: ["jobs:/data"]
+    networks: [internal, edge]
+    depends_on: [redis]
+
+  # Workers have no route out: the `internal` network has no gateway, so converters can't reach the internet
+  # or your LAN even if an engine is tricked into trying. Root filesystem read-only; only the job volume is writable.
+  worker-fast:
+    <<: *hardened
+    image: universal-converter-api
+    command: ["arq", "worker.FastWorker"]
+    stop_grace_period: 30s   # > WORKER_SHUTDOWN_GRACE_S, so running jobs can finish on deploys
+    environment: *api-env
+    volumes: ["jobs:/data"]
+    networks: [internal]
+    depends_on: [redis, api]
+    healthcheck: { disable: true }
+
+  worker-heavy:
+    <<: *hardened
+    image: universal-converter-api
+    command: ["arq", "worker.HeavyWorker"]
+    stop_grace_period: 30s   # > WORKER_SHUTDOWN_GRACE_S, so running jobs can finish on deploys
+    environment: *api-env
+    volumes: ["jobs:/data"]
+    networks: [internal]
+    depends_on: [redis, api]
+    healthcheck: { disable: true }
+    shm_size: 512m   # Chromium (HTML → PDF)
+
+  web:
+    <<: *hardened
+    build: { context: ., dockerfile: apps/web/Dockerfile }
+    image: universal-converter-web
+    tmpfs: ["/tmp:size=64m,mode=1777", "/app/.next/cache:size=128m,mode=1777"]   # Next.js runtime cache
+    environment:
+      INTERNAL_API_URL: http://api:8000
+    networks: [internal, edge]
+    depends_on: [api]
+
+  caddy:
+    image: caddy:2.8-alpine
+    environment:
+      UC_SITE_ADDRESS: ${UC_SITE_ADDRESS:-:8080}
+      UC_API_UPSTREAM: api:8000
+      UC_WEB_UPSTREAM: web:3000
+      UC_MAX_REQUEST_MB: ${UC_MAX_REQUEST_MB:-1100}
+    ports:
+      - "${HTTP_PORT:-8080}:8080"
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./deploy/Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy-data:/data
+      - caddy-config:/config
+    networks: [edge]
+    depends_on: [api, web]
+    cap_drop: [ALL]
+    cap_add: [NET_BIND_SERVICE]
+    security_opt: ["no-new-privileges:true"]
+    restart: unless-stopped
+
+networks:
+  internal:
+    internal: true
+  edge: {}
+
+volumes:
+  jobs: {}
+  caddy-data: {}
+  caddy-config: {}

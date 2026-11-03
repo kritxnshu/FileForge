@@ -14,6 +14,7 @@ import asyncio
 import json
 import logging
 import os
+import re
 import shutil
 import time
 from pathlib import Path
@@ -34,6 +35,19 @@ TIMEOUT_MESSAGES = {
     "fast": "This conversion took longer than {s} seconds and was stopped. Try a smaller file.",
     "heavy": "This conversion took longer than {m} minutes and was stopped. Try a smaller or shorter file.",
 }
+
+
+_EXC_LINE = re.compile(r"^([A-Za-z_][\w.]*(?:Error|Exception|Exit|Interrupt|Warning))\b")
+
+
+def error_class(stderr_tail: str | None) -> str:
+    """The last exception class named in a traceback (e.g. "ValueError"), never its message."""
+    found = "unknown"
+    for line in (stderr_tail or "").splitlines():
+        m = _EXC_LINE.match(line.strip())
+        if m:
+            found = m.group(1)
+    return found
 
 
 def _limits(op: registry.Operation, queue: str) -> sandbox.Limits:
@@ -62,6 +76,30 @@ def _output_names(orig_names: list[str], outputs: list[dict], op: registry.Opera
 
 
 async def run_job(ctx: dict[str, Any], job_id: str) -> str:
+    try:
+        return await _run_job(ctx, job_id)
+    except asyncio.CancelledError:
+        # A user's cancel (arq abort) or the worker shutting down. The sandbox has already killed the engine's
+        # process group; make sure the job doesn't stay "running" forever and nothing is left on disk.
+        await _interrupted(job_id)
+        raise
+
+
+async def _interrupted(job_id: str) -> None:
+    try:
+        key = store.k_job(job_id)
+        j = await store.fetch(key)
+        if j and j.get("state") in ("queued", "running"):
+            await store.update(key, {"state": "failed", "stage": "Failed", "error_code": "interrupted", "finished": time.time(),
+                                     "error": "The server restarted while converting this file. Try again."})
+            await store.publish_job(job_id)
+            await store.redis().srem(store.k_active(j.get("session", "")), job_id)
+        shutil.rmtree(LocalStorage(settings().STORAGE_DIR).job_dir(job_id), ignore_errors=True)
+    except Exception as e:  # never let cleanup mask the cancellation
+        log.warning("job %s: couldn't record interruption (%s)", job_id, type(e).__name__)
+
+
+async def _run_job(ctx: dict[str, Any], job_id: str) -> str:
     s = settings()
     r = store.redis()
     key = store.k_job(job_id)
@@ -165,8 +203,10 @@ async def run_job(ctx: dict[str, Any], job_id: str) -> str:
         else:
             err = {"code": "internal", "message": "The converter crashed on this file. It may be damaged or use unsupported features."}
         outcome.update(state="failed", stage="Failed", error_code=err.get("code", "internal"), error=err.get("message"))
-        if res.stderr_tail and err.get("code") in ("internal", "engine_error"):
-            log.warning("job %s failed (%s): %s", job_id, err.get("code"), res.stderr_tail[-500:].replace("\n", " | "))
+        if err.get("code") in ("internal", "engine_error"):
+            # Only the exception class: engine output and exception messages can quote file contents.
+            log.warning("job %s failed (%s): error_class=%s exit=%s", job_id, err.get("code"),
+                        error_class(res.stderr_tail), res.signal or res.returncode)
 
     if outcome["state"] != "succeeded":
         # failed or cancelled jobs drop partial outputs immediately
@@ -236,6 +276,9 @@ def _worker(queue: str) -> type:
         keep_result = 60
         health_check_interval = 30
         handle_signals = True
+        # On SIGTERM (deploys/restarts) stop taking jobs and let running ones finish for up to this long; any still
+        # running are then cancelled and marked failed with "Try again" (run_job). Keep stop_grace_period above it.
+        job_completion_wait = s.WORKER_SHUTDOWN_GRACE_S
 
     W.__name__ = f"{queue.title()}Worker"
     return W

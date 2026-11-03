@@ -100,11 +100,54 @@ export function toolEntries(caps: Capabilities): ToolEntry[] {
       });
     }
   }
+  // category order as declared by the API (Images first, Utilities last); stable within a category
+  const rank = new Map(caps.categories.map((c, i) => [c.id, i]));
+  return out.sort((a, b) => (rank.get(a.category) ?? 99) - (rank.get(b.category) ?? 99));
+}
+
+/** A cross-section for previews: round-robin across categories, in category order. */
+export function sampleAcrossCategories(entries: ToolEntry[], n: number): ToolEntry[] {
+  const byCat = new Map<string, ToolEntry[]>();
+  for (const e of entries) byCat.set(e.category, [...(byCat.get(e.category) ?? []), e]);
+  const lists = [...byCat.values()];
+  const out: ToolEntry[] = [];
+  for (let i = 0; out.length < n && lists.some((l) => i < l.length); i++) {
+    for (const l of lists) if (i < l.length && out.length < n) out.push(l[i]);
+  }
   return out;
 }
 
 export function findBySlug(caps: Capabilities, slug: string): ToolEntry | undefined {
   return toolEntries(caps).find((e) => e.slug === slug);
+}
+
+/** A format id from a URL token: the id itself or one of its extensions ("jpeg" → "jpg"). */
+export function resolveFormat(caps: Capabilities, token: string): string | null {
+  const t = token.toLowerCase();
+  if (caps.formats[t]) return t;
+  const hit = Object.entries(caps.formats).find(([, f]) => f.exts.includes(t));
+  return hit ? hit[0] : null;
+}
+
+/** For a "<a>-to-<b>" slug that names two known formats but no advertised conversion. */
+export function unsupportedPair(caps: Capabilities, slug: string): { source: string; target: string } | null {
+  const m = slug.toLowerCase().match(/^([a-z0-9]+)-to-([a-z0-9]+)$/);
+  if (!m) return null;
+  const source = resolveFormat(caps, m[1]);
+  const target = resolveFormat(caps, m[2]);
+  if (!source || !target) return null;
+  const served = toolEntries(caps).some((e) => e.kind === "convert" && e.pair.source === source && e.pair.target === target);
+  return served ? null : { source, target };
+}
+
+/** Conversion pages for files of this format (one per target), for "try instead" links. */
+export function conversionsFrom(caps: Capabilities, source: string): ToolEntry[] {
+  const seen = new Set<string>();
+  return toolEntries(caps).filter((e) => {
+    if (e.kind !== "convert" || e.op.runtime !== "server" || e.pair.source !== source || seen.has(e.pair.target)) return false;
+    seen.add(e.pair.target);
+    return true;
+  });
 }
 
 // ---------------------------------------------------------------------------

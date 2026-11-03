@@ -41,7 +41,7 @@ def package(ctx: Ctx) -> None:
     try:
         font.save(str(out))
     except Exception as e:
-        raise ConversionError("engine_error", "This font couldn't be repackaged.") from e
+        raise ConversionError("engine_error", "This font couldn't be converted. It may be damaged or use tables the target format can't hold.") from e
     ctx.notice("Outlines, hinting and metadata are unchanged; only the packaging changed.")
     ctx.add_output(out)
 

@@ -141,6 +141,8 @@ def export(ctx: Ctx) -> None:
     ctx.stage("Reading spreadsheet")
     sheets, missing = read_book(ctx, ctx.input.path, ctx.input.format)
     chosen = _pick(sheets, o)
+    ctx.info["sheets"] = [name for name, _ in sheets]
+    ctx.info["exported"] = [name for name, _ in chosen]
     used: set[str] = set()
     for k, (name, rows) in enumerate(chosen):
         ctx.progress(k, len(chosen), stage=f"Writing sheet {k + 1} of {len(chosen)}", force=True)

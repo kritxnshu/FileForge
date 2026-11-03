@@ -25,7 +25,11 @@ fi
 (cd "$API" && exec "$PY" -m arq worker.FastWorker) >"$LOGS/worker-fast.log" 2>&1 & pids+=($!)
 (cd "$API" && exec "$PY" -m arq worker.HeavyWorker) >"$LOGS/worker-heavy.log" 2>&1 & pids+=($!)
 if [ "$WEB_MODE" = "start" ]; then
-  (cd "$ROOT/apps/web" && exec pnpm start -p 3000 -H 127.0.0.1) >"$LOGS/web.log" 2>&1 & pids+=($!)
+  # The same standalone server the Docker image runs (needs `pnpm build` first).
+  SA="$ROOT/apps/web/.next/standalone"
+  [ -f "$SA/server.js" ] || { echo "Run 'cd apps/web && pnpm build' first (WEB_MODE=start)." >&2; exit 1; }
+  rm -rf "$SA/.next/static" "$SA/public" && cp -R "$ROOT/apps/web/.next/static" "$SA/.next/static" && cp -R "$ROOT/apps/web/public" "$SA/public"
+  (cd "$SA" && PORT=3000 HOSTNAME=127.0.0.1 exec node server.js) >"$LOGS/web.log" 2>&1 & pids+=($!)
 else
   (cd "$ROOT/apps/web" && exec pnpm dev -p 3000 -H 127.0.0.1) >"$LOGS/web.log" 2>&1 & pids+=($!)
 fi

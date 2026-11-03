@@ -409,3 +409,40 @@ def test_pdf_tables(src, dst):
 def test_pdf_tables_none_found():
     r = convert("pdf.to_tables", path("other.pdf"), "xlsx")
     assert not r.ok and r.error["code"] == "no_tables" and "didn't find any tables" in r.error["message"]
+
+
+# ---------------------------------------------------------------------------
+# OCR (Experimental, ENABLE_OCR): needs ocrmypdf + tesseract
+
+def _ocr_missing() -> list[str]:
+    from engine import registry
+
+    return registry.missing_engines(registry.get("pdf.ocr"), "pdf", "pdf")
+
+
+@pytest.mark.verifies("pdf.ocr:pdf->pdf")
+def test_ocr_makes_a_scanned_pdf_searchable():
+    if _ocr_missing():
+        pytest.skip(f"engine missing: {_ocr_missing()}")
+    assert "fox" not in pdf_text(path("scanned.pdf"))[1].lower()  # image only: no text layer before
+    r = convert("pdf.ocr", path("scanned.pdf"), timeout=180)
+    assert r.ok, r.error
+    validate_pdf(r.out, pages=1)
+    text = pdf_text(r.out)[1].lower().replace(" ", "")
+    assert "quickbrownfox" in text and "12345" in text
+
+
+@pytest.mark.verifies("neg:pdf.ocr")
+def test_ocr_refuses_a_pdf_that_already_has_text():
+    if _ocr_missing():
+        pytest.skip(f"engine missing: {_ocr_missing()}")
+    r = convert("pdf.ocr", path("document.pdf"), timeout=180)
+    assert not r.ok and r.error["code"] == "has_text"
+    assert "Re-OCR" in r.error["message"]
+    # with "Re-OCR" on, it runs anyway and the known text survives
+    r = convert("pdf.ocr", path("document.pdf"), options={"force": True}, timeout=180)
+    assert r.ok, r.error
+    assert "quick brown fox" in pdf_text(r.out)[1].lower()
+    # encrypted PDFs get a clear next step
+    r = convert("pdf.ocr", path("encrypted.pdf"), options={"password": "secret"}, timeout=180)
+    assert not r.ok and r.error["code"] == "password_required" and "Unlock PDF" in r.error["message"]

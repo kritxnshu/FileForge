@@ -12,9 +12,9 @@ its engines are installed, and its feature flag (if any) is on.
 |---|---|
 | Full | 617 |
 | Partial | 22 |
-| Experimental | 15 |
-| Untested | 1 |
-| Unsupported | 2 |
+| Experimental | 16 |
+| Untested | 0 |
+| Unsupported | 4 |
 
 ## Images
 
@@ -246,13 +246,13 @@ Known limitations: Text-based PDFs only; scanned PDFs are not supported. Text, h
 
 ### Make PDF searchable (OCR) (`pdf.ocr`)
 
-Recognize text in scanned PDFs and add an invisible, searchable text layer. Runtime: server; queue: heavy, flag `ENABLE_OCR`; engines: ocrmypdf, tesseract; negative test: missing.
+Recognize text in scanned PDFs and add an invisible, searchable text layer. Runtime: server; queue: heavy, flag `ENABLE_OCR`; engines: ocrmypdf, tesseract; negative test: passed.
 
 Known limitations: Accuracy depends on scan quality and language.
 
 | Source | Target | Level | Notes |
 |---|---|---|---|
-| PDF | (same) | Untested | hidden: engine missing: tesseract |
+| PDF | (same) | Experimental |  |
 
 ### PDF to images (`pdf.to_images`)
 
@@ -1174,3 +1174,5 @@ Known limitations: Hinting is dropped; CFF → TrueType approximates curves with
 |---|---|
 | Create RAR archives | RAR is a proprietary format; RAR files can only be extracted. |
 | Password cracking / DRM removal | Out of scope by policy. |
+| Background removal (rembg) | Not shipped (DECISIONS D13): it needs onnxruntime plus a ~170 MB model that the no-network sandbox can't download at run time, and each model's weights licence must be reviewed by the operator (some, such as BRIA RMBG, are non-commercial). ENABLE_BACKGROUND_REMOVAL is reserved for it. |
+| Scanned (image-only) PDF → DOCX / TXT / XLSX | Text extraction needs a text layer. Run OCR first (Experimental, ENABLE_OCR) to add one; the extractors then work on the result. |

@@ -15,6 +15,7 @@ Guarantees for each child:
 from __future__ import annotations
 
 import asyncio
+import functools
 import os
 import platform
 import resource
@@ -72,8 +73,22 @@ def isolation_mode() -> Isolation:
     if IS_MAC and shutil.which("sandbox-exec"):
         return Isolation("seatbelt", "macOS sandbox-exec: no network, writes confined to job dir, home dir unreadable")
     if IS_LINUX and shutil.which("bwrap"):
-        return Isolation("bwrap", "bubblewrap: --unshare-net, read-only root, job dir writable")
+        if _bwrap_usable():
+            return Isolation("bwrap", "bubblewrap: --unshare-net, read-only root, job dir writable")
+        return Isolation("limits-only", "bubblewrap is installed but can't create namespaces here (typical inside a "
+                         "container); relying on the container's isolation plus rlimits + timeouts")
     return Isolation("limits-only", "no bubblewrap/seatbelt available; rlimits + timeouts only")
+
+
+@functools.cache
+def _bwrap_usable() -> bool:
+    """bwrap needs user/network namespaces, which Docker's default seccomp profile usually denies."""
+    try:
+        r = subprocess.run(["bwrap", "--ro-bind", "/", "/", "--dev", "/dev", "--proc", "/proc", "--unshare-net",
+                            "--die-with-parent", "true"], capture_output=True, timeout=10)
+        return r.returncode == 0
+    except (OSError, subprocess.SubprocessError):
+        return False
 
 
 # ---------------------------------------------------------------------------

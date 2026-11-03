@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ClientTool } from "@/components/ClientTool";
+import { RecordRecent } from "@/components/History";
 import { fmtShort, toolEntries } from "@/lib/caps";
 import { serverCaps } from "@/lib/server";
 
@@ -39,6 +40,7 @@ export default async function ToolPage({ params }: Props) {
       <div className="mt-8">
         <ClientTool opId={e.op.id} source={e.pair.source} target={e.pair.target} />
       </div>
+      <RecordRecent slug={e.slug} title={e.kind === "convert" ? `${fmtShort(caps, e.pair.source)} to ${fmtShort(caps, e.pair.target)}` : e.op.label} href={`/tools/${e.slug}`} />
     </div>
   );
 }

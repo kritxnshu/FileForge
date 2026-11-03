@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import type { Capabilities, Operation } from "../api";
-import { formatBytes, searchTools, sizeDelta, toolEntries } from "../caps";
+import { conversionsFrom, formatBytes, resolveFormat, sampleAcrossCategories, searchTools, sizeDelta, toolEntries, unsupportedPair } from "../caps";
 import { cleanOptions, defaultsOf, visibleFields } from "../../components/OptionsForm";
 
 const fmt = (label: string, family: string, exts: string[]) => ({ label, family, exts, mime: "x" });
@@ -48,6 +48,30 @@ describe("tool search", () => {
   });
   it("returns nothing for unrelated words", () => {
     expect(searchTools(entries, "spaceship")).toHaveLength(0);
+  });
+});
+
+describe("directory order and unsupported pairs", () => {
+  const twoCats: Capabilities = { ...caps, categories: [{ id: "images", label: "Images" }, { id: "documents", label: "Documents" }] };
+  it("lists entries in the API's category order", () => {
+    expect(toolEntries(twoCats).map((e) => e.category)).toEqual(["images", "images", "documents", "documents", "documents"]);
+  });
+  it("samples across categories for previews", () => {
+    expect(sampleAcrossCategories(toolEntries(twoCats), 3).map((e) => e.slug)).toEqual(["heic-to-jpg", "docx-to-pdf", "jpg-to-heic"]);
+  });
+  it("resolves formats by id or extension", () => {
+    expect(resolveFormat(caps, "jpeg")).toBe("jpg");
+    expect(resolveFormat(caps, "HEIF")).toBe("heic");
+    expect(resolveFormat(caps, "exe")).toBeNull();
+  });
+  it("recognises a pair of real formats with no conversion", () => {
+    expect(unsupportedPair(caps, "heic-to-docx")).toEqual({ source: "heic", target: "docx" });
+    expect(unsupportedPair(caps, "jpeg-to-heif")).toBeNull(); // served (via aliases)
+    expect(unsupportedPair(caps, "exe-to-pdf")).toBeNull(); // unknown format: a plain 404
+    expect(unsupportedPair(caps, "docx-pdf")).toBeNull();
+  });
+  it("suggests one page per target", () => {
+    expect(conversionsFrom(caps, "jpg").map((e) => e.slug)).toEqual(["jpg-to-heic"]);
   });
 });
 

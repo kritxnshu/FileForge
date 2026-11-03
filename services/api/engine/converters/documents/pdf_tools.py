@@ -45,6 +45,8 @@ class PdfToImagesOptions(PdfPasswordOptions):
     pages: str | None = Field(None, title="Pages", description="Leave empty for all pages, or e.g. 1-3,7.",
                               json_schema_extra=ui(placeholder="All pages"), **RANGE_FIELD)
     quality: int = Field(90, ge=1, le=100, title="Quality", json_schema_extra=ui(widget="slider", targets=("jpg",)))
+    first_n: int | None = Field(None, ge=1, le=10000, title="Only the first N pages",
+                                json_schema_extra=ui(advanced=True, placeholder="All"))
 
 
 def pdf_to_images(ctx: Ctx) -> None:
@@ -54,6 +56,9 @@ def pdf_to_images(ctx: Ctx) -> None:
     doc = open_pdfium(ctx.input.path, o.password)
     n = len(doc)
     idx = parse_ranges(o.pages, n)
+    if o.first_n:
+        idx = idx[: o.first_n]
+    ctx.info["total_pages"] = n
     scale = o.dpi / 72
     width = len(str(n))
     for k, i in enumerate(idx):

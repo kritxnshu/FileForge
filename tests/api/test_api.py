@@ -156,3 +156,57 @@ def test_non_ascii_filename_content_disposition(client):
     cd = client.get(f"/api/jobs/{jid}/files/0").headers["content-disposition"]
     assert "filename*=UTF-8''%D1%84%D0%BE%D1%82%D0%BE%20caf%C3%A9.jpg" in cd
     assert 'filename="' in cd and "\n" not in cd
+
+
+def test_pdf_page_thumbnails_are_sandboxed_and_cached(client, live):
+    f = upload(client, path("document.pdf")).json()["files"][0]
+    r = client.get(f"/api/uploads/{f['id']}/pages")
+    assert r.status_code == 200, r.text
+    body = r.json()
+    assert body["pages"] == 3 and len(body["thumbnails"]) == 3
+    png = client.get(body["thumbnails"][1])
+    assert png.status_code == 200 and png.content[:8] == b"\x89PNG\r\n\x1a\n"
+    cache = Path(live.env["STORAGE_DIR"]) / "uploads" / f["id"] / "thumbs"
+    assert (cache / "pages.json").exists() and not (cache / "job").exists()
+    # another session can't read them; non-PDFs are refused; encrypted PDFs give a clear error
+    with httpx.Client(base_url=live.base) as other:
+        assert other.get(body["thumbnails"][0]).status_code == 404
+    img = upload(client, path("image.png")).json()["files"][0]
+    assert client.get(f"/api/uploads/{img['id']}/pages").status_code == 400
+    enc = upload(client, path("encrypted.pdf")).json()["files"][0]
+    r = client.get(f"/api/uploads/{enc['id']}/pages")
+    assert r.status_code == 422 and "password" in r.json()["error"]["message"]
+
+
+def test_failure_logs_name_the_error_class_never_the_message():
+    """Exception messages and engine stderr can quote file contents, so worker logs keep only the class."""
+    import worker
+
+    tb = 'Traceback (most recent call last):\n  File "/x.py", line 3, in f\nValueError: could not convert \'ACME salary 120000\''
+    assert worker.error_class(tb) == "ValueError"
+    assert worker.error_class("pikepdf._core.PdfError: object 12 0 is broken") == "pikepdf._core.PdfError"
+    assert worker.error_class("[mp3 @ 0x1] Header missing\nConfidential paragraph text") == "unknown"
+    assert worker.error_class(None) == "unknown"
+
+
+def test_spreadsheet_result_table_preview(client, live):
+    f = upload(client, path("data.csv")).json()["files"][0]
+    jid = client.post("/api/jobs", json={"file_ids": [f["id"]], "operation": "sheet.import", "target": "xlsx",
+                                         "options": {}}).json()["jobs"][0]["id"]
+    assert wait_job(client, jid)["state"] == "succeeded"
+    r = client.get(f"/api/jobs/{jid}/files/0/table")
+    assert r.status_code == 200, r.text
+    body = r.json()
+    assert body["rows"][0] == ["Name", "Qty", "Price", "Note"] and len(body["rows"]) == 5
+    assert body["rows"][2][:3] == ["Banana", "12", "0.25"] and body["rows"][4][0] == "Dürüm"
+    assert body["truncated"] is False and body["sheet"]
+    # cached next to the result, rendered in the sandbox (no job dir left behind)
+    cache = Path(live.env["STORAGE_DIR"]) / "jobs" / jid / "previews" / "0"
+    assert (cache / "table.json").exists() and not (cache / "tjob").exists()
+    with httpx.Client(base_url=live.base) as other:
+        assert other.get(f"/api/jobs/{jid}/files/0/table").status_code == 404
+    img = upload(client, path("image.png")).json()["files"][0]
+    jj = client.post("/api/jobs", json={"file_ids": [img["id"]], "operation": "image.convert", "target": "jpg",
+                                        "options": {}}).json()["jobs"][0]["id"]
+    assert wait_job(client, jj)["state"] == "succeeded"
+    assert client.get(f"/api/jobs/{jj}/files/0/table").status_code == 400

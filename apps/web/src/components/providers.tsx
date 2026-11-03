@@ -1,5 +1,6 @@
 "use client";
 
+import { MotionConfig } from "motion/react";
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import { ApiError, fetchCapabilities, uploadFiles, type Capabilities, type UploadedFile } from "@/lib/api";
 
@@ -56,6 +57,11 @@ interface WorkspaceState {
 const WsCtx = createContext<WorkspaceState>({ items: [], addFiles: () => {}, remove: () => {}, clear: () => {} });
 
 let seq = 0;
+
+/** Restrained motion app-wide (≤200 ms); honours the OS "reduce motion" setting. */
+export function MotionProvider({ children }: { children: ReactNode }) {
+  return <MotionConfig reducedMotion="user" transition={{ duration: 0.2, ease: "easeOut" }}>{children}</MotionConfig>;
+}
 
 export function WorkspaceProvider({ children }: { children: ReactNode }) {
   const [items, setItems] = useState<Item[]>([]);
@@ -117,25 +123,48 @@ export const useWorkspace = () => useContext(WsCtx);
 
 export type Theme = "system" | "light" | "dark";
 
-export function applyTheme(t: Theme) {
+let chosen: Theme | null = null; // fallback when storage is unavailable (private windows)
+
+function setRootTheme(t: Theme) {
   const root = document.documentElement;
   if (t === "system") root.removeAttribute("data-theme");
   else root.setAttribute("data-theme", t);
+}
+
+export function applyTheme(t: Theme) {
+  chosen = t;
+  setRootTheme(t);
   try {
     localStorage.setItem("uc-theme", t);
   } catch {
     /* storage unavailable */
   }
+  window.dispatchEvent(new Event("uc-theme"));
 }
 
 export function readTheme(): Theme {
   try {
     const t = localStorage.getItem("uc-theme");
-    if (t === "light" || t === "dark") return t;
+    if (t === "light" || t === "dark" || t === "system") return t;
   } catch {
     /* storage unavailable */
   }
-  return "system";
+  return chosen ?? "system";
+}
+
+/** For useSyncExternalStore: changes from this tab, and from other tabs (which are applied here too). */
+export function subscribeTheme(onChange: () => void): () => void {
+  const onStorage = (e: StorageEvent) => {
+    if (e.key !== "uc-theme") return;
+    setRootTheme(readTheme());
+    onChange();
+  };
+  window.addEventListener("uc-theme", onChange);
+  window.addEventListener("storage", onStorage);
+  return () => {
+    window.removeEventListener("uc-theme", onChange);
+    window.removeEventListener("storage", onStorage);
+  };
 }
 
 /** Inline, render-blocking: sets data-theme before first paint so there's no flash. */
