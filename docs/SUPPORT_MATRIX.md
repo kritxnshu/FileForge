@@ -10,7 +10,7 @@ its engines are installed, and its feature flag (if any) is on.
 
 | Level | Pairs |
 |---|---|
-| Full | 161 |
+| Full | 209 |
 | Partial | 7 |
 | Experimental | 13 |
 | Untested | 1 |
@@ -436,6 +436,126 @@ Print every sheet of a spreadsheet (or a CSV) to PDF with LibreOffice. Runtime: 
 | Excel 97-2003 (XLS) | PDF | Full |  |
 | OpenDocument Spreadsheet | PDF | Full |  |
 | CSV | PDF | Full |  |
+
+## Developer Tools
+
+### Convert data (paste) (`dev.data_convert`)
+
+Convert pasted JSON, XML, YAML, TOML, CSV or TSV in your browser. Runtime: client; queue: fast; engines: none; negative test: passed.
+
+| Source | Target | Level | Notes |
+|---|---|---|---|
+| JSON | XML | Full | XML needs one root element; other shapes are wrapped in <root>. |
+| JSON | YAML | Full |  |
+| JSON | TOML | Full |  |
+| XML | JSON | Full |  |
+| XML | YAML | Full |  |
+| XML | TOML | Full |  |
+| YAML | JSON | Full |  |
+| YAML | XML | Full | XML needs one root element; other shapes are wrapped in <root>. |
+| YAML | TOML | Full |  |
+| TOML | JSON | Full |  |
+| TOML | XML | Full | XML needs one root element; other shapes are wrapped in <root>. |
+| TOML | YAML | Full |  |
+| CSV | JSON | Full |  |
+| TSV | JSON | Full |  |
+| JSON | CSV | Full |  |
+| JSON | TSV | Full |  |
+
+### HTML ↔ Markdown (paste) (`dev.html_markdown`)
+
+Turn pasted HTML into Markdown, or Markdown into HTML, in your browser. Runtime: client; queue: fast; engines: none; negative test: passed.
+
+| Source | Target | Level | Notes |
+|---|---|---|---|
+| HTML | Markdown | Full |  |
+| Markdown | HTML | Full |  |
+
+### JSON formatter & validator (`dev.json_format`)
+
+Pretty-print, minify or validate JSON. Errors point to the exact line and column. Runtime: client; queue: fast; engines: none; negative test: passed.
+
+| Source | Target | Level | Notes |
+|---|---|---|---|
+| JSON | (same) | Full |  |
+
+### Code beautifier & minifier (`dev.code_format`)
+
+Beautify or minify CSS, JavaScript, SQL and XML in your browser. Runtime: client; queue: fast; engines: none; negative test: passed.
+
+| Source | Target | Level | Notes |
+|---|---|---|---|
+| CSS | (same) | Full |  |
+| JavaScript | (same) | Full |  |
+| SQL | (same) | Full |  |
+| XML | (same) | Full |  |
+
+### CSV to SQL (paste) (`dev.csv_to_sql`)
+
+Generate INSERT statements from pasted CSV, with quoting for your database. Runtime: client; queue: fast; engines: none; negative test: passed.
+
+| Source | Target | Level | Notes |
+|---|---|---|---|
+| CSV | SQL | Full |  |
+| TSV | SQL | Full |  |
+
+### Base64 encode / decode (`dev.base64`)
+
+Encode text or files to Base64, or decode Base64 back to text or a file. Runtime: client; queue: fast; engines: none; negative test: passed.
+
+| Source | Target | Level | Notes |
+|---|---|---|---|
+| Plain text | (same) | Full |  |
+
+### URL encode / decode (`dev.url`)
+
+Percent-encode text for URLs, or decode it back. Runtime: client; queue: fast; engines: none; negative test: passed.
+
+| Source | Target | Level | Notes |
+|---|---|---|---|
+| Plain text | (same) | Full |  |
+
+### Unix timestamp converter (`dev.timestamp`)
+
+Convert Unix timestamps (seconds or milliseconds) to ISO 8601 and local time, and back. Runtime: client; queue: fast; engines: none; negative test: passed.
+
+| Source | Target | Level | Notes |
+|---|---|---|---|
+| Plain text | (same) | Full |  |
+
+### Convert data file (`data.convert`)
+
+Convert structured data files between JSON, XML, YAML, TOML, CSV and TSV. Runtime: server; queue: fast; engines: none; negative test: passed.
+
+| Source | Target | Level | Notes |
+|---|---|---|---|
+| JSON | XML | Full | XML needs one root element; other shapes are wrapped in <root>. |
+| JSON | YAML | Full |  |
+| JSON | TOML | Full | TOML has no null; empty values are dropped. |
+| XML | JSON | Full |  |
+| XML | YAML | Full |  |
+| XML | TOML | Full | TOML has no null; empty values are dropped. |
+| YAML | JSON | Full |  |
+| YAML | XML | Full | XML needs one root element; other shapes are wrapped in <root>. |
+| YAML | TOML | Full | TOML has no null; empty values are dropped. |
+| TOML | JSON | Full |  |
+| TOML | XML | Full | XML needs one root element; other shapes are wrapped in <root>. |
+| TOML | YAML | Full |  |
+| CSV | JSON | Full |  |
+| TSV | JSON | Full |  |
+| JSON | CSV | Full | JSON must be an array of objects; nested objects become dotted columns. |
+| JSON | TSV | Full | JSON must be an array of objects; nested objects become dotted columns. |
+| CSV | YAML | Full |  |
+| TSV | YAML | Full |  |
+
+### CSV to SQL INSERT (`data.csv_to_sql`)
+
+Generate CREATE TABLE and INSERT statements from a CSV file, with correct quoting for your database. Runtime: server; queue: fast; engines: none; negative test: passed.
+
+| Source | Target | Level | Notes |
+|---|---|---|---|
+| CSV | SQL | Full |  |
+| TSV | SQL | Full |  |
 
 ## Unsupported
 

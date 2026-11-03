@@ -131,7 +131,7 @@ function Field({ name, schema, value, onChange }: { name: string; schema: JsonSc
     } else {
       control = (
         <div className="flex items-center gap-2">
-          <input id={id} type="number" aria-describedby={helpId} className={base} min={s.minimum ?? s.exclusiveMinimum} max={s.maximum} step={step}
+          <input id={id} type="number" aria-describedby={helpId} className={`${base} max-w-40`} min={s.minimum ?? s.exclusiveMinimum} max={s.maximum} step={step}
             placeholder={s["x-placeholder"] ?? (nullable ? "Auto" : undefined)}
             value={value === null || value === undefined ? "" : String(value)}
             onChange={(e) => onChange(e.target.value === "" ? (nullable ? null : s.default) : Number(e.target.value))} />

@@ -221,7 +221,7 @@ _XML_ROOT = re.compile(r"<(?!\?|!)([A-Za-z_][\w:.-]*)")
 
 def _text_kind(text: str, ext_fmt: str | None) -> str:
     stripped = text.lstrip("﻿ \t\r\n")
-    if ext_fmt in ("md", "txt") and not stripped.startswith(("{", "[", "<")):
+    if ext_fmt in ("md", "txt", "sql", "css", "js") and not stripped.startswith(("{", "[", "<")):
         return ext_fmt
     if stripped[:1] in ("{", "["):
         try:
@@ -281,7 +281,7 @@ def _text_kind(text: str, ext_fmt: str | None) -> str:
                 return "yaml"
         except yaml.YAMLError:
             pass
-    if ext_fmt in ("md", "txt", "html", "rtf"):
+    if ext_fmt in ("md", "txt", "html", "rtf", "sql", "css", "js"):
         return ext_fmt
     return "txt"
 

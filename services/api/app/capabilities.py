@@ -28,7 +28,7 @@ def build() -> tuple[dict[str, Any], dict[tuple[str, str, str], registry.PairInf
     infos = registry.pair_infos()
     index: dict[tuple[str, str, str], registry.PairInfo] = {}
     ops_out = []
-    seen_slugs: set[str] = set()
+    seen_slugs: set[tuple[str, str]] = set()
     for op in registry.all_ops():
         pairs = []
         for p in (i for i in infos if i.op is op):
@@ -36,8 +36,8 @@ def build() -> tuple[dict[str, Any], dict[tuple[str, str, str], registry.PairInf
                 continue
             index[(op.id, p.src, p.dst)] = p
             slug = _slug(op, p.src, p.dst)
-            primary = slug not in seen_slugs
-            seen_slugs.add(slug)
+            primary = (op.runtime, slug) not in seen_slugs  # /convert/<slug> (server) and /tools/<slug> (client)
+            seen_slugs.add((op.runtime, slug))
             pairs.append({
                 "source": p.src,
                 "target": p.dst,

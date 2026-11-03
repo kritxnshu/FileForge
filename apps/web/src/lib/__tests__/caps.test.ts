@@ -7,7 +7,7 @@ const fmt = (label: string, family: string, exts: string[]) => ({ label, family,
 const op = (id: string, pairs: [string, string][], extra: Partial<Operation> = {}): Operation => ({
   id, category: "documents", label: id, description: "", cardinality: "one_to_one", runtime: "server",
   resource_class: "fast", support: "full", limitations: [], options_schema: { type: "object", properties: {} },
-  min_inputs: 1, max_inputs: null, keywords: [],
+  min_inputs: 1, max_inputs: null, keywords: [], combine_only: false,
   pairs: pairs.map(([s, t]) => ({ source: s, target: t, support: "full", limitations: [], slug: `${s}-to-${t}`, primary: true })),
   ...extra,
 });

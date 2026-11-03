@@ -16,8 +16,9 @@ fixtures:
 test-api:         ## converter matrix, negative, security, lifecycle and HTTP tests (records verified.json)
 	$(PY) -m pytest
 
-test-web:         ## client-side tool unit tests (Vitest)
+test-web:         ## client-side tool unit tests (Vitest); results become verified.json evidence
 	cd apps/web && pnpm exec vitest run
+	$(PY) scripts/merge_vitest_results.py
 
 test-e2e:         ## Playwright end-to-end tests (starts the stack if it isn't running)
 	cd tests/e2e && pnpm exec playwright test

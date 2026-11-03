@@ -58,6 +58,9 @@ FORMATS: dict[str, Format] = {
         _F("xml", "XML", "data", ("xml",), "application/xml"),
         _F("yaml", "YAML", "data", ("yaml", "yml"), "application/yaml"),
         _F("toml", "TOML", "data", ("toml",), "application/toml"),
+        _F("sql", "SQL", "data", ("sql",), "application/sql"),
+        _F("css", "CSS", "text", ("css",), "text/css"),
+        _F("js", "JavaScript", "text", ("js", "mjs", "cjs"), "text/javascript"),
         # presentations
         _F("pptx", "PowerPoint (PPTX)", "presentation", ("pptx",), "application/vnd.openxmlformats-officedocument.presentationml.presentation"),
         _F("ppt", "PowerPoint 97-2003 (PPT)", "presentation", ("ppt",), "application/vnd.ms-powerpoint"),
