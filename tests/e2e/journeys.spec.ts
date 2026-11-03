@@ -124,6 +124,8 @@ test("reorder pages using thumbnails (buttons and drag and drop)", async ({ page
 
   await page.getByTestId("convert").click();
   await expect(page.getByTestId("job-card")).toHaveAttribute("data-state", "succeeded", { timeout: 60_000 });
+  await expect(page.getByTestId("job-card")).toContainText("Reorder pages");
+  await expect(page.getByTestId("job-card")).not.toContainText("to Reorder pages"); // a tool, not a target format
   const { bytes } = await readDownload(page, () => page.getByTestId("download").first().click());
   const pages = pdfPageTexts(bytes, info.outputPath());
   expect(pages).toHaveLength(3);
@@ -243,7 +245,7 @@ test("history keeps metadata only, marks expired results and can be cleared", as
   await expect(history.getByRole("link", { name: "PNG to JPG" })).toHaveAttribute("href", "/convert/png-to-jpg");
   const stored = await page.evaluate(() => localStorage.getItem("uc-history") ?? "");
   const [entry] = JSON.parse(stored);
-  expect(Object.keys(entry).sort()).toEqual(["at", "expiresAt", "fileName", "jobId", "label", "operation", "outputs", "source", "target"]);
+  expect(Object.keys(entry).sort()).toEqual(["at", "expiresAt", "fileName", "jobId", "label", "operation", "outputs", "source", "target", "tool"]);
   expect(stored.length).toBeLessThan(1000); // names and formats, never file contents
 
   // an older conversion whose files have been deleted shows as expired, with no download link

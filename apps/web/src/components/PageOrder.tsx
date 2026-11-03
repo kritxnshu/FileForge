@@ -86,7 +86,7 @@ export function PdfThumbs({ jobId, index }: { jobId: string; index: number }) {
   const { data } = usePages(() => outputPages(jobId, index), `${jobId}/${index}`);
   if (!data) return null;
   return (
-    <div className="flex gap-2 overflow-x-auto rounded-[var(--radius-control)] border border-line bg-surface-2 p-2" data-testid="pdf-thumbs">
+    <div className="flex w-fit max-w-full gap-2 overflow-x-auto rounded-[var(--radius-control)] border border-line bg-surface-2 p-2" data-testid="pdf-thumbs">
       {data.thumbnails.slice(0, 12).map((u, i) => (
         // eslint-disable-next-line @next/next/no-img-element
         <img key={u} src={u} alt={`Page ${i + 1}`} className="h-28 w-auto rounded bg-white shadow-sm" />

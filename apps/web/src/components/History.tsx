@@ -65,7 +65,7 @@ export function HistoryPanel() {
             <li key={h.jobId} className="flex flex-wrap items-center justify-between gap-2 py-2.5" data-expired={expired}>
               <span className="min-w-0">
                 <span className="block truncate font-medium" title={h.fileName}>{h.fileName}</span>
-                <span className="text-[0.88rem] text-muted">to {h.label}, {ago(h.at)}</span>
+                <span className="text-[0.88rem] text-muted">{h.tool ? h.label : `to ${h.label}`}, {ago(h.at)}</span>
               </span>
               {expired ? (
                 <span className="rounded-full bg-surface-2 px-2.5 py-0.5 text-[0.82rem] text-muted">Expired</span>

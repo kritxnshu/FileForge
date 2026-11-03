@@ -1252,169 +1252,169 @@
   },
   "dev.base64:txt->txt": {
    "status": "passed",
-   "at": "2026-11-03T12:41:03+00:00",
+   "at": "2026-11-03T13:18:20+00:00",
    "tests": 1,
    "by": "vitest"
   },
   "dev.code_format:css->css": {
    "status": "passed",
-   "at": "2026-11-03T12:41:03+00:00",
+   "at": "2026-11-03T13:18:20+00:00",
    "tests": 1,
    "by": "vitest"
   },
   "dev.code_format:js->js": {
    "status": "passed",
-   "at": "2026-11-03T12:41:03+00:00",
+   "at": "2026-11-03T13:18:20+00:00",
    "tests": 1,
    "by": "vitest"
   },
   "dev.code_format:sql->sql": {
    "status": "passed",
-   "at": "2026-11-03T12:41:03+00:00",
+   "at": "2026-11-03T13:18:20+00:00",
    "tests": 1,
    "by": "vitest"
   },
   "dev.code_format:xml->xml": {
    "status": "passed",
-   "at": "2026-11-03T12:41:03+00:00",
+   "at": "2026-11-03T13:18:20+00:00",
    "tests": 1,
    "by": "vitest"
   },
   "dev.csv_to_sql:csv->sql": {
    "status": "passed",
-   "at": "2026-11-03T12:41:03+00:00",
+   "at": "2026-11-03T13:18:20+00:00",
    "tests": 1,
    "by": "vitest"
   },
   "dev.csv_to_sql:tsv->sql": {
    "status": "passed",
-   "at": "2026-11-03T12:41:03+00:00",
+   "at": "2026-11-03T13:18:20+00:00",
    "tests": 1,
    "by": "vitest"
   },
   "dev.data_convert:csv->json": {
    "status": "passed",
-   "at": "2026-11-03T12:41:03+00:00",
+   "at": "2026-11-03T13:18:20+00:00",
    "tests": 1,
    "by": "vitest"
   },
   "dev.data_convert:json->csv": {
    "status": "passed",
-   "at": "2026-11-03T12:41:03+00:00",
+   "at": "2026-11-03T13:18:20+00:00",
    "tests": 1,
    "by": "vitest"
   },
   "dev.data_convert:json->toml": {
    "status": "passed",
-   "at": "2026-11-03T12:41:03+00:00",
+   "at": "2026-11-03T13:18:20+00:00",
    "tests": 1,
    "by": "vitest"
   },
   "dev.data_convert:json->tsv": {
    "status": "passed",
-   "at": "2026-11-03T12:41:03+00:00",
+   "at": "2026-11-03T13:18:20+00:00",
    "tests": 1,
    "by": "vitest"
   },
   "dev.data_convert:json->xml": {
    "status": "passed",
-   "at": "2026-11-03T12:41:03+00:00",
+   "at": "2026-11-03T13:18:20+00:00",
    "tests": 2,
    "by": "vitest"
   },
   "dev.data_convert:json->yaml": {
    "status": "passed",
-   "at": "2026-11-03T12:41:03+00:00",
+   "at": "2026-11-03T13:18:20+00:00",
    "tests": 1,
    "by": "vitest"
   },
   "dev.data_convert:toml->json": {
    "status": "passed",
-   "at": "2026-11-03T12:41:03+00:00",
+   "at": "2026-11-03T13:18:20+00:00",
    "tests": 1,
    "by": "vitest"
   },
   "dev.data_convert:toml->xml": {
    "status": "passed",
-   "at": "2026-11-03T12:41:03+00:00",
+   "at": "2026-11-03T13:18:20+00:00",
    "tests": 1,
    "by": "vitest"
   },
   "dev.data_convert:toml->yaml": {
    "status": "passed",
-   "at": "2026-11-03T12:41:03+00:00",
+   "at": "2026-11-03T13:18:20+00:00",
    "tests": 1,
    "by": "vitest"
   },
   "dev.data_convert:tsv->json": {
    "status": "passed",
-   "at": "2026-11-03T12:41:03+00:00",
+   "at": "2026-11-03T13:18:20+00:00",
    "tests": 1,
    "by": "vitest"
   },
   "dev.data_convert:xml->json": {
    "status": "passed",
-   "at": "2026-11-03T12:41:03+00:00",
+   "at": "2026-11-03T13:18:20+00:00",
    "tests": 2,
    "by": "vitest"
   },
   "dev.data_convert:xml->toml": {
    "status": "passed",
-   "at": "2026-11-03T12:41:03+00:00",
+   "at": "2026-11-03T13:18:20+00:00",
    "tests": 1,
    "by": "vitest"
   },
   "dev.data_convert:xml->yaml": {
    "status": "passed",
-   "at": "2026-11-03T12:41:03+00:00",
+   "at": "2026-11-03T13:18:20+00:00",
    "tests": 1,
    "by": "vitest"
   },
   "dev.data_convert:yaml->json": {
    "status": "passed",
-   "at": "2026-11-03T12:41:03+00:00",
+   "at": "2026-11-03T13:18:20+00:00",
    "tests": 1,
    "by": "vitest"
   },
   "dev.data_convert:yaml->toml": {
    "status": "passed",
-   "at": "2026-11-03T12:41:03+00:00",
+   "at": "2026-11-03T13:18:20+00:00",
    "tests": 1,
    "by": "vitest"
   },
   "dev.data_convert:yaml->xml": {
    "status": "passed",
-   "at": "2026-11-03T12:41:03+00:00",
+   "at": "2026-11-03T13:18:20+00:00",
    "tests": 1,
    "by": "vitest"
   },
   "dev.html_markdown:html->md": {
    "status": "passed",
-   "at": "2026-11-03T12:41:03+00:00",
+   "at": "2026-11-03T13:18:20+00:00",
    "tests": 1,
    "by": "vitest"
   },
   "dev.html_markdown:md->html": {
    "status": "passed",
-   "at": "2026-11-03T12:41:03+00:00",
+   "at": "2026-11-03T13:18:20+00:00",
    "tests": 1,
    "by": "vitest"
   },
   "dev.json_format:json->json": {
    "status": "passed",
-   "at": "2026-11-03T12:41:03+00:00",
+   "at": "2026-11-03T13:18:20+00:00",
    "tests": 1,
    "by": "vitest"
   },
   "dev.timestamp:txt->txt": {
    "status": "passed",
-   "at": "2026-11-03T12:41:03+00:00",
+   "at": "2026-11-03T13:18:20+00:00",
    "tests": 1,
    "by": "vitest"
   },
   "dev.url:txt->txt": {
    "status": "passed",
-   "at": "2026-11-03T12:41:03+00:00",
+   "at": "2026-11-03T13:18:20+00:00",
    "tests": 1,
    "by": "vitest"
   },
@@ -2155,49 +2155,49 @@
   },
   "neg:dev.base64": {
    "status": "passed",
-   "at": "2026-11-03T12:41:03+00:00",
+   "at": "2026-11-03T13:18:20+00:00",
    "tests": 1,
    "by": "vitest"
   },
   "neg:dev.code_format": {
    "status": "passed",
-   "at": "2026-11-03T12:41:03+00:00",
+   "at": "2026-11-03T13:18:20+00:00",
    "tests": 1,
    "by": "vitest"
   },
   "neg:dev.csv_to_sql": {
    "status": "passed",
-   "at": "2026-11-03T12:41:03+00:00",
+   "at": "2026-11-03T13:18:20+00:00",
    "tests": 1,
    "by": "vitest"
   },
   "neg:dev.data_convert": {
    "status": "passed",
-   "at": "2026-11-03T12:41:03+00:00",
+   "at": "2026-11-03T13:18:20+00:00",
    "tests": 1,
    "by": "vitest"
   },
   "neg:dev.html_markdown": {
    "status": "passed",
-   "at": "2026-11-03T12:41:03+00:00",
+   "at": "2026-11-03T13:18:20+00:00",
    "tests": 1,
    "by": "vitest"
   },
   "neg:dev.json_format": {
    "status": "passed",
-   "at": "2026-11-03T12:41:03+00:00",
+   "at": "2026-11-03T13:18:20+00:00",
    "tests": 1,
    "by": "vitest"
   },
   "neg:dev.timestamp": {
    "status": "passed",
-   "at": "2026-11-03T12:41:03+00:00",
+   "at": "2026-11-03T13:18:20+00:00",
    "tests": 1,
    "by": "vitest"
   },
   "neg:dev.url": {
    "status": "passed",
-   "at": "2026-11-03T12:41:03+00:00",
+   "at": "2026-11-03T13:18:20+00:00",
    "tests": 1,
    "by": "vitest"
   },
@@ -2388,31 +2388,31 @@
   },
   "neg:util.bytes": {
    "status": "passed",
-   "at": "2026-11-03T12:41:03+00:00",
+   "at": "2026-11-03T13:18:20+00:00",
    "tests": 1,
    "by": "vitest"
   },
   "neg:util.color": {
    "status": "passed",
-   "at": "2026-11-03T12:41:03+00:00",
+   "at": "2026-11-03T13:18:20+00:00",
    "tests": 1,
    "by": "vitest"
   },
   "neg:util.image_base64": {
    "status": "passed",
-   "at": "2026-11-03T12:41:03+00:00",
+   "at": "2026-11-03T13:18:20+00:00",
    "tests": 1,
    "by": "vitest"
   },
   "neg:util.qr": {
    "status": "passed",
-   "at": "2026-11-03T12:41:03+00:00",
+   "at": "2026-11-03T13:18:20+00:00",
    "tests": 1,
    "by": "vitest"
   },
   "neg:util.units": {
    "status": "passed",
-   "at": "2026-11-03T12:41:03+00:00",
+   "at": "2026-11-03T13:18:20+00:00",
    "tests": 1,
    "by": "vitest"
   },
@@ -2848,79 +2848,79 @@
   },
   "util.bytes:txt->txt": {
    "status": "passed",
-   "at": "2026-11-03T12:41:03+00:00",
+   "at": "2026-11-03T13:18:20+00:00",
    "tests": 1,
    "by": "vitest"
   },
   "util.color:txt->txt": {
    "status": "passed",
-   "at": "2026-11-03T12:41:03+00:00",
+   "at": "2026-11-03T13:18:20+00:00",
    "tests": 2,
    "by": "vitest"
   },
   "util.image_base64:avif->txt": {
    "status": "passed",
-   "at": "2026-11-03T12:41:03+00:00",
+   "at": "2026-11-03T13:18:20+00:00",
    "tests": 1,
    "by": "vitest"
   },
   "util.image_base64:bmp->txt": {
    "status": "passed",
-   "at": "2026-11-03T12:41:03+00:00",
+   "at": "2026-11-03T13:18:20+00:00",
    "tests": 1,
    "by": "vitest"
   },
   "util.image_base64:gif->txt": {
    "status": "passed",
-   "at": "2026-11-03T12:41:03+00:00",
+   "at": "2026-11-03T13:18:20+00:00",
    "tests": 1,
    "by": "vitest"
   },
   "util.image_base64:ico->txt": {
    "status": "passed",
-   "at": "2026-11-03T12:41:03+00:00",
+   "at": "2026-11-03T13:18:20+00:00",
    "tests": 1,
    "by": "vitest"
   },
   "util.image_base64:jpg->txt": {
    "status": "passed",
-   "at": "2026-11-03T12:41:03+00:00",
+   "at": "2026-11-03T13:18:20+00:00",
    "tests": 1,
    "by": "vitest"
   },
   "util.image_base64:png->txt": {
    "status": "passed",
-   "at": "2026-11-03T12:41:03+00:00",
+   "at": "2026-11-03T13:18:20+00:00",
    "tests": 2,
    "by": "vitest"
   },
   "util.image_base64:svg->txt": {
    "status": "passed",
-   "at": "2026-11-03T12:41:03+00:00",
+   "at": "2026-11-03T13:18:20+00:00",
    "tests": 1,
    "by": "vitest"
   },
   "util.image_base64:webp->txt": {
    "status": "passed",
-   "at": "2026-11-03T12:41:03+00:00",
+   "at": "2026-11-03T13:18:20+00:00",
    "tests": 1,
    "by": "vitest"
   },
   "util.qr:txt->png": {
    "status": "passed",
-   "at": "2026-11-03T12:41:03+00:00",
+   "at": "2026-11-03T13:18:20+00:00",
    "tests": 1,
    "by": "vitest"
   },
   "util.qr:txt->svg": {
    "status": "passed",
-   "at": "2026-11-03T12:41:03+00:00",
+   "at": "2026-11-03T13:18:20+00:00",
    "tests": 1,
    "by": "vitest"
   },
   "util.units:txt->txt": {
    "status": "passed",
-   "at": "2026-11-03T12:41:03+00:00",
+   "at": "2026-11-03T13:18:20+00:00",
    "tests": 1,
    "by": "vitest"
   },

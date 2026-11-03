@@ -19,6 +19,8 @@ export interface RunView {
   sourceFormat: string;
   sourceFileId: string | null;
   targetLabel: string;
+  /** A tool (compress, reorder pages…) rather than a format conversion: label it "Reorder pages", not "to …". */
+  transform?: boolean;
   job: Job | null;
 }
 
@@ -192,7 +194,7 @@ export function JobCard({ run, onCancel, onRetry }: { run: RunView; onCancel: ()
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0">
           <p className="truncate font-medium" title={title}>{title}</p>
-          <p className="text-[0.9rem] text-muted">to {run.targetLabel}</p>
+          <p className="text-[0.9rem] text-muted">{run.transform ? run.targetLabel : `to ${run.targetLabel}`}</p>
         </div>
         {(state === "queued" || state === "running") && (
           <button onClick={onCancel} className="flex items-center gap-1 rounded-md px-2 py-1 text-[0.9rem] text-muted hover:text-ink">

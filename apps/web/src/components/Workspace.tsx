@@ -212,7 +212,7 @@ export function Workspace({ preset }: { preset?: Preset }) {
         addHistory({
           jobId: r.jobId, at: Date.now(), fileName: r.fileNames[0], operation: r.opId,
           label: r.targetLabel, source: r.sourceFormat, target: r.target, outputs: r.job.outputs.length,
-          expiresAt: r.job.expires_at,
+          expiresAt: r.job.expires_at, tool: r.transform,
         });
       }
     }
@@ -244,6 +244,7 @@ export function Workspace({ preset }: { preset?: Preset }) {
             target: choice.pair.target, options, sourceFormat: files[0].server!.format!,
             sourceFileId: files.length === 1 ? files[0].server!.id : null,
             targetLabel: choice.op.cardinality === "transform" ? choice.op.label : toolTitle(caps, choice.op, choice.pair).replace(/^.* to /, ""),
+            transform: choice.op.cardinality === "transform",
             job: null,
           };
         });

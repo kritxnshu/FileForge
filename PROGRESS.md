@@ -13,7 +13,7 @@ Resume guide: read this file, then `docs/ARCHITECTURE.md` and `docs/DECISIONS.md
 | M4 P2 modules: presentations, audio, video, archives, utilities | done |
 | M5 UI completion | done |
 | M6 Hardening | done |
-| M7 Final verification | in progress |
+| M7 Final verification | done (Docker images not built: no Docker on this machine, DECISIONS D15) |
 
 ## Environment (M0 check, 2026-11-03, macOS arm64)
 
@@ -64,12 +64,19 @@ Not available: Docker (Dockerfiles still shipped), bubblewrap/nsjail (macOS uses
   - Background removal decided: not shipped, listed as Unsupported (D13).
 - M7: see "Final verification" below.
 
-## Final verification (M7)
+## Final verification (M7, 2026-11-03)
 
-At the M5+M6 commit (2026-11-03, this machine): `make test-api` 770 passed; `make test-web` (tsc, ESLint, Vitest) 68
-passed; `make check-matrix` passed (617 Full, 22 Partial, 16 Experimental, 0 untested, 4 Unsupported);
-`make test-e2e` 16 passed against the production build (`WEB_MODE=start`, standalone server).
-Next: a fresh clone following README, then every suite.
+1. **Fresh install from the README** on a clean clone in an empty directory (`make setup && make test`, stdin closed):
+   - First attempt: `pnpm install` stalled (see Known issues). Second attempt found a real bug: with no Python pin,
+     `uv sync` built the venv with the host's Python 3.14 and `image.trace` (vtracer) segfaulted, so 6 tests failed.
+     Fixed by committing `services/api/.python-version` (3.12), as D2 intended.
+   - Third attempt (commit 75d54c1): **API 770 passed** (Python 3.12.15); **Vitest 68 passed** (after `tsc` + ESLint);
+     **matrix check passed** (617 Full, 22 Partial, 16 Experimental, 0 untested, 4 Unsupported); **Playwright 16 passed**.
+2. **Real-browser walk-through** at 390 px (Playwright screenshots in `.data/screenshots/`) and 1440 px in light
+   and dark (home, mixed-batch workspace with options, results, a client tool, formats). Fixed what it found: tool
+   results read "to Reorder pages" (now "Reorder pages", in history too), and the PDF thumbnail strip stretched across
+   the card. Re-ran e2e against the production build: 16 passed.
+3. Docs written: README, ENV, DEPLOYMENT, SECURITY, THIRD_PARTY_LICENSES, ARCHITECTURE/DECISIONS updated.
 
 ## How to run
 

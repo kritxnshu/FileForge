@@ -10,6 +10,8 @@ export interface HistoryEntry {
   target: string;
   outputs: number;
   expiresAt: number | null;
+  /** A tool (compress, reorder pages…): shown as its label rather than "to <format>". */
+  tool?: boolean;
 }
 
 const KEY = "uc-history";
