@@ -186,6 +186,15 @@ def _garbage(p: Path) -> None:
     p.write_bytes(bytes((i * 7919 + 13) % 256 for i in range(4096)))
 
 
+@builder("big-gradient.png")
+def _big(p: Path) -> None:
+    """49 MP, compresses well (small upload) but takes seconds to encode — used for cancel/timeout tests."""
+    from PIL import Image
+
+    g = Image.linear_gradient("L").resize((7000, 7000))
+    Image.merge("RGB", (g, g.rotate(90), g.rotate(180))).save(p, "PNG", optimize=False, compress_level=9)
+
+
 if __name__ == "__main__":
     for n in available():
         print(path(n))

@@ -34,8 +34,8 @@ class Settings(BaseSettings):
     WORKER_CONCURRENCY_FAST: int = max(2, (os.cpu_count() or 2))
     WORKER_CONCURRENCY_HEAVY: int = max(1, (os.cpu_count() or 2) // 4)
 
-    FILE_RETENTION_MINUTES: int = 60
-    SWEEP_INTERVAL_S: int = 60
+    FILE_RETENTION_MINUTES: float = 60  # fractional values are allowed (tests use seconds-long TTLs)
+    SWEEP_INTERVAL_S: float = 60
 
     RATE_LIMIT_JOBS_PER_10MIN: int = 30
     RATE_LIMIT_UPLOADS_PER_10MIN: int = 60
@@ -53,7 +53,7 @@ class Settings(BaseSettings):
 
     @property
     def retention_s(self) -> int:
-        return self.FILE_RETENTION_MINUTES * 60
+        return max(1, int(self.FILE_RETENTION_MINUTES * 60))
 
     def limits_public(self) -> dict:
         return {
@@ -62,7 +62,7 @@ class Settings(BaseSettings):
             "max_batch_files": self.MAX_BATCH_FILES,
             "max_batch_total_mb": self.MAX_BATCH_TOTAL_MB,
             "max_image_megapixels": self.MAX_IMAGE_PIXELS // 1_000_000,
-            "retention_minutes": self.FILE_RETENTION_MINUTES,
+            "retention_minutes": round(self.FILE_RETENTION_MINUTES, 2) if self.FILE_RETENTION_MINUTES % 1 else int(self.FILE_RETENTION_MINUTES),
             "jobs_per_10min": self.RATE_LIMIT_JOBS_PER_10MIN,
         }
 

@@ -65,7 +65,7 @@ async def health(request: Request) -> dict[str, Any]:
         "engines": {k: {"available": bool(v), "version": v} for k, v in engines.items()},
         "disabled_operations": disabled,
         "isolation": {"mode": iso.kind, "detail": iso.detail},
-        "retention_minutes": settings().FILE_RETENTION_MINUTES,
+        "retention_minutes": settings().limits_public()["retention_minutes"],
     }
 
 
