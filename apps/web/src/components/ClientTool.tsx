@@ -4,7 +4,7 @@ import { ArrowLeftRight, Copy, Download, FileUp, ShieldCheck } from "lucide-reac
 import { useEffect, useMemo, useRef, useState } from "react";
 import type { Capabilities, Operation } from "@/lib/api";
 import { fmtShort } from "@/lib/caps";
-import { FILE_INPUT, TOOLS, ToolError, type ToolResult } from "@/lib/tools";
+import { FILE_INPUT, FILE_ONLY, TOOLS, ToolError, type ToolResult } from "@/lib/tools";
 import { defaultsOf, OptionsForm, type OptionValues } from "./OptionsForm";
 import { useCaps } from "./providers";
 
@@ -83,6 +83,9 @@ function ToolBody({ caps, op, initialSource, initialTarget }: { caps: Capabiliti
   };
 
   const loadFile = async (f: File) => {
+    const ext = f.name.toLowerCase().split(".").pop() ?? "";
+    const byExt = sources.find((s) => s === ext || caps.formats[s]?.exts.includes(ext));
+    if (byExt && FILE_ONLY.has(op.id)) setSource(byExt);
     if (FILE_INPUT.has(op.id) && values.direction !== "decode") {
       setBytes(new Uint8Array(await f.arrayBuffer()));
       setFileName(f.name);
@@ -94,15 +97,16 @@ function ToolBody({ caps, op, initialSource, initialTarget }: { caps: Capabiliti
     }
   };
 
-  const outExt = op.cardinality === "transform" ? EXT[source] ?? "txt" : EXT[target] ?? "txt";
+  const outExt = op.cardinality === "transform" ? EXT[source] ?? "txt" : EXT[target] ?? target;
   const download = () => {
     if (!result) return;
-    const blob = result.bytes && !result.output
+    const binary = result.bytes && !result.output;
+    const blob = binary
       ? new Blob([result.bytes as BlobPart], { type: result.mime ?? "application/octet-stream" })
       : new Blob([result.output], { type: "text/plain;charset=utf-8" });
     const a = document.createElement("a");
     a.href = URL.createObjectURL(blob);
-    a.download = result.bytes && !result.output ? "decoded.bin" : `output.${outExt}`;
+    a.download = binary ? (result.mime === "image/png" ? "output.png" : "decoded.bin") : `output.${outExt}`;
     a.click();
     setTimeout(() => URL.revokeObjectURL(a.href), 1000);
   };
@@ -159,7 +163,14 @@ function ToolBody({ caps, op, initialSource, initialTarget }: { caps: Capabiliti
             <input ref={fileRef} type="file" className="sr-only" tabIndex={-1} aria-hidden="true"
               onChange={(e) => { const f = e.target.files?.[0]; if (f) void loadFile(f); e.target.value = ""; }} />
           </div>
-          {bytes ? (
+          {FILE_ONLY.has(op.id) && !bytes ? (
+            <button type="button" onClick={() => fileRef.current?.click()} data-testid="tool-file"
+              className="dropzone-surface flex min-h-64 flex-col items-center justify-center gap-2 rounded-[var(--radius-control)] border-2 border-dashed border-line-strong p-6 text-muted hover:text-ink">
+              <FileUp size={24} aria-hidden="true" />
+              <span className="font-medium">Choose a file</span>
+              <span className="text-[0.88rem]">It's read in your browser and never uploaded.</span>
+            </button>
+          ) : bytes ? (
             <div className="flex min-h-64 items-center justify-between rounded-[var(--radius-control)] border border-line bg-surface-2 p-3">
               <span>{fileName} ({bytes.length.toLocaleString()} bytes)</span>
               <button className="text-[0.9rem] text-muted hover:text-ink" onClick={() => { setBytes(undefined); setFileName(undefined); }}>Clear</button>
@@ -184,8 +195,22 @@ function ToolBody({ caps, op, initialSource, initialTarget }: { caps: Capabiliti
               </button>
             </div>
           </div>
-          <textarea id="tool-out" readOnly value={result?.output ?? ""} spellCheck={false} data-testid="tool-output"
-            className="min-h-64 w-full rounded-[var(--radius-control)] border border-line bg-surface-2 p-3 font-mono text-[0.85rem] leading-relaxed" />
+          {typeof result?.data?.swatch === "string" && (
+            <div className="flex overflow-hidden rounded-[var(--radius-control)] border border-line" data-testid="tool-swatch">
+              <div className="h-20 flex-1" style={{ background: result.data.swatch as string }} aria-label={`Swatch ${result.data.swatch}`} role="img" />
+              <div className="grid h-20 flex-1 place-items-center text-lg font-semibold"
+                style={{ background: result.data.against as string, color: result.data.swatch as string }}>Sample text</div>
+            </div>
+          )}
+          {typeof result?.data?.preview === "string" && (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img src={result.data.preview as string} alt="Preview of the result" data-testid="tool-preview"
+              className="max-h-72 self-start rounded-[var(--radius-control)] border border-line bg-[repeating-conic-gradient(var(--surface-2)_0_25%,var(--surface)_0_50%)] bg-[length:16px_16px] object-contain p-2" />
+          )}
+          {!(result?.bytes && !result.output) && (
+            <textarea id="tool-out" readOnly value={result?.output ?? ""} spellCheck={false} data-testid="tool-output"
+              className="min-h-64 w-full rounded-[var(--radius-control)] border border-line bg-surface-2 p-3 font-mono text-[0.85rem] leading-relaxed" />
+          )}
         </div>
       </div>
       <div aria-live="polite" className="flex flex-col gap-2">

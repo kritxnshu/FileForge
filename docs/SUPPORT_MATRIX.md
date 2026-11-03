@@ -10,9 +10,9 @@ its engines are installed, and its feature flag (if any) is on.
 
 | Level | Pairs |
 |---|---|
-| Full | 412 |
-| Partial | 14 |
-| Experimental | 13 |
+| Full | 617 |
+| Partial | 22 |
+| Experimental | 15 |
 | Untested | 1 |
 | Unsupported | 2 |
 
@@ -437,6 +437,62 @@ Print every sheet of a spreadsheet (or a CSV) to PDF with LibreOffice. Runtime: 
 | OpenDocument Spreadsheet | PDF | Full |  |
 | CSV | PDF | Full |  |
 
+## Presentations
+
+### Convert presentation (`pres.office`)
+
+Convert PowerPoint and OpenDocument presentations, or save them as PDF, with LibreOffice. Runtime: server; queue: heavy; engines: soffice; negative test: passed.
+
+| Source | Target | Level | Notes |
+|---|---|---|---|
+| PowerPoint (PPTX) | PowerPoint 97-2003 (PPT) | Full | The old .ppt format may simplify newer animations and effects. |
+| PowerPoint (PPTX) | OpenDocument Presentation | Full |  |
+| PowerPoint (PPTX) | PDF | Full | Animations, transitions and embedded media don't carry over to PDF. |
+| PowerPoint 97-2003 (PPT) | PowerPoint (PPTX) | Full |  |
+| PowerPoint 97-2003 (PPT) | OpenDocument Presentation | Full |  |
+| PowerPoint 97-2003 (PPT) | PDF | Full | Animations, transitions and embedded media don't carry over to PDF. |
+| OpenDocument Presentation | PowerPoint (PPTX) | Full |  |
+| OpenDocument Presentation | PowerPoint 97-2003 (PPT) | Full | The old .ppt format may simplify newer animations and effects. |
+| OpenDocument Presentation | PDF | Full | Animations, transitions and embedded media don't carry over to PDF. |
+
+### Slides to images (`pres.to_images`)
+
+Save each slide as a PNG or JPG image. Runtime: server; queue: heavy; engines: soffice, pypdfium2; negative test: passed.
+
+| Source | Target | Level | Notes |
+|---|---|---|---|
+| PowerPoint (PPTX) | PNG | Full |  |
+| PowerPoint (PPTX) | JPG | Full |  |
+| PowerPoint 97-2003 (PPT) | PNG | Full |  |
+| PowerPoint 97-2003 (PPT) | JPG | Full |  |
+| OpenDocument Presentation | PNG | Full |  |
+| OpenDocument Presentation | JPG | Full |  |
+
+### Images to PowerPoint (`pres.from_images`)
+
+Make a PowerPoint deck with one image per slide. Runtime: server; queue: fast; engines: python-pptx, pillow; negative test: passed.
+
+| Source | Target | Level | Notes |
+|---|---|---|---|
+| PNG | PowerPoint (PPTX) | Full |  |
+| JPG | PowerPoint (PPTX) | Full |  |
+| WebP | PowerPoint (PPTX) | Full |  |
+| GIF | PowerPoint (PPTX) | Full |  |
+| BMP | PowerPoint (PPTX) | Full |  |
+| TIFF | PowerPoint (PPTX) | Full |  |
+| HEIC | PowerPoint (PPTX) | Full |  |
+| AVIF | PowerPoint (PPTX) | Full |  |
+
+### PDF to PowerPoint (`pres.from_pdf`)
+
+Put each PDF page on its own slide as an image. Runtime: server; queue: fast; engines: pypdfium2, python-pptx; negative test: passed.
+
+Known limitations: Image-based slides — not editable. Text can't be changed or searched in the result.
+
+| Source | Target | Level | Notes |
+|---|---|---|---|
+| PDF | PowerPoint (PPTX) | Partial |  |
+
 ## Audio
 
 ### Convert audio (`audio.convert`)
@@ -709,6 +765,211 @@ Save a single frame of a video as a PNG or JPG at the time you choose. Runtime: 
 | 3GP | PNG | Full |  |
 | 3GP | JPG | Full |  |
 
+## Archives
+
+### Convert archive (`archive.convert`)
+
+Repack an archive into another format. Every entry is checked before it's unpacked. Runtime: server; queue: fast; engines: py7zr; negative test: passed.
+
+Known limitations: Links, device files, absolute paths and “..” paths are refused; size, entry-count and compression-ratio limits apply.
+
+| Source | Target | Level | Notes |
+|---|---|---|---|
+| ZIP | TAR | Full |  |
+| ZIP | TAR.GZ | Full |  |
+| ZIP | TAR.BZ2 | Full |  |
+| ZIP | TAR.XZ | Full |  |
+| ZIP | 7Z | Full |  |
+| TAR | ZIP | Full |  |
+| TAR | TAR.GZ | Full |  |
+| TAR | TAR.BZ2 | Full |  |
+| TAR | TAR.XZ | Full |  |
+| TAR | 7Z | Full |  |
+| TAR.GZ | ZIP | Full |  |
+| TAR.GZ | TAR | Full |  |
+| TAR.GZ | TAR.BZ2 | Full |  |
+| TAR.GZ | TAR.XZ | Full |  |
+| TAR.GZ | 7Z | Full |  |
+| TAR.BZ2 | ZIP | Full |  |
+| TAR.BZ2 | TAR | Full |  |
+| TAR.BZ2 | TAR.GZ | Full |  |
+| TAR.BZ2 | TAR.XZ | Full |  |
+| TAR.BZ2 | 7Z | Full |  |
+| TAR.XZ | ZIP | Full |  |
+| TAR.XZ | TAR | Full |  |
+| TAR.XZ | TAR.GZ | Full |  |
+| TAR.XZ | TAR.BZ2 | Full |  |
+| TAR.XZ | 7Z | Full |  |
+| 7Z | ZIP | Full |  |
+| 7Z | TAR | Full |  |
+| 7Z | TAR.GZ | Full |  |
+| 7Z | TAR.BZ2 | Full |  |
+| 7Z | TAR.XZ | Full |  |
+| RAR | ZIP | Partial | RAR is read-only here (libarchive); some RAR5 features such as encryption may fail. |
+| RAR | TAR | Partial | RAR is read-only here (libarchive); some RAR5 features such as encryption may fail. |
+| RAR | TAR.GZ | Partial | RAR is read-only here (libarchive); some RAR5 features such as encryption may fail. |
+| RAR | TAR.BZ2 | Partial | RAR is read-only here (libarchive); some RAR5 features such as encryption may fail. |
+| RAR | TAR.XZ | Partial | RAR is read-only here (libarchive); some RAR5 features such as encryption may fail. |
+| RAR | 7Z | Partial | RAR is read-only here (libarchive); some RAR5 features such as encryption may fail. |
+
+### Extract files (`archive.extract`)
+
+Open an archive, see what's inside, and download the files one by one or all together. Runtime: server; queue: fast; engines: py7zr; negative test: passed.
+
+| Source | Target | Level | Notes |
+|---|---|---|---|
+| ZIP | (same) | Full |  |
+| TAR | (same) | Full |  |
+| TAR.GZ | (same) | Full |  |
+| TAR.BZ2 | (same) | Full |  |
+| TAR.XZ | (same) | Full |  |
+| 7Z | (same) | Full |  |
+| RAR | (same) | Partial | RAR is read-only here (libarchive); some RAR5 features such as encryption may fail. |
+
+### Create ZIP (`archive.create_zip`)
+
+Put your files into a single ZIP archive. Runtime: server; queue: fast; engines: none; negative test: passed.
+
+| Source | Target | Level | Notes |
+|---|---|---|---|
+| PNG | ZIP | Full |  |
+| JPG | ZIP | Full |  |
+| WebP | ZIP | Full |  |
+| GIF | ZIP | Full |  |
+| BMP | ZIP | Full |  |
+| TIFF | ZIP | Full |  |
+| ICO | ZIP | Full |  |
+| AVIF | ZIP | Full |  |
+| HEIC | ZIP | Full |  |
+| SVG | ZIP | Full |  |
+| PDF | ZIP | Full |  |
+| Word (DOCX) | ZIP | Full |  |
+| Word 97-2003 (DOC) | ZIP | Full |  |
+| OpenDocument Text | ZIP | Full |  |
+| RTF | ZIP | Full |  |
+| Plain text | ZIP | Full |  |
+| Markdown | ZIP | Full |  |
+| HTML | ZIP | Full |  |
+| EPUB | ZIP | Full |  |
+| Excel (XLSX) | ZIP | Full |  |
+| Excel 97-2003 (XLS) | ZIP | Full |  |
+| OpenDocument Spreadsheet | ZIP | Full |  |
+| CSV | ZIP | Full |  |
+| TSV | ZIP | Full |  |
+| JSON | ZIP | Full |  |
+| XML | ZIP | Full |  |
+| YAML | ZIP | Full |  |
+| TOML | ZIP | Full |  |
+| SQL | ZIP | Full |  |
+| CSS | ZIP | Full |  |
+| JavaScript | ZIP | Full |  |
+| PowerPoint (PPTX) | ZIP | Full |  |
+| PowerPoint 97-2003 (PPT) | ZIP | Full |  |
+| OpenDocument Presentation | ZIP | Full |  |
+| MP3 | ZIP | Full |  |
+| WAV | ZIP | Full |  |
+| AAC | ZIP | Full |  |
+| FLAC | ZIP | Full |  |
+| OGG Vorbis | ZIP | Full |  |
+| M4A | ZIP | Full |  |
+| Opus | ZIP | Full |  |
+| WMA | ZIP | Full |  |
+| MP4 | ZIP | Full |  |
+| MOV | ZIP | Full |  |
+| MKV | ZIP | Full |  |
+| WebM | ZIP | Full |  |
+| AVI | ZIP | Full |  |
+| FLV | ZIP | Full |  |
+| WMV | ZIP | Full |  |
+| 3GP | ZIP | Full |  |
+| ZIP | (same) | Full |  |
+| TAR | ZIP | Full |  |
+| TAR.GZ | ZIP | Full |  |
+| TAR.BZ2 | ZIP | Full |  |
+| TAR.XZ | ZIP | Full |  |
+| 7Z | ZIP | Full |  |
+| GZ | ZIP | Full |  |
+| RAR | ZIP | Full |  |
+| TrueType font | ZIP | Full |  |
+| OpenType font | ZIP | Full |  |
+| WOFF | ZIP | Full |  |
+| WOFF2 | ZIP | Full |  |
+
+### Compress with GZIP (`archive.gzip`)
+
+Compress a single file to .gz. Runtime: server; queue: fast; engines: none; negative test: passed.
+
+| Source | Target | Level | Notes |
+|---|---|---|---|
+| PNG | GZ | Full |  |
+| JPG | GZ | Full |  |
+| WebP | GZ | Full |  |
+| GIF | GZ | Full |  |
+| BMP | GZ | Full |  |
+| TIFF | GZ | Full |  |
+| ICO | GZ | Full |  |
+| AVIF | GZ | Full |  |
+| HEIC | GZ | Full |  |
+| SVG | GZ | Full |  |
+| PDF | GZ | Full |  |
+| Word (DOCX) | GZ | Full |  |
+| Word 97-2003 (DOC) | GZ | Full |  |
+| OpenDocument Text | GZ | Full |  |
+| RTF | GZ | Full |  |
+| Plain text | GZ | Full |  |
+| Markdown | GZ | Full |  |
+| HTML | GZ | Full |  |
+| EPUB | GZ | Full |  |
+| Excel (XLSX) | GZ | Full |  |
+| Excel 97-2003 (XLS) | GZ | Full |  |
+| OpenDocument Spreadsheet | GZ | Full |  |
+| CSV | GZ | Full |  |
+| TSV | GZ | Full |  |
+| JSON | GZ | Full |  |
+| XML | GZ | Full |  |
+| YAML | GZ | Full |  |
+| TOML | GZ | Full |  |
+| SQL | GZ | Full |  |
+| CSS | GZ | Full |  |
+| JavaScript | GZ | Full |  |
+| PowerPoint (PPTX) | GZ | Full |  |
+| PowerPoint 97-2003 (PPT) | GZ | Full |  |
+| OpenDocument Presentation | GZ | Full |  |
+| MP3 | GZ | Full |  |
+| WAV | GZ | Full |  |
+| AAC | GZ | Full |  |
+| FLAC | GZ | Full |  |
+| OGG Vorbis | GZ | Full |  |
+| M4A | GZ | Full |  |
+| Opus | GZ | Full |  |
+| WMA | GZ | Full |  |
+| MP4 | GZ | Full |  |
+| MOV | GZ | Full |  |
+| MKV | GZ | Full |  |
+| WebM | GZ | Full |  |
+| AVI | GZ | Full |  |
+| FLV | GZ | Full |  |
+| WMV | GZ | Full |  |
+| 3GP | GZ | Full |  |
+| ZIP | GZ | Full |  |
+| TAR | GZ | Full |  |
+| TAR.BZ2 | GZ | Full |  |
+| TAR.XZ | GZ | Full |  |
+| 7Z | GZ | Full |  |
+| RAR | GZ | Full |  |
+| TrueType font | GZ | Full |  |
+| OpenType font | GZ | Full |  |
+| WOFF | GZ | Full |  |
+| WOFF2 | GZ | Full |  |
+
+### Decompress GZIP (`archive.gunzip`)
+
+Get the original file back out of a .gz file. Runtime: server; queue: fast; engines: none; negative test: passed.
+
+| Source | Target | Level | Notes |
+|---|---|---|---|
+| GZ | (same) | Full |  |
+
 ## Developer Tools
 
 ### Convert data (paste) (`dev.data_convert`)
@@ -828,6 +1089,84 @@ Generate CREATE TABLE and INSERT statements from a CSV file, with correct quotin
 |---|---|---|---|
 | CSV | SQL | Full |  |
 | TSV | SQL | Full |  |
+
+## Utilities
+
+### Image to Base64 (`util.image_base64`)
+
+Turn an image into a Base64 string or data URI for CSS, HTML or JSON. Runtime: client; queue: fast; engines: none; negative test: passed.
+
+| Source | Target | Level | Notes |
+|---|---|---|---|
+| PNG | Plain text | Full |  |
+| JPG | Plain text | Full |  |
+| GIF | Plain text | Full |  |
+| WebP | Plain text | Full |  |
+| SVG | Plain text | Full |  |
+| AVIF | Plain text | Full |  |
+| BMP | Plain text | Full |  |
+| ICO | Plain text | Full |  |
+
+### Color converter (`util.color`)
+
+Convert colors between HEX, RGB, HSL and OKLCH, and check contrast for accessibility. Runtime: client; queue: fast; engines: none; negative test: passed.
+
+| Source | Target | Level | Notes |
+|---|---|---|---|
+| Plain text | (same) | Full |  |
+
+### Length unit converter (`util.units`)
+
+Convert between pixels, inches, centimeters, millimeters and points. Runtime: client; queue: fast; engines: none; negative test: passed.
+
+| Source | Target | Level | Notes |
+|---|---|---|---|
+| Plain text | (same) | Full |  |
+
+### File size converter (`util.bytes`)
+
+Convert between bytes, KB, MB, GB and TB, with decimal (1000) and binary (1024) units side by side. Runtime: client; queue: fast; engines: none; negative test: passed.
+
+| Source | Target | Level | Notes |
+|---|---|---|---|
+| Plain text | (same) | Full |  |
+
+### QR code generator (`util.qr`)
+
+Make a QR code for a link or text, as PNG or SVG. Runtime: client; queue: fast; engines: none; negative test: passed.
+
+| Source | Target | Level | Notes |
+|---|---|---|---|
+| Plain text | PNG | Full |  |
+| Plain text | SVG | Full |  |
+
+### Convert font (`font.convert`)
+
+Package fonts for the web (WOFF, WOFF2) or unpack web fonts back to TTF/OTF. Runtime: server; queue: fast; engines: fonttools; negative test: passed.
+
+| Source | Target | Level | Notes |
+|---|---|---|---|
+| TrueType font | WOFF | Full |  |
+| TrueType font | WOFF2 | Full |  |
+| OpenType font | WOFF | Full |  |
+| OpenType font | WOFF2 | Full |  |
+| WOFF | WOFF2 | Full |  |
+| WOFF2 | WOFF | Full |  |
+| WOFF | TrueType font | Full | Works when the web font wraps matching outlines (TrueType → TTF, CFF → OTF). |
+| WOFF2 | TrueType font | Full | Works when the web font wraps matching outlines (TrueType → TTF, CFF → OTF). |
+| WOFF | OpenType font | Full | Works when the web font wraps matching outlines (TrueType → TTF, CFF → OTF). |
+| WOFF2 | OpenType font | Full | Works when the web font wraps matching outlines (TrueType → TTF, CFF → OTF). |
+
+### Convert font outlines (`font.outlines`)
+
+Convert between TrueType (TTF) and PostScript/CFF (OTF) outlines. Runtime: server; queue: fast, flag `ENABLE_EXPERIMENTAL`; engines: fonttools; negative test: passed.
+
+Known limitations: Hinting is dropped; CFF → TrueType approximates curves within the tolerance you set.
+
+| Source | Target | Level | Notes |
+|---|---|---|---|
+| TrueType font | OpenType font | Experimental |  |
+| OpenType font | TrueType font | Experimental |  |
 
 ## Unsupported
 

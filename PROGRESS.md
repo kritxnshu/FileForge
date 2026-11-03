@@ -10,7 +10,7 @@ Resume guide: read this file, then `docs/ARCHITECTURE.md` and `docs/DECISIONS.md
 | M1 Walking skeleton (upload → detect → PNG→JPG with progress → download → cleanup, 1 Playwright test) | done |
 | M2 Engine framework (registry, schemas→forms, capabilities/health, sandbox, fixtures, validators, matrix generator, sessions, limits, rate limits) | done |
 | M3 P1 modules: images → documents & PDF → spreadsheets → developer tools | done |
-| M4 P2 modules: presentations, audio, video, archives, utilities | not started |
+| M4 P2 modules: presentations, audio, video, archives, utilities | done |
 | M5 UI completion | not started |
 | M6 Hardening | not started |
 | M7 Final verification | not started |
@@ -51,16 +51,24 @@ Not available: Docker (Dockerfiles still shipped), bubblewrap/nsjail (macOS uses
   video → GIF (two-pass palette), GIF → MP4/WebM, extract audio, frame → image. FFmpeg layer in `engine/ffmpeg.py`
   (protocol + demuxer whitelists, `-progress` output, truncation detection). 536 API tests passing.
 
+- M4 rest: presentations (LibreOffice, slides → images chain, images → PPTX, PDF → PPTX image slides labelled
+  not editable), archives (repack ZIP/TAR/TGZ/TBZ2/TXZ/7Z, RAR read via libarchive, extract, create ZIP, gzip/gunzip;
+  zip-slip/link/device/bomb/entry/size limits all tested), fonts (WOFF/WOFF2 Full, TTF↔OTF outlines Experimental),
+  client utilities (image → Base64, colour, units, bytes, QR with decode-back tests). Fixtures for all 62 formats.
+  763 API tests + 63 Vitest passing; matrix: 617 Full, 22 Partial, 15 Experimental.
+
 ## In progress
 
-- M4 remaining: presentations, archives, utilities.
+- M5 UI completion.
 
 ## Next
 
-- M4: presentations (LibreOffice + chain PPTX → PDF → PNG, images → PPTX, PDF → PPTX image slides), archives
-  (ZIP/TAR/7Z/RAR read, every §7 limit), utilities (image ↔ base64, colour, units, bytes, QR, fonts).
-- M5: PDF page thumbnails for reordering, remaining pages (/formats, /privacy, /terms, /docs), history UI, a11y pass.
-- Background removal (rembg) is registered nowhere yet: decide in M6 whether to ship it (model weights license).
+- M5: PDF page thumbnails (merge/reorder + PDF results), history panel, /formats /privacy /terms /docs pages,
+  accessibility pass, remaining Playwright journeys (batch ZIP, unsupported pair, merge with reorder, video → MP3
+  progress, dark mode, 390 px screenshots).
+- M6: Dockerfiles + compose, docs (README, ENV, DEPLOYMENT, SECURITY, THIRD_PARTY_LICENSES), concurrency benchmark,
+  error-message review. Decide on background removal (model licence) — currently not registered.
+- M7: fresh-install verification and final report.
 
 ## How to run
 
