@@ -75,7 +75,7 @@ Not available: Docker (Dockerfiles still shipped), bubblewrap/nsjail (macOS uses
     drawing, highlight, white-out, images, redaction boxes, crop area, form fields; undo, keyboard move/delete), a
     signature pad (draw, type, upload), an organizer, form filling, and camera capture for Scan to PDF (D27). Featured
     on the home page and in the header.
-  - Tests: `tests/api/test_pdf_suite.py` (35), hub and page-view tests in `test_api.py`, Playwright
+  - Tests: `tests/api/test_pdf_suite.py` (36), hub and page-view tests in `test_api.py`, Playwright
     `tests/e2e/pdf.spec.ts` (hub, edit, sign, redact, organize, fill form, each checked with pypdf), and axe-core
     on `/pdf`, a tool page, scan, the editor with the signature dialog open, and the organizer, in both themes.
   - Fixed: the Playwright `webServer` command broke when the checkout path contains spaces (now quoted).

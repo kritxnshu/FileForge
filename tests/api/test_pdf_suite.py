@@ -538,6 +538,17 @@ def test_to_pdfa_marks_identification_output_intent_and_embeds_fonts():
 
 
 @needs("pdf.to_pdfa")
+def test_to_pdfa_of_an_encrypted_pdf_with_its_password():
+    import pikepdf
+
+    # the job decrypts in-process, so the password never reaches Ghostscript's command line
+    r = convert("pdf.to_pdfa", path("encrypted.pdf"), options={"password": "secret"}, timeout=180)
+    assert r.ok, r.error
+    with pikepdf.open(r.out) as pdf:  # no password needed: PDF/A forbids encryption
+        assert not pdf.is_encrypted and pdf.open_metadata()["pdfaid:part"] == "2"
+
+
+@needs("pdf.to_pdfa")
 @pytest.mark.verifies("neg:pdf.to_pdfa")
 def test_to_pdfa_wrong_password():
     r = convert("pdf.to_pdfa", path("encrypted.pdf"), options={"password": "nope"}, timeout=180)

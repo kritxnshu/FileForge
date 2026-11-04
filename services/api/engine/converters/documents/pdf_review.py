@@ -230,12 +230,15 @@ def to_pdfa(ctx: Ctx) -> None:
                     "/OutputConditionIdentifier (sRGB) /Info (sRGB IEC61966-2.1) >> /PUT pdfmark\n"
                     "[{Catalog} <</OutputIntents [ {OutputIntent_PDFA} ]>> /PUT pdfmark\n")
     out = ctx.default_out("pdf")
+    src = ctx.input.path
+    if o.password:
+        # decrypt in-process: a password on Ghostscript's command line would be visible to other processes (ps)
+        src = ctx.work_dir / "decrypted.pdf"
+        with open_pike(ctx.input.path, o.password) as pdf:
+            pdf.save(src, encryption=False)
     cmd = [gs, f"-dPDFA={part}", "-dBATCH", "-dNOPAUSE", "-dSAFER", "-dNOOUTERSAVE", "-sDEVICE=pdfwrite",
            "-dPDFACompatibilityPolicy=1", "-sColorConversionStrategy=RGB", f"--permit-file-read={icc}",
-           f"--permit-file-read={defs}", f"-sOutputFile={out}"]
-    if o.password:
-        cmd.append(f"-sPDFPassword={o.password}")
-    cmd += [str(defs), str(ctx.input.path)]
+           f"--permit-file-read={defs}", f"-sOutputFile={out}", str(defs), str(src)]
 
     def line(b: bytes) -> None:
         m = re.match(rb"^Page (\d+)", b)
