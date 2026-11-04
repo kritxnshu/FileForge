@@ -1,25 +1,107 @@
 # Universal Converter
 
-One site for converting files between formats: images, PDFs, Word/Excel/PowerPoint, audio, video, archives, fonts
-and developer data. Drop in files, pick a target (only the ones that work for that file are offered), adjust
-settings, watch real progress, preview and download. Files are deleted automatically after a configurable retention
-window, or right away with "Delete now".
+<div align="center">
 
-PDF tools live at `/pdf`: merge, split, organize, crop, compress, repair, convert to and from Office and images,
-edit (text, shapes, images, drawings), sign, redact, fill and create forms, page numbers, watermarks, protect and
-compare.
+**One workspace. Every file. Real conversions.**
 
-Every conversion the UI offers is backed by an automated test that opens the result with an independent parser. See
-[`docs/SUPPORT_MATRIX.md`](docs/SUPPORT_MATRIX.md), which is generated from the registry and the latest test run.
+[![Next.js](https://img.shields.io/badge/Next.js-16-black?logo=nextdotjs)](apps/web)
+[![Python](https://img.shields.io/badge/Python-3.12-3776AB?logo=python&logoColor=white)](services/api)
+[![Docker](https://img.shields.io/badge/Docker-ready-2496ED?logo=docker&logoColor=white)](docker-compose.yml)
 
-- **Web**: Next.js 16 (App Router), TypeScript, Tailwind, Motion, Lucide (`apps/web`). Text and data tools run in the
-  browser.
-- **API + workers**: Python 3.12, FastAPI, arq on Redis, two queues (`fast`, `heavy`) (`services/api`). Every
-  conversion runs in its own sandboxed process with no network.
-- **Engines**: Pillow, pillow-heif, resvg, pypdf, pikepdf, pypdfium2, pdfplumber, openpyxl, python-docx/pptx,
-  fontTools, reportlab, FFmpeg, LibreOffice, Pandoc, Chromium, libarchive, Tesseract (optional), Ghostscript (optional,
-  AGPL, PDF/A only).
-- **Proxy**: Caddy serves everything on one origin and routes `/api` to FastAPI.
+Convert, edit, secure, and optimize files without moving between tools.
+
+**Images · Documents · PDFs · Spreadsheets · Presentations · Audio · Video · Archives · Fonts · Developer Tools**
+
+</div>
+
+---
+
+## Why Universal Converter?
+
+Universal Converter is a production-focused, self-hostable file toolbox built around a simple promise:
+**if the interface offers a conversion, it really works.**
+
+Every advertised conversion is validated by opening the generated result with an independent parser. Unsupported
+pairs are never guessed, and the support matrix is generated from the same registry and test evidence that powers
+the UI.
+
+<div align="center">
+
+| Real file processing | File-first workflow | Privacy by design | Verified results |
+|:---:|:---:|:---:|:---:|
+| Powered by proven native engines | Batch uploads, previews, settings and ZIP downloads | Sandboxed, network-disabled conversion processes | Generated support matrix backed by tests |
+
+</div>
+
+## Built for serious workflows
+
+### Universal conversion hub
+
+Drop in one or many files, receive automatic format detection, choose from only the operations supported for that
+file, adjust conversion settings, track real progress, preview when useful, and download everything individually or
+as a ZIP.
+
+### Complete PDF toolkit
+
+Explore more than 40 PDF tools at `/pdf`, including:
+
+<table>
+  <tr>
+    <td><strong>Pages</strong><br>Merge, split, organize, reorder, crop and rotate</td>
+    <td><strong>Editing</strong><br>Edit text, shapes, images, drawings and add page numbers</td>
+  </tr>
+  <tr>
+    <td><strong>Documents</strong><br>Convert to and from Office formats and images</td>
+    <td><strong>Security</strong><br>Protect, unlock, redact and sanitize sensitive content</td>
+  </tr>
+  <tr>
+    <td><strong>Forms</strong><br>Fill, create, inspect and manage PDF forms</td>
+    <td><strong>Review</strong><br>Sign, watermark, compare, scan and compress</td>
+  </tr>
+</table>
+
+### Developer tools
+
+Work with JSON, YAML, CSV, SQL, XML, Markdown, QR codes, encoding, checksums and common text transformations
+entirely from the browser.
+
+## How it works
+
+```mermaid
+flowchart LR
+    User([Browser]) --> UI[Next.js workspace]
+    UI --> API[FastAPI + job registry]
+    API --> Queue[(Redis queues)]
+    Queue --> Fast[Fast workers]
+    Queue --> Heavy[Heavy workers]
+    Fast --> Engines[Images, PDFs, Office, media...]
+    Heavy --> Engines
+    Engines --> Results[Validated output files]
+    Results --> UI
+```
+
+| Layer | Technology |
+|---|---|
+| **Frontend** | Next.js 16 App Router, React 19, TypeScript, Tailwind CSS, Motion and Lucide |
+| **API** | Python 3.12, FastAPI, Pydantic, arq workers |
+| **Storage & jobs** | Redis queues, isolated job directories, configurable retention |
+| **Document engines** | pypdf, pikepdf, PDFium, OpenPyXL, python-docx, python-pptx, ReportLab, LibreOffice and Pandoc |
+| **Media engines** | Pillow, pillow-heif, resvg, FFmpeg and fontTools |
+| **Delivery** | Caddy routes the web app and API on one origin |
+| **Security model** | Sandboxed conversion processes with network access disabled |
+
+## Support at a glance
+
+The live support matrix currently records:
+
+| Support level | Format pairs |
+|---|---:|
+| Full | 633 |
+| Partial | 23 |
+| Experimental | 16 |
+| Unsupported | 4 |
+
+See [the generated support matrix](docs/SUPPORT_MATRIX.md) for the complete operation-by-operation breakdown.
 
 ## Quick start
 
@@ -29,10 +111,10 @@ Every conversion the UI offers is backed by an automated test that opens the res
 docker compose up -d --build      # → http://localhost:8080
 ```
 
-For a real domain with automatic HTTPS, set `UC_SITE_ADDRESS=convert.example.com` (see
-[`docs/DEPLOYMENT.md`](docs/DEPLOYMENT.md)).
+For a public deployment, set `UC_SITE_ADDRESS=convert.example.com` in Caddy's environment. See the
+[deployment guide](docs/DEPLOYMENT.md).
 
-### Native (macOS or Linux)
+### Native development
 
 Install the system tools once:
 
@@ -53,8 +135,12 @@ make setup     # Python venv (uv), Playwright's Chromium, web + e2e dependencies
 make dev       # Redis, API, both workers, Next.js and Caddy → http://localhost:8080
 ```
 
-API docs (OpenAPI) are at http://localhost:8080/api/docs and engine status at `/api/health`. Logs go to
-`.data/logs/`. Tesseract is optional; without it the OCR tool is disabled and `/api/health` says so.
+When the stack is running:
+
+- **App:** http://localhost:8080
+- **PDF toolkit:** http://localhost:8080/pdf
+- **OpenAPI docs:** http://localhost:8080/api/docs
+- **Engine health:** http://localhost:8080/api/health
 
 ## Tests
 
@@ -66,33 +152,39 @@ That runs everything, in order:
 
 | Target | What it runs |
 |---|---|
-| `make test-api` | pytest: the converter matrix (every advertised pair, validated with an independent parser), negative tests, security tests (SSRF, XXE, zip slip, bombs, playlists, `WEBSERVICE`, cross-session access…), lifecycle tests (limits, rate limits, expiry, cancel, timeouts), the concurrency benchmark, and HTTP tests against live API + worker processes. Results are recorded in `services/api/engine/verified.json`. |
-| `make test-web` | `tsc`, ESLint, then Vitest round-trip tests for the client-side tools. |
-| `make matrix` / `make check-matrix` | Regenerate `docs/SUPPORT_MATRIX.md`; fail if any Full/Partial pair lacks a passing test. |
-| `make test-e2e` | Playwright: drag-and-drop PNG → JPG, a mixed batch → ZIP, unsupported pairs, merge with reordering, page-thumbnail reordering, video → MP3 with progress, dark mode, history, 390 px layouts, CSP, and WCAG 2.1 AA checks (axe-core) in both themes. Starts the stack with `scripts/dev.sh` if it isn't running. |
+| `make test-api` | Converter matrix, independent-output validation, negative cases, security tests, lifecycle tests, concurrency and live HTTP/worker checks |
+| `make test-web` | TypeScript, ESLint and client-side tool round-trip tests |
+| `make matrix` / `make check-matrix` | Generate and verify the support matrix against test evidence |
+| `make test-e2e` | Real browser journeys, responsive layouts, dark mode, CSP and WCAG checks |
 
 **What gets advertised is decided by the tests.** A pair appears in the UI only after its test passes, and stops
 appearing if it fails (DECISIONS D7). Don't edit `verified.json` or `SUPPORT_MATRIX.md` by hand.
 
-## Adding a conversion
+## Extend the platform
 
 Add a converter module under `services/api/engine/converters/<category>/` that registers an `Operation` (formats,
 cardinality, a Pydantic options model, engines, queue, target support level, limitations), a fixture builder in
 `tests/fixtures/generate.py`, and a matrix test plus a negative test. The UI picks up the new operation, its settings
 form (from the JSON Schema) and its `/convert/<a>-to-<b>` page automatically.
 
-## Docs
+## Documentation
 
-| | |
+| Guide | Purpose |
 |---|---|
-| [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) | Components, request flow, registry, storage |
-| [`docs/DECISIONS.md`](docs/DECISIONS.md) | Every deviation from the build prompt and why |
-| [`docs/SUPPORT_MATRIX.md`](docs/SUPPORT_MATRIX.md) | Generated: every operation and pair, its support level and test status |
-| [`docs/SECURITY.md`](docs/SECURITY.md) | Threat model, mitigations and the test for each |
-| [`docs/ENV.md`](docs/ENV.md) | Every environment variable |
-| [`docs/DEPLOYMENT.md`](docs/DEPLOYMENT.md) | Single-VM Docker Compose with TLS, worker isolation, scaling, upgrades |
-| [`docs/THIRD_PARTY_LICENSES.md`](docs/THIRD_PARTY_LICENSES.md) | Dependencies and licences, AGPL policy, image distribution |
-| [`PROGRESS.md`](PROGRESS.md) | Milestones, current state, known issues |
+| [Architecture](docs/ARCHITECTURE.md) | Components, request flow, registry and storage |
+| [Support matrix](docs/SUPPORT_MATRIX.md) | Generated operation and format coverage |
+| [Security](docs/SECURITY.md) | Threat model, mitigations and security test coverage |
+| [Environment](docs/ENV.md) | Configuration variables |
+| [Deployment](docs/DEPLOYMENT.md) | TLS, worker isolation, scaling and upgrades |
+| [Decisions](docs/DECISIONS.md) | Architecture decisions and recorded deviations |
+| [Third-party licenses](docs/THIRD_PARTY_LICENSES.md) | Dependency and engine licensing |
+| [Progress](PROGRESS.md) | Milestones, current state and known issues |
 
-The privacy notice and terms in the web app are **templates**: whoever runs the site must review them and add their
-details.
+> **Deployment note:** The privacy notice and terms in the web app are templates. Review and personalize them before
+> exposing a public instance.
+
+<div align="center">
+
+Built by [Kritanshu](https://github.com/kritxnshu)
+
+</div>
