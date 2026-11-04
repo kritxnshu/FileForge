@@ -132,6 +132,62 @@ test("organize pages: delete, rotate and duplicate on one screen", async ({ page
   expect(pdfCheck(bytes, info.outputPath(), "[p.rotation % 360 for p in r.pages]")).toEqual([90, 0, 0]);
 });
 
+test("Add a logo stamps the image on every page, and waits for the second file", async ({ page }, info) => {
+  await page.goto("/pdf/watermark-pdf-image");
+  await dropFiles(page, "[data-testid=dropzone]", [{ path: fixture("document.pdf"), name: "report.pdf", type: "application/pdf" }]);
+  await waitReady(page, 1);
+  await expect(page.getByTestId("preset-needs-more")).toBeVisible();
+  await expect(page.locator('[data-testid^="target-pdf.compare"][aria-checked=true]')).toHaveCount(0); // was pre-picked by mistake
+  await expect(page.getByTestId("convert")).toHaveCount(0);
+
+  await dropFiles(page, "[data-testid=dropzone]", [{ path: fixture("image.png"), name: "logo.png", type: "image/png" }]);
+  await waitReady(page, 2);
+  await expect(page.getByTestId("preset-needs-more")).toHaveCount(0);
+  await expect(page.getByTestId("target-pdf.watermark_image-pdf")).toHaveAttribute("aria-checked", "true");
+  const bytes = await runAndDownload(page);
+  expect(pdfCheck(bytes, info.outputPath(), "[len(p.images) for p in r.pages]")).toEqual([1, 1, 1]);
+});
+
+test("a tool page doesn't swap in another tool for a file it can't use", async ({ page }) => {
+  await page.goto("/pdf/sign-pdf");
+  await dropFiles(page, "[data-testid=dropzone]", [{ path: fixture("document.docx"), name: "letter.docx" }]);
+  await waitReady(page, 1);
+  await expect(page.getByTestId("preset-mismatch")).toContainText("Sign PDF works with PDF files");
+  await expect(page.getByTestId("target-doc.office-pdf")).toHaveAttribute("aria-checked", "false"); // not converted silently
+  await expect(page.getByTestId("convert")).toHaveCount(0);
+});
+
+test("page tools need something placed, and one PDF at a time", async ({ page }) => {
+  await page.setViewportSize({ width: 1280, height: 2400 });
+  await page.goto("/pdf/edit-pdf");
+  await dropFiles(page, "[data-testid=dropzone]", [
+    { path: fixture("document.pdf"), name: "a.pdf", type: "application/pdf" },
+    { path: fixture("other.pdf"), name: "b.pdf", type: "application/pdf" },
+  ]);
+  await waitReady(page, 2);
+  await expect(page.getByTestId("one-pdf-only")).toContainText("Edit PDF works on one PDF at a time");
+  await expect(page.getByTestId("convert")).toBeDisabled();
+
+  await page.getByRole("button", { name: "Remove b.pdf" }).click();
+  await expect(page.getByTestId("one-pdf-only")).toHaveCount(0);
+  await expect(page.getByTestId("nothing-placed")).toBeVisible(); // nothing on the page yet
+  await expect(page.getByTestId("convert")).toBeDisabled();
+
+  const editor = page.getByTestId("pdf-editor");
+  await expect(editor.getByTestId("editor-page")).toHaveJSProperty("complete", true, { timeout: 30_000 });
+  await editor.getByTestId("tool-text").click();
+  await editor.getByTestId("editor-overlay").click({ position: { x: 40, y: 40 } });
+  await expect(page.getByTestId("nothing-placed")).toHaveCount(0);
+  await expect(page.getByTestId("convert")).toBeEnabled();
+});
+
+test("a password-protected PDF in the editor says to unlock it first", async ({ page }) => {
+  await openTool(page, "edit-pdf", "encrypted.pdf");
+  const alert = page.getByTestId("workspace").getByRole("alert");
+  await expect(alert).toContainText("Unlock it first with Unlock PDF", { timeout: 30_000 });
+  await expect(alert).not.toContainText("Advanced settings");
+});
+
 test("fill a PDF form's fields", async ({ page }, info) => {
   await openTool(page, "fill-pdf-form", "form.pdf");
   const form = page.getByTestId("pdf-form-fill");

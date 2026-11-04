@@ -49,6 +49,7 @@ for (const theme of ["light", "dark"] as const) {
       await waitReady(page, 1);
       await expect(page.getByTestId("editor-page")).toHaveJSProperty("complete", true, { timeout: 30_000 });
       await page.getByTestId("sign-date").click(); // something selected, so the properties panel shows
+      await expect(page.getByTestId("convert")).toHaveCSS("opacity", "1"); // let its fade-in from disabled finish
       await audit(page, `${theme} sign editor`);
       await page.getByTestId("sign-place").click();
       await expect(page.getByTestId("signature-pad")).toBeVisible();

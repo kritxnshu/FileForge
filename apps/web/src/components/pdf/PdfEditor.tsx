@@ -294,7 +294,7 @@ export function PdfEditor({ fileId, mode, value, onChange }: { fileId: string; m
   };
 
   if (error) {
-    return <p role="alert" className="rounded-[var(--radius-control)] bg-danger-soft p-3">{error} If it&apos;s password-protected, unlock it first.</p>;
+    return <p role="alert" className="rounded-[var(--radius-control)] bg-danger-soft p-3">{error}</p>;
   }
   if (!data) return <p className="text-muted">Loading pages…</p>;
 

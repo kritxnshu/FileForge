@@ -57,6 +57,9 @@ async def _sandboxed(src: Path, fmt: str, work: Path, operation: str, target: st
     if not res.ok or not (work / "result.json").exists():
         err = json.loads((work / "error.json").read_text()) if (work / "error.json").exists() else {}
         shutil.rmtree(work, ignore_errors=True)
+        if err.get("code") == "password_required":  # previews never get the password typed under Advanced settings
+            raise HTTPException(422, "This PDF is password-protected, so its pages can't be shown. Unlock it first with "
+                                     "Unlock PDF, then add the unlocked copy.")
         raise HTTPException(422, err.get("message") or failure)
     return json.loads((work / "result.json").read_text())
 

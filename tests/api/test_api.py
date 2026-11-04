@@ -248,6 +248,11 @@ def test_page_editor_view_and_form_fields(client, live):
     assert r.status_code == 422 and "no fillable form fields" in r.json()["error"]["message"]
     img = upload(client, path("image.png")).json()["files"][0]
     assert client.get(f"/api/uploads/{img['id']}/form").status_code == 400
+    # a locked PDF: previews never get its password, so the message says to unlock it (not "Advanced settings")
+    locked = upload(client, path("encrypted.pdf")).json()["files"][0]
+    r = client.get(f"/api/uploads/{locked['id']}/pages")
+    assert r.status_code == 422 and "Unlock it first" in r.json()["error"]["message"]
+    assert "Advanced" not in r.json()["error"]["message"]
 
 
 def test_oversized_job_options_rejected(client):

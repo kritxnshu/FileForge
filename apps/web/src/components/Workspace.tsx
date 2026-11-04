@@ -18,7 +18,7 @@ import {
 import { choiceKey, choicesFor, fmtLabel, fmtShort, formatBytes, SUPPORT_LABEL, toolTitle, type Choice } from "@/lib/caps";
 import { addHistory } from "@/lib/history";
 import { DropZone } from "./DropZone";
-import { cleanOptions, defaultsOf, OptionsForm, type OptionValues } from "./OptionsForm";
+import { cleanOptions, defaultsOf, nothingPlaced, onePdfOnly, OptionsForm, type OptionValues } from "./OptionsForm";
 import { useCaps, useWorkspace, type Item } from "./providers";
 import { JobCard, type RunView } from "./results";
 
@@ -149,22 +149,30 @@ export function Workspace({ preset }: { preset?: Preset }) {
 
   // a conversion page's own choice, pre-picked for each matching file type until the user picks something else;
   // file types it can't apply to are "mismatched" (e.g. an MP3 dropped on "PNG to JPG")
-  const { presetPicks, mismatched } = useMemo(() => {
+  const { presetPicks, mismatched, waiting } = useMemo(() => {
     const presetPicks: Record<string, string> = {};
     const mismatched: string[] = [];
+    const waiting: string[] = []; // the tool takes this type, but only together with another (a PDF and a logo)
     if (preset) {
-      for (const [f, list] of choicesByFormat) {
+      // a tool that takes several kinds of file at once runs over all of them together
+      const together = combineChoices.find((c) => c.op.id === preset.opId && c.pair.target === preset.target);
+      if (together) presetPicks[COMBINE] = choiceKey(together);
+      else for (const [f, list] of choicesByFormat) {
+        // a conversion page may fall back to the same target (a GIF on "PNG to JPG"); a tool page never swaps tools
         const match = list.find((c) => c.op.id === preset.opId && c.pair.target === preset.target)
-          ?? list.find((c) => c.pair.target === preset.target && c.op.cardinality !== "transform");
+          ?? (preset.label ? undefined : list.find((c) => c.pair.target === preset.target && c.op.cardinality !== "transform"));
         if (match) presetPicks[f] = choiceKey(match);
+        else if (preset.label && preset.sources?.includes(f)) waiting.push(f);
         else mismatched.push(f);
       }
     }
-    return { presetPicks, mismatched };
-  }, [preset, choicesByFormat]);
+    return { presetPicks, mismatched, waiting };
+  }, [preset, choicesByFormat, combineChoices]);
   const picks = useMemo(() => ({ ...presetPicks, ...userPicks }), [presetPicks, userPicks]);
 
   const presetOptions = useCallback((opId: string): OptionValues => (preset && preset.opId === opId ? preset.options ?? {} : {}), [preset]);
+  const startValues = useCallback((c: Choice): OptionValues => ({ ...defaultsOf(c.op.options_schema), ...presetOptions(c.op.id) }), [presetOptions]);
+  const valuesFor = useCallback((c: Choice): OptionValues => ({ ...startValues(c), ...(optValues[c.op.id] ?? {}) }), [startValues, optValues]);
 
   const findChoice = useCallback((k: string, list: Choice[]) => list.find((c) => choiceKey(c) === k) ?? null, []);
   const combined = picks[COMBINE] ? findChoice(picks[COMBINE], combineChoices) : null;
@@ -187,7 +195,10 @@ export function Workspace({ preset }: { preset?: Preset }) {
 
   const allPicked = groups.size > 0 && (combined !== null || [...groups.keys()].every((f) => picks[f]));
   const active = runs.some((r) => !r.job || !TERMINAL.includes(r.job.state));
-  const canRun = allPicked && !uploading && !submitting && ready.length > 0;
+  // Edit, Sign, Organize…: what you place is drawn on one PDF's pages, so it can't be applied to other PDFs
+  const severalPdfs = planned.find((p) => p.items.length > 1 && onePdfOnly(p.choice.op.options_schema));
+  const nothingYet = planned.find((p) => nothingPlaced(p.choice.op.options_schema, valuesFor(p.choice), startValues(p.choice)));
+  const canRun = allPicked && !uploading && !submitting && ready.length > 0 && !severalPdfs && !nothingYet;
 
   const updateRun = useCallback((jobId: string, job: Job) => {
     setRuns((prev) => prev.map((r) => (r.jobId === jobId ? { ...r, job } : r)));
@@ -233,9 +244,7 @@ export function Workspace({ preset }: { preset?: Preset }) {
     let bid = batchId;
     try {
       for (const { choice, items: its } of planned) {
-        const schema = choice.op.options_schema;
-        const values = { ...defaultsOf(schema), ...presetOptions(choice.op.id), ...(optValues[choice.op.id] ?? {}) };
-        const options = cleanOptions(schema, choice.pair.target, values);
+        const options = cleanOptions(choice.op.options_schema, choice.pair.target, valuesFor(choice));
         const res = await createJobs({
           file_ids: its.map((i) => i.server!.id),
           operation: choice.op.id,
@@ -385,6 +394,12 @@ export function Workspace({ preset }: { preset?: Preset }) {
               </span>
             </p>
           )}
+          {preset?.label && waiting.length > 0 && (
+            <p className="mb-5 flex gap-2 rounded-[var(--radius-control)] bg-warn-soft p-3 text-[0.95rem]" role="status" data-testid="preset-needs-more">
+              <AlertTriangle size={17} className="mt-0.5 shrink-0 text-warn" aria-hidden="true" />
+              <span>{preset.label} uses more than one kind of file at once. Add the other file it needs to continue.</span>
+            </p>
+          )}
           <div className="flex flex-col gap-6">
             {combineChoices.length > 0 && (
               <div>
@@ -431,13 +446,21 @@ export function Workspace({ preset }: { preset?: Preset }) {
                 {distinctOps.length > 1 && <p className="mb-3 font-medium">{c.op.label}</p>}
                 <OptionsForm schema={c.op.options_schema} target={c.pair.target}
                   context={{ pdfFileId: planned.find((p) => p.choice.op.id === c.op.id)?.items.find((i) => i.server?.format === "pdf")?.server?.id }}
-                  values={{ ...defaultsOf(c.op.options_schema), ...presetOptions(c.op.id), ...(optValues[c.op.id] ?? {}) }}
+                  values={valuesFor(c)}
                   onChange={(v) => setOptValues((p) => ({ ...p, [c.op.id]: v }))} />
               </div>
             ))}
           </div>
           {submitError && <p role="alert" className="mt-4 rounded-[var(--radius-control)] bg-danger-soft p-3">{submitError}</p>}
-          <button onClick={submit} disabled={!canRun} data-testid="convert"
+          {severalPdfs ? (
+            <p id="run-hint" role="status" data-testid="one-pdf-only" className="mt-6 flex gap-2 rounded-[var(--radius-control)] bg-warn-soft p-3 text-[0.95rem]">
+              <AlertTriangle size={17} className="mt-0.5 shrink-0 text-warn" aria-hidden="true" />
+              <span>{severalPdfs.choice.op.label} works on one PDF at a time, because what you place is drawn on that PDF&apos;s pages. Remove the other PDFs, then do them one by one.</span>
+            </p>
+          ) : nothingYet && (
+            <p id="run-hint" data-testid="nothing-placed" className="mt-6 text-[0.95rem] text-muted">Nothing to apply yet: use the tools above on the page first.</p>
+          )}
+          <button onClick={submit} disabled={!canRun} data-testid="convert" aria-describedby={severalPdfs || nothingYet ? "run-hint" : undefined}
             className="mt-6 w-full rounded-[var(--radius-control)] bg-accent px-6 py-3.5 text-lg font-semibold text-accent-ink transition-opacity duration-150 hover:opacity-90 disabled:opacity-40 sm:w-auto">
             {submitting ? "Starting…" : uploading ? "Waiting for uploads…" : ready.length > 1 && !combined && planned.every((p) => p.choice.op.cardinality !== "many_to_one") ? `Convert ${ready.length} files` : "Convert"}
           </button>

@@ -82,6 +82,11 @@ Not available: Docker (Dockerfiles still shipped), bubblewrap/nsjail (macOS uses
   - Fixed: Vitest couldn't load `caps.test.ts` once `OptionsForm` imported the PDF editor, because the signature
     pad's `next/font/google` call only works inside Next's compiler. Vitest now aliases it to a stub
     (`src/lib/__tests__/next-font-stub.ts`).
+  - Bug hunt (every hub tool run in a browser, plus edge cases), fixed with e2e tests: "Add a logo" ran Compare PDFs
+    (PDF + image) or pre-picked it (PDF only); a Word file on "Sign PDF" was silently converted to PDF; with two PDFs
+    the editor showed the first but applied its edits to both; a locked PDF in the editor said to use Advanced
+    settings, which previews never see; page editors could be run with nothing placed (D28, D29).
+    After the fixes: API 809 passed, Vitest 68, matrix check passed, Playwright 28 passed.
   - Hardened: Caddy now caps non-upload API request bodies at 20 MB. Before, `POST /api/jobs` accepted up to the
     1100 MB upload limit, and FastAPI reads the whole JSON body into memory before any check runs.
   - Docs: DECISIONS D23–D27, ARCHITECTURE (tool hubs), ENV (`UC_GS`, `UC_SRGB_ICC`, `UC_UNICODE_FONT`, AGPL flag
@@ -136,3 +141,7 @@ Not available: Docker (Dockerfiles still shipped), bubblewrap/nsjail (macOS uses
   clean-up it relies on is tested in `test_pdf_suite.py`; try the camera on a real phone before launch.
 - PDF/A isn't offered by the Docker image: it needs `ENABLE_AGPL_ENGINES=true` and Ghostscript, which the image
   doesn't install (D24).
+- Hindi text is drawn wrongly by Edit PDF, Sign PDF and page numbers (checked 2026-11-04; other scripts that need
+  shaping, such as Bengali, Tamil and Arabic, are likely affected the same way but weren't tried): reportlab places glyphs without shaping (matras out of order, conjuncts not joined), while the
+  browser preview shows them correctly. In Docker the fallback font (DejaVu) has no Devanagari at all. Not fixed yet:
+  needs a shaping engine and a Noto font lookup.

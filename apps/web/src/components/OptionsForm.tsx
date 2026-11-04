@@ -48,6 +48,25 @@ export function visibleFields(schema: JsonSchema, target: string | null): [strin
   });
 }
 
+// widgets drawn on one PDF's pages: what is placed there means nothing on another PDF
+const ONE_PDF_WIDGETS = new Set([...PDF_WIDGETS, "page-order"]);
+
+/** True when the operation's settings are placed on one PDF's pages, so it can't run on several PDFs at once. */
+export function onePdfOnly(schema: JsonSchema): boolean {
+  return Object.values(schema.properties ?? {}).some((s) => ONE_PDF_WIDGETS.has(s["x-widget"] ?? ""));
+}
+
+const blank = (v: unknown) => v == null || v === "" || (Array.isArray(v) && v.length === 0);
+
+/** True when a page-editor tool (Edit, Sign, Redact, Crop, Create a form) has nothing placed and no other setting
+ * changed from `start` (defaults plus the page's preset), so running it could only fail. */
+export function nothingPlaced(schema: JsonSchema, values: OptionValues, start: OptionValues): boolean {
+  const props = Object.entries(schema.properties ?? {});
+  const editor = props.find(([, s]) => s["x-widget"] === "pdf-editor")?.[0];
+  if (!editor || !blank(values[editor])) return false;
+  return props.every(([k]) => k === editor || (blank(values[k]) && blank(start[k])) || JSON.stringify(values[k]) === JSON.stringify(start[k]));
+}
+
 /** Only send fields that apply to this target and differ from defaults. */
 export function cleanOptions(schema: JsonSchema, target: string | null, values: OptionValues): OptionValues {
   const out: OptionValues = {};
