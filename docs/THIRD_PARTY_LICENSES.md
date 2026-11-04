@@ -89,7 +89,7 @@ source of the AGPL work and your modifications to it.
 | Component | What it would unlock |
 |---|---|
 | PyMuPDF → pdf2docx | Better layout fidelity for PDF → DOCX (tables, columns, images in place). With the flag on *and* pdf2docx installed, PDF → DOCX uses it; otherwise the permissive pdfplumber → python-docx pipeline (Partial) is used. |
-| Ghostscript | PDF/A output from OCRmyPDF, and Ghostscript-based PDF compression. Not used: OCR runs with `--output-type pdf`, and compression uses pikepdf + Pillow. |
+| Ghostscript | The "PDF to PDF/A" tool (`pdf.to_pdfa`), offered only when the flag is on *and* `gs` is installed (DECISIONS D24). It runs as a separate, unmodified process. OCR still runs with `--output-type pdf` and compression uses pikepdf + Pillow, so neither needs it. The Docker image doesn't install it. |
 | IMG.LY background removal | In-browser/server background removal. Not shipped (DECISIONS D13). |
 
 ## Distributing the Docker images

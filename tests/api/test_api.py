@@ -210,3 +210,49 @@ def test_spreadsheet_result_table_preview(client, live):
                                         "options": {}}).json()["jobs"][0]["id"]
     assert wait_job(client, jj)["state"] == "succeeded"
     assert client.get(f"/api/jobs/{jj}/files/0/table").status_code == 400
+
+
+def test_pdf_hub_lists_only_advertised_tools(client):
+    caps = client.get("/api/capabilities").json()
+    hub = caps["hubs"]["pdf"]
+    advertised = {(o["id"], p["source"], p["target"]) for o in caps["operations"] for p in o["pairs"]}
+    slugs = {t["slug"] for t in hub["tools"]}
+    assert {"merge-pdf", "split-pdf", "compress-pdf", "word-to-pdf", "pdf-to-jpg"} <= slugs
+    for t in hub["tools"]:
+        assert any(op == t["op"] and s in t["sources"] for op, s, _ in advertised), t["slug"]
+        assert t["group"] in {g["id"] for g in hub["groups"]}
+    # feature-flagged tools stay out while their flag is off (this instance runs without ENABLE_AGPL_ENGINES)
+    assert "pdf-to-pdfa" not in slugs
+    word = next(t for t in hub["tools"] if t["slug"] == "word-to-pdf")
+    assert word["target"] == "pdf" and {"docx", "doc", "odt", "rtf"} >= set(word["sources"]) and "docx" in word["sources"]
+    assert any("AI" in x["title"] for x in hub["not_offered"])
+
+
+def test_page_editor_view_and_form_fields(client, live):
+    pdf = upload(client, path("document.pdf")).json()["files"][0]
+    idx = client.get(f"/api/uploads/{pdf['id']}/pages").json()
+    assert idx["sizes"][0] == [pytest.approx(595.28, abs=0.1), pytest.approx(841.89, abs=0.1)]
+    r = client.get(f"/api/uploads/{pdf['id']}/view/1")
+    assert r.status_code == 200 and r.content[:8] == b"\x89PNG\r\n\x1a\n"
+    from PIL import Image
+
+    assert Image.open(io.BytesIO(r.content)).width == pytest.approx(595.28 * 110 / 72, abs=2)
+    assert client.get(f"/api/uploads/{pdf['id']}/view/9").status_code == 422  # no such page
+    with httpx.Client(base_url=live.base) as other:
+        assert other.get(f"/api/uploads/{pdf['id']}/view/0").status_code == 404
+    # form fields
+    form = upload(client, path("form.pdf")).json()["files"][0]
+    fields = client.get(f"/api/uploads/{form['id']}/form").json()["fields"]
+    assert {f["name"] for f in fields} == {"full_name", "subscribe", "country", "plan"}
+    r = client.get(f"/api/uploads/{pdf['id']}/form")
+    assert r.status_code == 422 and "no fillable form fields" in r.json()["error"]["message"]
+    img = upload(client, path("image.png")).json()["files"][0]
+    assert client.get(f"/api/uploads/{img['id']}/form").status_code == 400
+
+
+def test_oversized_job_options_rejected(client):
+    f = upload(client, path("document.pdf")).json()["files"][0]
+    big = {"objects": [{"type": "image", "page": 1, "x": 0, "y": 0, "w": 0.1, "h": 0.1,
+                        "data": "data:image/png;base64," + "A" * 3_900_000}] * 5}
+    r = client.post("/api/jobs", json={"file_ids": [f["id"]], "operation": "pdf.edit", "target": None, "options": big})
+    assert r.status_code == 413 and "too large" in r.json()["error"]["message"]

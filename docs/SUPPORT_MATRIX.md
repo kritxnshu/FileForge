@@ -10,8 +10,8 @@ its engines are installed, and its feature flag (if any) is on.
 
 | Level | Pairs |
 |---|---|
-| Full | 617 |
-| Partial | 22 |
+| Full | 633 |
+| Partial | 23 |
 | Experimental | 16 |
 | Untested | 0 |
 | Unsupported | 4 |
@@ -253,6 +253,156 @@ Known limitations: Accuracy depends on scan quality and language.
 | Source | Target | Level | Notes |
 |---|---|---|---|
 | PDF | (same) | Experimental |  |
+
+### Edit PDF (`pdf.edit`)
+
+Add text, images, shapes, arrows, highlights and freehand drawing to PDF pages, or cover things up with white-out. Runtime: server; queue: fast; engines: pypdf, reportlab, pillow; negative test: passed.
+
+Known limitations: Adds new content on top of the page. Existing text can be covered with white-out and retyped, but not edited in place. White-out hides content visually only: use Redact to remove it.
+
+| Source | Target | Level | Notes |
+|---|---|---|---|
+| PDF | (same) | Full |  |
+
+### Sign PDF (`pdf.sign`)
+
+Draw, type or upload your signature and place it on the page, with the date or your initials. Runtime: server; queue: fast; engines: pypdf, reportlab, pillow; negative test: passed.
+
+Known limitations: A visual signature, not a cryptographic (certificate-based) digital signature.
+
+| Source | Target | Level | Notes |
+|---|---|---|---|
+| PDF | (same) | Full |  |
+
+### Redact PDF (`pdf.redact`)
+
+Permanently black out names, numbers or areas. The content under each box is removed from the file, not just hidden. Runtime: server; queue: fast; engines: pypdfium2, pypdf, img2pdf, pillow; negative test: passed.
+
+Known limitations: Pages with redactions are converted to images, so their remaining text can't be selected. Word search only finds real text: scanned pages need OCR first, or mark the areas by hand.
+
+| Source | Target | Level | Notes |
+|---|---|---|---|
+| PDF | (same) | Full |  |
+
+### Export form data (`pdf.form_data`)
+
+List a PDF form's fields with their types, options and current values, as JSON. Runtime: server; queue: fast; engines: pikepdf, pypdf; negative test: passed.
+
+| Source | Target | Level | Notes |
+|---|---|---|---|
+| PDF | JSON | Full |  |
+
+### Fill PDF form (`pdf.fill_form`)
+
+Fill in a PDF form's text boxes, checkboxes, choices and radio buttons, and optionally flatten it. Runtime: server; queue: fast; engines: pikepdf, pypdf; negative test: passed.
+
+| Source | Target | Level | Notes |
+|---|---|---|---|
+| PDF | (same) | Full |  |
+
+### Create a form (`pdf.add_fields`)
+
+Turn any PDF into a fillable form: draw text boxes, checkboxes and dropdowns where people should answer. Runtime: server; queue: fast; engines: pikepdf, pypdf; negative test: passed.
+
+| Source | Target | Level | Notes |
+|---|---|---|---|
+| PDF | (same) | Full |  |
+
+### Organize pages (`pdf.organize`)
+
+Reorder, rotate, delete, duplicate and add blank pages, all on one screen. Runtime: server; queue: fast; engines: pikepdf; negative test: passed.
+
+| Source | Target | Level | Notes |
+|---|---|---|---|
+| PDF | (same) | Full |  |
+
+### Crop PDF (`pdf.crop`)
+
+Trim the margins of PDF pages, or keep just an area you draw, on every page or the ones you pick. Runtime: server; queue: fast; engines: pypdf; negative test: passed.
+
+Known limitations: Cropping hides what's outside the area; it isn't deleted from the file. Use Redact to remove content permanently.
+
+| Source | Target | Level | Notes |
+|---|---|---|---|
+| PDF | (same) | Full |  |
+
+### Resize pages (`pdf.resize`)
+
+Fit every page onto A4, Letter or another paper size, scaled to fit with optional margins. Runtime: server; queue: fast; engines: pypdf; negative test: passed.
+
+| Source | Target | Level | Notes |
+|---|---|---|---|
+| PDF | (same) | Full |  |
+
+### Pages per sheet (`pdf.nup`)
+
+Print-friendly layouts: put 2, 4, 6, 9 or 16 pages on each sheet, in reading order. Runtime: server; queue: fast; engines: pypdf; negative test: passed.
+
+| Source | Target | Level | Notes |
+|---|---|---|---|
+| PDF | (same) | Full |  |
+
+### Add page numbers (`pdf.page_numbers`)
+
+Number pages, or add a header or footer such as “Page 3 of 10” or a document title, in the position, font and size you choose. Runtime: server; queue: fast; engines: pypdf, reportlab; negative test: passed.
+
+| Source | Target | Level | Notes |
+|---|---|---|---|
+| PDF | (same) | Full |  |
+
+### Repair PDF (`pdf.repair`)
+
+Rebuild a damaged PDF's internal structure and recover its pages. Runtime: server; queue: fast; engines: pikepdf, pypdfium2, pypdf; negative test: passed.
+
+Known limitations: Recovers what the file still contains; content that was cut off or overwritten can't be brought back.
+
+| Source | Target | Level | Notes |
+|---|---|---|---|
+| PDF | (same) | Full |  |
+
+### Extract images (`pdf.extract_images`)
+
+Save the photos and pictures embedded in a PDF as separate image files, at their original quality. Runtime: server; queue: fast; engines: pikepdf, pillow; negative test: passed.
+
+| Source | Target | Level | Notes |
+|---|---|---|---|
+| PDF | PNG | Full |  |
+
+### Edit PDF properties (`pdf.metadata`)
+
+Change a PDF's title, author, subject and keywords, or remove all of its properties for privacy. Runtime: server; queue: fast; engines: pikepdf; negative test: passed.
+
+| Source | Target | Level | Notes |
+|---|---|---|---|
+| PDF | (same) | Full |  |
+
+### Flatten PDF (`pdf.flatten`)
+
+Make filled-in forms, comments and stamps a permanent part of the page, so they can't be changed. Runtime: server; queue: fast; engines: pikepdf; negative test: passed.
+
+| Source | Target | Level | Notes |
+|---|---|---|---|
+| PDF | (same) | Full |  |
+
+### Compare PDFs (`pdf.compare`)
+
+Spot the differences between two versions of a PDF: a report lists changed text and shows each changed page side by side. Add the original first. Runtime: server; queue: fast; engines: pypdfium2, reportlab, pillow; negative test: passed.
+
+Known limitations: Compares page by page: if pages were inserted or removed, later pages show as changed.
+
+| Source | Target | Level | Notes |
+|---|---|---|---|
+| PDF | (same) | Full |  |
+
+### Convert to PDF/A (`pdf.to_pdfa`)
+
+Make an archival PDF/A version of a PDF, with fonts embedded and colours defined for long-term preservation. Runtime: server; queue: heavy, flag `ENABLE_AGPL_ENGINES`; engines: ghostscript, pikepdf, pypdfium2; negative test: passed.
+
+Known limitations: Uses Ghostscript (AGPL), so it's only offered when the operator enables AGPL engines. The result carries PDF/A identification and an sRGB output intent, but isn't checked by a PDF/A validator; unusual files (transparency, damaged fonts) may not fully comply.
+
+| Source | Target | Level | Notes |
+|---|---|---|---|
+| PDF | (same) | Partial | hidden: disabled (set ENABLE_AGPL_ENGINES=true) |
 
 ### PDF to images (`pdf.to_images`)
 

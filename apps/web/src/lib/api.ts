@@ -60,11 +60,36 @@ export interface FormatInfo {
   mime: string;
 }
 
+export interface HubTool {
+  slug: string;
+  title: string;
+  description: string;
+  icon: string;
+  group: string;
+  op: string;
+  target: string;
+  sources: string[];
+  support: SupportLevel;
+  limitations: string[];
+  options: Record<string, unknown>;
+  special: string | null;
+  cardinality: Operation["cardinality"];
+}
+
+export interface Hub {
+  title: string;
+  description: string;
+  groups: { id: string; label: string }[];
+  tools: HubTool[];
+  not_offered: { title: string; reason: string }[];
+}
+
 export interface Capabilities {
   version: number;
   categories: { id: string; label: string }[];
   formats: Record<string, FormatInfo>;
   operations: Operation[];
+  hubs?: Record<string, Hub>;
   limits: {
     max_file_size_mb: number;
     max_video_size_mb: number;
@@ -245,6 +270,27 @@ export const batchZipUrl = (batchId: string) => `/api/batches/${batchId}/zip`;
 export interface PageIndex {
   pages: number;
   thumbnails: string[];
+  /** Displayed page sizes in points ([width, height]), rotation and crop applied. */
+  sizes?: [number, number][];
+}
+
+/** A page rendered large for the page editors (0-based page index). */
+export const pageViewUrl = (fileId: string, n: number) => `/api/uploads/${fileId}/view/${n}`;
+
+export interface FormField {
+  name: string;
+  type: "text" | "checkbox" | "choice" | "radio" | "signature" | "button";
+  value?: string | boolean;
+  options?: string[];
+  multiline?: boolean;
+  multiselect?: boolean;
+  required: boolean;
+  read_only: boolean;
+  widgets: { page: number; x: number; y: number; w: number; h: number }[];
+}
+
+export async function uploadFormFields(fileId: string): Promise<{ fields: FormField[] }> {
+  return parse(await fetch(`/api/uploads/${fileId}/form`, opts));
 }
 
 export async function uploadPages(fileId: string): Promise<PageIndex> {

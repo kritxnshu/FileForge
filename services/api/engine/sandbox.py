@@ -183,7 +183,8 @@ def _preexec(limits: Limits) -> Callable[[], None]:
 
 def _env(job_dir: Path, extra: dict[str, str] | None) -> dict[str, str]:
     keep = ("PATH", "LANG", "LC_ALL", "PLAYWRIGHT_BROWSERS_PATH", "SANDBOX_ISOLATION", "SANDBOX_UID",
-            "SANDBOX_EXTRA_READ", "UC_FFMPEG", "UC_FFPROBE", "UC_SOFFICE", "UC_PANDOC")
+            "SANDBOX_EXTRA_READ", "UC_FFMPEG", "UC_FFPROBE", "UC_SOFFICE", "UC_PANDOC", "UC_GS",
+            "UC_SRGB_ICC", "UC_UNICODE_FONT")
     env = {k: os.environ[k] for k in keep if k in os.environ}
     env.setdefault("PATH", "/usr/local/bin:/usr/bin:/bin")
     if IS_MAC and "/opt/homebrew/bin" not in env["PATH"]:

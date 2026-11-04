@@ -12,12 +12,17 @@
 		Strict-Transport-Security "max-age=31536000; includeSubDomains"
 		X-Content-Type-Options nosniff
 		Referrer-Policy no-referrer
-		Permissions-Policy "camera=(), microphone=(), geolocation=(), interest-cohort=()"
+		Permissions-Policy "camera=(self), microphone=(), geolocation=(), interest-cohort=()"
 	}
 
 	handle /api/* {
 		request_body {
 			max_size {$UC_MAX_REQUEST_MB:1100}MB
+		}
+		# everything except uploads is small JSON; cap it before FastAPI reads it into memory
+		@not_upload not path /api/uploads
+		request_body @not_upload {
+			max_size 20MB
 		}
 		reverse_proxy {$UC_API_UPSTREAM:127.0.0.1:8000} {
 			flush_interval -1

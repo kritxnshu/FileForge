@@ -72,6 +72,8 @@ started *from inside* that child, so they inherit its limits, process group and 
 - **Upload size** is enforced while streaming: the request is aborted at the limit and nothing is kept. Tests:
   `test_lifecycle.py::test_oversized_upload_413_and_nothing_kept`, `::test_oversized_upload_aborts_mid_stream`,
   `::test_too_many_files_rejected`.
+- **Other request bodies** (job settings, which can carry editor images) are capped at 20 MB by Caddy before FastAPI
+  reads them, and job settings at 16 MB by the API (413).
 
 ## Web app
 
@@ -82,7 +84,10 @@ started *from inside* that child, so they inherit its limits, process group and 
   `tests/e2e/csp.spec.ts` (fresh nonce per request, and no CSP violation while using the workspace and the
   client-side tools).
 - `X-Frame-Options: DENY`, `Referrer-Policy: no-referrer`, `nosniff`, HSTS and a restrictive `Permissions-Policy`
-  (Caddy).
+  (Caddy). The camera is allowed for this origin only (`camera=(self)`), for Scan to PDF; microphone and geolocation
+  stay off. Photos are captured in the browser and uploaded like any other file, only when taken (DECISIONS D27).
+- Redaction removes content, not just covers it: pages with redactions are re-rendered as images, and document
+  properties and bookmarks are dropped (DECISIONS D25). Signatures are visual, not certificate-based (D26).
 - Client-side tools ("Runs in your browser") never send their input to the server.
 
 ## Retention and privacy

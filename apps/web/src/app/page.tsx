@@ -2,6 +2,7 @@ import Link from "next/link";
 import { Suspense } from "react";
 import { Archive, AudioLines, Braces, FileSpreadsheet, FileText, Image as ImageIcon, Presentation, Video, Wrench } from "lucide-react";
 import { DropZone } from "@/components/DropZone";
+import { ToolCard } from "@/components/pdf/PdfHub";
 import { ToolDirectory } from "@/components/ToolDirectory";
 import { fmtShort, toolEntries } from "@/lib/caps";
 import { serverCaps } from "@/lib/server";
@@ -10,6 +11,9 @@ const POPULAR: [string, string][] = [
   ["png", "jpg"], ["jpg", "png"], ["pdf", "docx"], ["docx", "pdf"],
   ["pdf", "jpg"], ["mp4", "mp3"], ["xlsx", "pdf"], ["heic", "jpg"],
 ];
+
+// Featured on the home page when the API offers them (the full list lives at /pdf).
+const FEATURED_PDF = ["edit-pdf", "sign-pdf", "merge-pdf", "compress-pdf", "organize-pdf", "redact-pdf", "pdf-to-word", "fill-pdf-form"];
 
 const CATEGORY_ICON: Record<string, typeof ImageIcon> = {
   images: ImageIcon, documents: FileText, spreadsheets: FileSpreadsheet, presentations: Presentation,
@@ -21,6 +25,9 @@ export default async function Home() {
   const entries = caps ? toolEntries(caps) : [];
   const popular = POPULAR.map(([s, t]) => entries.find((e) => e.kind === "convert" && e.pair.source === s && e.pair.target === t)).filter(
     (e): e is NonNullable<typeof e> => Boolean(e),
+  );
+  const pdfTools = FEATURED_PDF.map((slug) => caps?.hubs?.pdf?.tools.find((t) => t.slug === slug)).filter(
+    (t): t is NonNullable<typeof t> => Boolean(t),
   );
   const familyOrder = ["image", "pdf", "document", "spreadsheet", "presentation", "audio", "video", "archive", "font", "data"];
   const familyNames: Record<string, string> = {
@@ -61,6 +68,23 @@ export default async function Home() {
                 </Link>
               </li>
             ))}
+          </ul>
+        </section>
+      )}
+
+      {pdfTools.length > 0 && (
+        <section aria-labelledby="pdf-h" className="py-10" data-testid="home-pdf">
+          <div className="flex flex-wrap items-end justify-between gap-3">
+            <div>
+              <h2 id="pdf-h" className="font-display text-3xl font-semibold">Everything for PDFs</h2>
+              <p className="mt-1 text-muted">Edit, sign, redact, fill forms, organize and convert, in one place.</p>
+            </div>
+            <Link href="/pdf" className="font-medium text-accent underline underline-offset-4 hover:decoration-2">
+              See all {caps?.hubs?.pdf?.tools.length} PDF tools
+            </Link>
+          </div>
+          <ul className="mt-5 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            {pdfTools.map((t) => <li key={t.slug}><ToolCard tool={t} /></li>)}
           </ul>
         </section>
       )}

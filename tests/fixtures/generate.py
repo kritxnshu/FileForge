@@ -7,6 +7,7 @@ Run directly to (re)build everything:  python tests/fixtures/generate.py
 from __future__ import annotations
 
 import io
+import re
 import os
 import shutil
 import subprocess
@@ -286,6 +287,57 @@ def _pdf(p: Path, pages: int = 3, table: bool = True) -> None:
 
 builder("document.pdf")(lambda p: _pdf(p, 3))
 builder("other.pdf")(lambda p: _pdf(p, 2, table=False))
+
+
+@builder("document-changed.pdf")
+def _changed(p: Path) -> None:
+    """document.pdf with page 2's text changed (for Compare)."""
+    from reportlab.lib import colors
+    from reportlab.lib.pagesizes import A4
+    from reportlab.lib.styles import getSampleStyleSheet
+    from reportlab.platypus import PageBreak, Paragraph, SimpleDocTemplate, Table, TableStyle
+
+    st = getSampleStyleSheet()
+    t = Table([[str(c) for c in r] for r in KNOWN_TABLE])
+    t.setStyle(TableStyle([("GRID", (0, 0), (-1, -1), 0.8, colors.black)]))
+    story = [Paragraph("Quarterly Report", st["Title"]), Paragraph(KNOWN_SENTENCE, st["BodyText"]), t,
+             PageBreak(), Paragraph("Page 2 revised wording here", st["BodyText"]),
+             PageBreak(), Paragraph("Page 3 marker text", st["BodyText"])]
+    SimpleDocTemplate(str(p), pagesize=A4).build(story)
+
+
+@builder("form.pdf")
+def _form(p: Path) -> None:
+    """A fillable form: text field, checkbox, dropdown and radio group with known names."""
+    from reportlab.lib.pagesizes import A4
+    from reportlab.pdfgen import canvas
+
+    c = canvas.Canvas(str(p), pagesize=A4)
+    c.setFont("Helvetica-Bold", 16)
+    c.drawString(72, 780, "Application form")
+    c.setFont("Helvetica", 11)
+    f = c.acroForm
+    c.drawString(72, 740, "Full name:")
+    f.textfield(name="full_name", x=160, y=730, width=250, height=20, value="", fontSize=11)
+    c.drawString(72, 700, "Subscribe:")
+    f.checkbox(name="subscribe", x=160, y=695, size=16, checked=False)
+    c.drawString(72, 660, "Country:")
+    f.choice(name="country", x=160, y=650, width=150, height=20, options=["India", "France", "Japan"], value="India")
+    c.drawString(72, 620, "Plan:")
+    f.radio(name="plan", value="basic", selected=True, x=160, y=615, size=14)
+    f.radio(name="plan", value="pro", selected=False, x=200, y=615, size=14)
+    c.showPage()
+    c.save()
+
+
+@builder("broken-xref.pdf")
+def _broken_xref(p: Path) -> None:
+    """document.pdf with its cross-reference offsets wrecked: strict readers fail, recovery succeeds."""
+    data = path("document.pdf").read_bytes()
+    head, sep, tail = data.rpartition(b"startxref")
+    tail = re.sub(rb"\d+", b"999999", tail, count=1)
+    head = re.sub(rb"(\n)(\d{10}) (\d{5}) n", lambda m: m.group(1) + b"0000000001 " + m.group(3) + b" n", head)
+    p.write_bytes(head + sep + tail)
 
 
 @builder("encrypted.pdf")

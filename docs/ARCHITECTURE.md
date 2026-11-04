@@ -43,6 +43,10 @@ Effective support level of a (operation, source, target) pair = target level **i
 
 Chains (≤3 hops) are planned by BFS over advertised one→one pairs, and only exposed when `verified.json` has a passing test for the chain key `chain:<src>-><dst>`.
 
+## Tool hubs
+
+`engine/hubs.py` defines curated sections of the site built on registry operations (today the PDF hub at `/pdf`, 40 tools in 8 groups). A hub tool names an operation and, optionally, its sources, target and preset options. `/api/capabilities` includes a tool only when that operation has an advertised pair that matches it, so a hub never offers anything untested, flag-disabled or missing its engine (DECISIONS D23). Interactive PDF tools (edit, sign, redact, crop, create form, organize, fill form) are ordinary operations whose options carry an `x-widget`; the web app renders that widget (`apps/web/src/components/pdf/`) in place of a plain form field, using page images from `/api/uploads/{id}/pages` and `/view/{n}`.
+
 ## Storage
 
 `app/storage.py` is a small interface (`put_upload`, `open`, `job_dir`, `delete`); only the local-volume implementation exists. Files on disk are named by random 128-bit IDs; original filenames exist only in Redis metadata and in sanitized `Content-Disposition` headers.

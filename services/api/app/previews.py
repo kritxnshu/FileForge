@@ -69,9 +69,45 @@ async def thumbnails(src: Path, cache: Path) -> dict:
         for n, o in enumerate(result["outputs"]):
             (work / o["path"]).replace(cache / f"{n}.png")
         shutil.rmtree(work, ignore_errors=True)
-        return {"pages": result["info"].get("total_pages", len(result["outputs"])), "thumbnails": len(result["outputs"])}
+        info = result["info"]
+        return {"pages": info.get("total_pages", len(result["outputs"])), "thumbnails": len(result["outputs"]),
+                "sizes": info.get("page_sizes", [])}
 
     return await _cached(cache / "pages.json", build)
+
+
+VIEW_DPI = 110
+
+
+async def page_view(src: Path, cache: Path, n: int) -> Path:
+    """One page rendered large enough to edit on (cached)."""
+    target = cache / f"view-{n}.png"
+    if target.exists():
+        return target
+
+    async def build() -> dict:
+        work = cache / f"vjob-{n}"
+        result = await _sandboxed(src, "pdf", work, "pdf.to_images", "png", {"dpi": VIEW_DPI, "pages": str(n + 1)},
+                                  "We couldn't render this page.")
+        (work / result["outputs"][0]["path"]).replace(target)
+        shutil.rmtree(work, ignore_errors=True)
+        return {"ok": True}
+
+    await _cached(cache / f"view-{n}.json", build)
+    return target
+
+
+async def form_fields(src: Path, cache: Path) -> dict:
+    """A PDF form's fields, types, options, values and positions (from pdf.form_data, sandboxed)."""
+    async def build() -> dict:
+        work = cache / "fjob"
+        result = await _sandboxed(src, "pdf", work, "pdf.form_data", "json", {},
+                                  "We couldn't read this PDF's form fields.")
+        data = json.loads((work / result["outputs"][0]["path"]).read_text(encoding="utf-8"))
+        shutil.rmtree(work, ignore_errors=True)
+        return data
+
+    return await _cached(cache / "form.json", build)
 
 
 async def table(src: Path, fmt: str, cache: Path) -> dict:

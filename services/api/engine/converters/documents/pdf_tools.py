@@ -59,6 +59,13 @@ def pdf_to_images(ctx: Ctx) -> None:
     if o.first_n:
         idx = idx[: o.first_n]
     ctx.info["total_pages"] = n
+    from .pdfgeom import frame_pdfium
+
+    sizes = []
+    for i in range(min(n, 5000)):  # displayed size of every page, in points (used by the page editors)
+        f = frame_pdfium(doc[i])
+        sizes.append([round(f.width, 2), round(f.height, 2)])
+    ctx.info["page_sizes"] = sizes
     scale = o.dpi / 72
     width = len(str(n))
     for k, i in enumerate(idx):
@@ -101,6 +108,19 @@ class ImagesToPdfOptions(Options):
     fit: Literal["fit", "fill", "original"] = Field("fit", title="Placement",
                                                     description="fit: whole image visible; fill: cover the page (may crop edges); original: actual size.")
     margin_mm: float = Field(0, ge=0, le=50, title="Margins", json_schema_extra=ui(unit="mm"))
+    enhance: Literal["none", "document", "bw"] = Field(
+        "none", title="Clean up photos",
+        description="document: grayscale with boosted contrast, good for photos of paper; bw: crisp black and white.")
+
+
+def _enhance(im: Image.Image, mode: str) -> Image.Image:
+    from PIL import ImageFilter
+
+    g = ImageOps.autocontrast(im.convert("L"), cutoff=2)
+    g = g.filter(ImageFilter.UnsharpMask(radius=2, percent=120, threshold=3))
+    if mode == "bw":
+        return g.point(lambda p: 255 if p > 150 else 0).convert("1")
+    return g
 
 
 def images_to_pdf(ctx: Ctx) -> None:
@@ -111,7 +131,7 @@ def images_to_pdf(ctx: Ctx) -> None:
     total = len(ctx.inputs)
     for k, inp in enumerate(ctx.inputs):
         ctx.progress(k, total, stage=f"Adding image {k + 1} of {total}", force=True)
-        if inp.format == "jpg":
+        if inp.format == "jpg" and o.enhance == "none":
             im = open_image(ctx, inp.path)
             if im.mode in ("RGB", "L", "CMYK"):
                 blobs.append(inp.path.read_bytes())  # embedded as-is: lossless
@@ -129,7 +149,14 @@ def images_to_pdf(ctx: Ctx) -> None:
         elif im.mode not in ("RGB", "L"):
             im = im.convert("RGB")
         buf = io.BytesIO()
-        im.save(buf, "PNG")
+        if o.enhance != "none":
+            im = _enhance(im, o.enhance)
+            if o.enhance == "document":
+                im.save(buf, "JPEG", quality=85, optimize=True)  # grayscale photos: much smaller than PNG
+            else:
+                im.save(buf, "PNG", optimize=True)
+        else:
+            im.save(buf, "PNG")
         blobs.append(buf.getvalue())
     layout = None
     if o.page_size != "image":

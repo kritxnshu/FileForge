@@ -14,6 +14,7 @@ Resume guide: read this file, then `docs/ARCHITECTURE.md` and `docs/DECISIONS.md
 | M5 UI completion | done |
 | M6 Hardening | done |
 | M7 Final verification | done (Docker images not built: no Docker on this machine, DECISIONS D15) |
+| M8 PDF tools hub (`/pdf`: 40 tools, editor, sign, redact, forms, organize, scan, compare, PDF/A) | done |
 
 ## Environment (M0 check, 2026-11-03, macOS arm64)
 
@@ -63,6 +64,31 @@ Not available: Docker (Dockerfiles still shipped), bubblewrap/nsjail (macOS uses
   - Docs: README, ENV, DEPLOYMENT, SECURITY, THIRD_PARTY_LICENSES; DECISIONS D11–D22.
   - Background removal decided: not shipped, listed as Unsupported (D13).
 - M7: see "Final verification" below.
+- M8 (PDF tools hub, 2026-11-04):
+  - `engine/hubs.py`: the PDF hub, 40 tools in 8 groups, each listed only when its operation is advertised (D23),
+    plus a "Not offered" list (AI summaries/translation, signature requests, HTML from a URL).
+  - 17 new operations: organize, crop, resize, pages per sheet, page numbers, repair, extract images, metadata,
+    flatten (`pdf_pages.py`); edit, sign, redact, fill form, create form, export form data (`pdf_markup.py`);
+    compare, PDF/A (`pdf_review.py`, PDF/A behind `ENABLE_AGPL_ENGINES` with Ghostscript, D24). Shared drawing and
+    font helpers in `pdfgeom.py`.
+  - Web: `/pdf` (search and group filter) and `/pdf/<slug>` tool pages; a page editor (text, shapes, lines, arrows,
+    drawing, highlight, white-out, images, redaction boxes, crop area, form fields; undo, keyboard move/delete), a
+    signature pad (draw, type, upload), an organizer, form filling, and camera capture for Scan to PDF (D27). Featured
+    on the home page and in the header.
+  - Tests: `tests/api/test_pdf_suite.py` (35), hub and page-view tests in `test_api.py`, Playwright
+    `tests/e2e/pdf.spec.ts` (hub, edit, sign, redact, organize, fill form, each checked with pypdf), and axe-core
+    on `/pdf`, a tool page, scan, the editor with the signature dialog open, and the organizer, in both themes.
+  - Fixed: the Playwright `webServer` command broke when the checkout path contains spaces (now quoted).
+  - Fixed: Vitest couldn't load `caps.test.ts` once `OptionsForm` imported the PDF editor, because the signature
+    pad's `next/font/google` call only works inside Next's compiler. Vitest now aliases it to a stub
+    (`src/lib/__tests__/next-font-stub.ts`).
+  - Hardened: Caddy now caps non-upload API request bodies at 20 MB. Before, `POST /api/jobs` accepted up to the
+    1100 MB upload limit, and FastAPI reads the whole JSON body into memory before any check runs.
+  - Docs: DECISIONS D23–D27, ARCHITECTURE (tool hubs), ENV (`UC_GS`, `UC_SRGB_ICC`, `UC_UNICODE_FONT`, AGPL flag
+    scope), SECURITY (camera, redaction), THIRD_PARTY_LICENSES (Ghostscript), README.
+  - Verified (2026-11-04): **API 808 passed**, **Vitest 68 passed** (after `tsc` + ESLint), **matrix check passed**
+    (633 Full, 23 Partial, 16 Experimental, 0 untested, 4 Unsupported), **Playwright 24 passed**. Live stack: a
+    25 MB `POST /api/jobs` gets 413 from Caddy, and a 30 MB upload still reaches the API.
 
 ## Final verification (M7, 2026-11-03)
 
@@ -106,3 +132,7 @@ Not available: Docker (Dockerfiles still shipped), bubblewrap/nsjail (macOS uses
   `make setup` hangs there, interrupt it and run it again.
 - Accessibility is checked with automated rules plus a keyboard journey. A manual screen-reader pass is still
   recommended before launch.
+- Scan to PDF's live camera capture isn't covered by automated tests (headless Chromium has no camera). The photo
+  clean-up it relies on is tested in `test_pdf_suite.py`; try the camera on a real phone before launch.
+- PDF/A isn't offered by the Docker image: it needs `ENABLE_AGPL_ENGINES=true` and Ghostscript, which the image
+  doesn't install (D24).

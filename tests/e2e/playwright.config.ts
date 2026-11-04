@@ -17,7 +17,7 @@ export default defineConfig({
   webServer: process.env.E2E_BASE_URL
     ? undefined
     : {
-        command: `${ROOT}/scripts/dev.sh`,
+        command: `"${ROOT}/scripts/dev.sh"`, // quoted: the checkout path may contain spaces
         url: `${BASE}/api/health`,
         reuseExistingServer: true,
         timeout: 180_000,

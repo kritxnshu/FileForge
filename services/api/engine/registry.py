@@ -288,6 +288,7 @@ ENGINE_PROBES.update(
         "chromium": _chromium_probe,
         "bsdtar": _which_version("bsdtar", ["--version"]),
         "qpdf": _which_version("qpdf", ["--version"]),
+        "ghostscript": _which_version("gs", ["--version"], "UC_GS"),
         "tesseract": _which_version("tesseract", ["--version"]),
         "ocrmypdf": lambda: _py_version("ocrmypdf")() or _which_version("ocrmypdf", ["--version"])(),
         "rembg": _py_version("rembg"),

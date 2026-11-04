@@ -26,6 +26,12 @@ export interface Preset {
   opId: string;
   source: string;
   target: string;
+  /** Settings this page starts with (e.g. Scan to PDF cleans up photos). */
+  options?: OptionValues;
+  /** A tool page's name ("Edit PDF"), used in messages instead of "converts X to Y". */
+  label?: string;
+  /** Formats the tool accepts, for messages. */
+  sources?: string[];
 }
 
 interface Run extends RunView {
@@ -158,6 +164,8 @@ export function Workspace({ preset }: { preset?: Preset }) {
   }, [preset, choicesByFormat]);
   const picks = useMemo(() => ({ ...presetPicks, ...userPicks }), [presetPicks, userPicks]);
 
+  const presetOptions = useCallback((opId: string): OptionValues => (preset && preset.opId === opId ? preset.options ?? {} : {}), [preset]);
+
   const findChoice = useCallback((k: string, list: Choice[]) => list.find((c) => choiceKey(c) === k) ?? null, []);
   const combined = picks[COMBINE] ? findChoice(picks[COMBINE], combineChoices) : null;
 
@@ -226,7 +234,7 @@ export function Workspace({ preset }: { preset?: Preset }) {
     try {
       for (const { choice, items: its } of planned) {
         const schema = choice.op.options_schema;
-        const values = { ...defaultsOf(schema), ...(optValues[choice.op.id] ?? {}) };
+        const values = { ...defaultsOf(schema), ...presetOptions(choice.op.id), ...(optValues[choice.op.id] ?? {}) };
         const options = cleanOptions(schema, choice.pair.target, values);
         const res = await createJobs({
           file_ids: its.map((i) => i.server!.id),
@@ -362,9 +370,18 @@ export function Workspace({ preset }: { preset?: Preset }) {
             <p className="mb-5 flex gap-2 rounded-[var(--radius-control)] bg-warn-soft p-3 text-[0.95rem]" role="status" data-testid="preset-mismatch">
               <AlertTriangle size={17} className="mt-0.5 shrink-0 text-warn" aria-hidden="true" />
               <span>
-                This page converts {fmtShort(caps, preset.source)} to {fmtShort(caps, preset.target)}.{" "}
-                {mismatched.map((f) => fmtLabel(caps, f)).join(" and ")} files can&apos;t be converted to {fmtShort(caps, preset.target)}, so pick
-                another option below.
+                {preset.label ? (
+                  <>
+                    {preset.label} works with {(preset.sources ?? [preset.source]).map((f) => fmtShort(caps, f)).join(", ")} files.{" "}
+                    {mismatched.map((f) => fmtLabel(caps, f)).join(" and ")} files can&apos;t be used here, so pick another option below.
+                  </>
+                ) : (
+                  <>
+                    This page converts {fmtShort(caps, preset.source)} to {fmtShort(caps, preset.target)}.{" "}
+                    {mismatched.map((f) => fmtLabel(caps, f)).join(" and ")} files can&apos;t be converted to {fmtShort(caps, preset.target)}, so pick
+                    another option below.
+                  </>
+                )}
               </span>
             </p>
           )}
@@ -414,7 +431,7 @@ export function Workspace({ preset }: { preset?: Preset }) {
                 {distinctOps.length > 1 && <p className="mb-3 font-medium">{c.op.label}</p>}
                 <OptionsForm schema={c.op.options_schema} target={c.pair.target}
                   context={{ pdfFileId: planned.find((p) => p.choice.op.id === c.op.id)?.items.find((i) => i.server?.format === "pdf")?.server?.id }}
-                  values={{ ...defaultsOf(c.op.options_schema), ...(optValues[c.op.id] ?? {}) }}
+                  values={{ ...defaultsOf(c.op.options_schema), ...presetOptions(c.op.id), ...(optValues[c.op.id] ?? {}) }}
                   onChange={(v) => setOptValues((p) => ({ ...p, [c.op.id]: v }))} />
               </div>
             ))}

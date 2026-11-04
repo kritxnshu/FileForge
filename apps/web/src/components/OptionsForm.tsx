@@ -9,6 +9,12 @@ import { ChevronDown } from "lucide-react";
 import { useId, useState } from "react";
 import type { JsonSchema } from "@/lib/api";
 import { PageOrder } from "./PageOrder";
+import type { EditorMode } from "./pdf/editorModel";
+import { PdfEditor } from "./pdf/PdfEditor";
+import { PdfFormFill } from "./pdf/PdfFormFill";
+import { PdfOrganize, type OrganizePage } from "./pdf/PdfOrganize";
+
+const PDF_WIDGETS = new Set(["pdf-editor", "pdf-organize", "pdf-form-fill"]);
 
 export interface FormContext {
   /** An uploaded PDF the form is about (enables the page-order widget). */
@@ -61,6 +67,24 @@ function Field({ name, schema, value, onChange, context }: { name: string; schem
     "w-full rounded-[var(--radius-control)] border border-line bg-surface px-3 py-2 text-ink placeholder:text-muted focus-visible:border-accent";
 
   let control: React.ReactNode;
+  const widget = s["x-widget"] as string | undefined;
+  if (widget && PDF_WIDGETS.has(widget)) {
+    const fid = context?.pdfFileId;
+    return (
+      <div>
+        <span className="mb-2 block font-medium">{label}</span>
+        {!fid ? (
+          <p className="rounded-[var(--radius-control)] bg-surface-2 p-3 text-muted">Add a PDF above to start.</p>
+        ) : widget === "pdf-editor" ? (
+          <PdfEditor fileId={fid} mode={(s["x-mode"] as EditorMode) ?? "edit"} value={value} onChange={onChange} />
+        ) : widget === "pdf-organize" ? (
+          <PdfOrganize fileId={fid} value={value as OrganizePage[] | undefined} onChange={onChange} />
+        ) : (
+          <PdfFormFill fileId={fid} value={value as Record<string, string | boolean | string[]> | undefined} onChange={onChange} />
+        )}
+      </div>
+    );
+  }
   if (s["x-widget"] === "page-order" && context?.pdfFileId) {
     return (
       <div>

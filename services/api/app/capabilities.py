@@ -20,6 +20,37 @@ def _slug(op: registry.Operation, src: str, dst: str) -> str:
     return f"{src}-to-{dst}"
 
 
+def _hubs(index: dict[tuple[str, str, str], registry.PairInfo]) -> dict[str, Any]:
+    """Curated sections (engine/hubs.py), keeping only tools whose operation is advertised right now."""
+    from engine.hubs import HUBS
+
+    out: dict[str, Any] = {}
+    for hub in HUBS:
+        tools = []
+        for t in hub.tools:
+            pairs = [k for k in index if k[0] == t.op and (t.target is None or k[2] == t.target)
+                     and (t.sources is None or k[1] in t.sources)]
+            if not pairs:
+                continue
+            levels = {index[k].level for k in pairs}
+            op = registry.get(t.op)
+            tools.append({
+                "slug": t.slug, "title": t.title, "description": t.description, "icon": t.icon, "group": t.group,
+                "op": t.op, "target": t.target or pairs[0][2], "sources": sorted({k[1] for k in pairs}),
+                "support": next(lv for lv in ("experimental", "partial", "full") if lv in levels),
+                "limitations": list(op.limitations) if op else [], "options": t.options, "special": t.special,
+                "cardinality": op.cardinality if op else "transform",
+            })
+        used = {t["group"] for t in tools}
+        out[hub.id] = {
+            "title": hub.title, "description": hub.description,
+            "groups": [{"id": g, "label": label} for g, label in hub.groups if g in used],
+            "tools": tools,
+            "not_offered": [{"title": a, "reason": b} for a, b in hub.not_offered],
+        }
+    return out
+
+
 def build() -> tuple[dict[str, Any], dict[tuple[str, str, str], registry.PairInfo]]:
     """Returns (public capabilities document, advertised pair index)."""
     global _cache
@@ -66,12 +97,14 @@ def build() -> tuple[dict[str, Any], dict[tuple[str, str, str], registry.PairInf
             "pairs": pairs,
         })
     used = {f for o in ops_out for p in o["pairs"] for f in (p["source"], p["target"])}
+    hubs_out = _hubs(index)
     doc = {
         "version": 1,
         "categories": [{"id": c, "label": label} for c, label in registry.CATEGORIES],
         "formats": {fid: {"label": f.label, "family": f.family, "exts": list(f.exts), "mime": f.mime}
                     for fid, f in FORMATS.items() if fid in used},
         "operations": ops_out,
+        "hubs": hubs_out,
         "limits": settings().limits_public(),
     }
     _cache = (time.monotonic(), doc, index)

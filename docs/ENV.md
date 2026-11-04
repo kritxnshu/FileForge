@@ -59,7 +59,7 @@ other. Over a limit the API returns 429 with `Retry-After`.
 
 | Variable | Default | Purpose |
 |---|---|---|
-| `ENABLE_AGPL_ENGINES` | `false` | Allows AGPL engines. Today that's only pdf2docx (via PyMuPDF) for PDF → DOCX, used only if it is also installed; otherwise the permissive pdfplumber → python-docx pipeline is used. AGPL obligations apply to network services; see THIRD_PARTY_LICENSES.md. |
+| `ENABLE_AGPL_ENGINES` | `false` | Allows AGPL engines, each used only if it is also installed: pdf2docx (via PyMuPDF) for PDF → DOCX (otherwise the permissive pdfplumber → python-docx pipeline is used), and Ghostscript for the "PDF to PDF/A" tool (otherwise that tool isn't offered; the Docker image doesn't install `gs`). AGPL obligations apply to network services; see THIRD_PARTY_LICENSES.md. |
 | `ENABLE_OCR` | `false` | Shows the Experimental "Make PDF searchable (OCR)" tool. Needs `ocrmypdf` and `tesseract` (Docker: build with `WITH_OCR=true`). |
 | `ENABLE_BACKGROUND_REMOVAL` | `false` | Reserved. Background removal is not shipped (DECISIONS D13), so this currently has no effect. |
 | `ENABLE_EXPERIMENTAL` | `false` | Shows the other Experimental operations (raster → HEIC, trace to SVG, TTF ↔ OTF outlines). They're tested either way; the flag only controls whether they're offered. |
@@ -72,7 +72,9 @@ other. Over a limit the API returns 429 with `Retry-After`.
 | `SANDBOX_UID` | `65534` | If the worker runs as root, job processes drop to this UID. The Docker image runs as UID 10001 and never needs it. |
 | `SANDBOX_EXTRA_READ` | (empty) | Extra read-only paths (`:`-separated) job processes may read under the macOS Seatbelt profile, e.g. a custom font directory. |
 | `PLAYWRIGHT_BROWSERS_PATH` | Playwright's default (Docker: `/opt/ms-playwright`) | Where the Chromium used for HTML → PDF and SVG → PDF lives. |
-| `UC_FFMPEG`, `UC_FFPROBE`, `UC_PANDOC`, `UC_SOFFICE` | found on `PATH` | Absolute paths to override the engine binaries. |
+| `UC_FFMPEG`, `UC_FFPROBE`, `UC_PANDOC`, `UC_SOFFICE`, `UC_GS` | found on `PATH` | Absolute paths to override the engine binaries (`UC_GS`: Ghostscript, for PDF/A). |
+| `UC_SRGB_ICC` | Ghostscript's own `srgb.icc` | sRGB ICC profile embedded as the PDF/A output intent. |
+| `UC_UNICODE_FONT` | DejaVu Sans or Arial Unicode, if found | TrueType font for text the built-in PDF fonts can't show (e.g. Cyrillic, Greek) in Edit PDF, Sign PDF and page numbers. Coverage depends on the font (DejaVu Sans, for example, has no Devanagari). Without one, such text is refused with a clear message. |
 | `UC_DEBUG_ERRORS` | (unset) | `1` appends the engine's last stderr line to error messages shown to the user. Development only: engine output can contain file contents. |
 | `UC_VERIFIED_PATH` | `services/api/engine/verified.json` | Where test results (which decide what is advertised) are read from and written to. |
 
@@ -90,7 +92,7 @@ other. Over a limit the API returns 429 with `Retry-After`.
 | `UC_SITE_ADDRESS` | `:8080` | Caddy site address. A domain name (e.g. `convert.example.com`) turns on automatic HTTPS. |
 | `UC_API_UPSTREAM` | `127.0.0.1:8000` (Docker: `api:8000`) | FastAPI upstream for `/api/*`. Uploads stream straight here and never pass through Next.js. |
 | `UC_WEB_UPSTREAM` | `127.0.0.1:3000` (Docker: `web:3000`) | Next.js upstream for everything else. |
-| `UC_MAX_REQUEST_MB` | `1100` | Request-body cap at the proxy. Keep it a little above `MAX_BATCH_TOTAL_MB`. |
+| `UC_MAX_REQUEST_MB` | `1100` | Request-body cap at the proxy for uploads. Keep it a little above `MAX_BATCH_TOTAL_MB`. Every other API request is capped at 20 MB by the proxy (and job settings at 16 MB by the API). |
 | `UC_CADDY_GLOBAL` | (empty) | Extra Caddy global options, e.g. `email ops@example.com` for ACME. |
 
 ## Development and tests

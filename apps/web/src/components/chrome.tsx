@@ -56,6 +56,9 @@ export function Header() {
       </a>
       <Logo />
       <nav aria-label="Main" className="flex items-center gap-1 sm:gap-4">
+        <Link href="/pdf" className="rounded-md px-2 py-1 text-[0.95rem] font-medium text-ink hover:text-accent" data-testid="nav-pdf">
+          PDF tools
+        </Link>
         <Link href="/tools" className="hidden rounded-md px-2 py-1 text-[0.95rem] text-muted hover:text-ink sm:block">
           All tools
         </Link>
@@ -83,6 +86,7 @@ export function Footer() {
         </div>
         <nav aria-label="Product" className="flex flex-col gap-2">
           <span className="font-medium">Product</span>
+          <Link className="text-muted hover:text-ink" href="/pdf">PDF tools</Link>
           <Link className="text-muted hover:text-ink" href="/tools">All tools</Link>
           <Link className="text-muted hover:text-ink" href="/formats">Supported formats</Link>
           <Link className="text-muted hover:text-ink" href="/docs">Docs</Link>

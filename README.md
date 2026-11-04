@@ -5,6 +5,10 @@ and developer data. Drop in files, pick a target (only the ones that work for th
 settings, watch real progress, preview and download. Files are deleted automatically after a configurable retention
 window, or right away with "Delete now".
 
+PDF tools live at `/pdf`: merge, split, organize, crop, compress, repair, convert to and from Office and images,
+edit (text, shapes, images, drawings), sign, redact, fill and create forms, page numbers, watermarks, protect and
+compare.
+
 Every conversion the UI offers is backed by an automated test that opens the result with an independent parser. See
 [`docs/SUPPORT_MATRIX.md`](docs/SUPPORT_MATRIX.md), which is generated from the registry and the latest test run.
 
@@ -13,7 +17,8 @@ Every conversion the UI offers is backed by an automated test that opens the res
 - **API + workers**: Python 3.12, FastAPI, arq on Redis, two queues (`fast`, `heavy`) (`services/api`). Every
   conversion runs in its own sandboxed process with no network.
 - **Engines**: Pillow, pillow-heif, resvg, pypdf, pikepdf, pypdfium2, pdfplumber, openpyxl, python-docx/pptx,
-  fontTools, FFmpeg, LibreOffice, Pandoc, Chromium, libarchive, Tesseract (optional).
+  fontTools, reportlab, FFmpeg, LibreOffice, Pandoc, Chromium, libarchive, Tesseract (optional), Ghostscript (optional,
+  AGPL, PDF/A only).
 - **Proxy**: Caddy serves everything on one origin and routes `/api` to FastAPI.
 
 ## Quick start

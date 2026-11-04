@@ -10,7 +10,8 @@ async function audit(page: Page, label: string) {
 }
 
 const PAGES = ["/", "/convert", "/tools", "/formats", "/docs", "/privacy", "/terms", "/convert/png-to-jpg",
-  "/convert/mp3-to-docx", "/tools/json-formatter", "/tools/color-converter", "/tools/txt-to-png", "/nope"];
+  "/convert/mp3-to-docx", "/tools/json-formatter", "/tools/color-converter", "/tools/txt-to-png", "/nope",
+  "/pdf", "/pdf/edit-pdf", "/pdf/scan-to-pdf"];
 
 for (const theme of ["light", "dark"] as const) {
   test.describe(`${theme} theme`, () => {
@@ -40,6 +41,24 @@ for (const theme of ["light", "dark"] as const) {
       for (const c of await page.getByTestId("job-card").all()) await expect(c).toHaveAttribute("data-state", "succeeded", { timeout: 30_000 });
       await expect(page.getByTestId("pdf-thumbs").locator("img")).toHaveCount(3, { timeout: 30_000 });
       await audit(page, `${theme} workspace with results`);
+    });
+
+    test("the PDF editor, signature dialog and organizer pass WCAG 2.1 AA checks", async ({ page }) => {
+      await page.goto("/pdf/sign-pdf");
+      await dropFiles(page, "[data-testid=dropzone]", [{ path: fixture("document.pdf"), name: "b.pdf", type: "application/pdf" }]);
+      await waitReady(page, 1);
+      await expect(page.getByTestId("editor-page")).toHaveJSProperty("complete", true, { timeout: 30_000 });
+      await page.getByTestId("sign-date").click(); // something selected, so the properties panel shows
+      await audit(page, `${theme} sign editor`);
+      await page.getByTestId("sign-place").click();
+      await expect(page.getByTestId("signature-pad")).toBeVisible();
+      await audit(page, `${theme} signature dialog`);
+
+      await page.goto("/pdf/organize-pdf");
+      await dropFiles(page, "[data-testid=dropzone]", [{ path: fixture("document.pdf"), name: "b.pdf", type: "application/pdf" }]);
+      await waitReady(page, 1);
+      await expect(page.getByTestId("organize-card")).toHaveCount(3, { timeout: 30_000 });
+      await audit(page, `${theme} organizer`);
     });
   });
 }

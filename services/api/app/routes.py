@@ -5,6 +5,7 @@ from __future__ import annotations
 import asyncio
 import json
 import time
+from pathlib import Path
 from typing import Any
 
 from fastapi import APIRouter, Depends, HTTPException, Request, Response
@@ -136,7 +137,8 @@ async def _thumbs_index(src, cache, base: str, sid: str, request: Request) -> di
 
     await _hit(f"thumbs:s:{sid}", 600, 1, 300)
     info = await thumbnails(src, cache)
-    return {"pages": info["pages"], "thumbnails": [f"{base}/{n}" for n in range(info["thumbnails"])]}
+    return {"pages": info["pages"], "thumbnails": [f"{base}/{n}" for n in range(info["thumbnails"])],
+            "sizes": info.get("sizes", [])}
 
 
 def _thumb_file(cache, n: int) -> FileResponse:
@@ -166,6 +168,43 @@ async def upload_page(file_id: str, n: int, sid: str = Depends(existing_session)
     return _thumb_file(storage().upload_path(file_id).parent / "thumbs", n)
 
 
+async def _owned_pdf(file_id: str, sid: str) -> Path:
+    _check_id(file_id)
+    f = await store.owned(store.k_file(file_id), sid)
+    src = storage().upload_path(file_id)
+    if not f or not src.exists():
+        raise HTTPException(404, GONE_FILE)
+    if f["format"] != "pdf":
+        raise HTTPException(400, "This only works with PDFs.")
+    return src
+
+
+@router.get("/uploads/{file_id}/view/{n}")
+async def upload_page_view(file_id: str, n: int, sid: str = Depends(existing_session)) -> FileResponse:
+    """A page rendered large for the page editors."""
+    from .previews import page_view
+    from .security import _hit
+
+    src = await _owned_pdf(file_id, sid)
+    if n < 0 or n > 9999:
+        raise HTTPException(404, "That page preview isn't available.")
+    await _hit(f"views:s:{sid}", 600, 1, 1200)
+    p = await page_view(src, src.parent / "thumbs", n)
+    return FileResponse(p, media_type="image/png", headers={"X-Content-Type-Options": "nosniff",
+                                                             "Cache-Control": "private, max-age=600"})
+
+
+@router.get("/uploads/{file_id}/form")
+async def upload_form_fields(file_id: str, sid: str = Depends(existing_session)) -> dict[str, Any]:
+    """A PDF form's fields, for the Fill a form tool."""
+    from .previews import form_fields
+    from .security import _hit
+
+    src = await _owned_pdf(file_id, sid)
+    await _hit(f"thumbs:s:{sid}", 600, 1, 300)
+    return await form_fields(src, src.parent / "thumbs")
+
+
 @router.delete("/uploads/{file_id}")
 async def delete_upload(file_id: str, sid: str = Depends(existing_session)) -> dict[str, bool]:
     _check_id(file_id)
@@ -179,6 +218,9 @@ async def delete_upload(file_id: str, sid: str = Depends(existing_session)) -> d
 
 # ---------------------------------------------------------------------------
 # jobs
+
+
+MAX_OPTIONS_BYTES = 16 * 1024 * 1024  # editor images travel inside the options
 
 
 class JobRequest(BaseModel):
@@ -217,6 +259,8 @@ async def create_jobs(body: JobRequest, request: Request, sid: str = Depends(get
         raise HTTPException(400, "Unknown operation.")
     if len(body.file_ids) > s.MAX_BATCH_FILES:
         raise HTTPException(400, f"A batch can have at most {s.MAX_BATCH_FILES} files.")
+    if len(json.dumps(body.options, separators=(",", ":"))) > MAX_OPTIONS_BYTES:
+        raise HTTPException(413, "These settings are too large. Use fewer or smaller images.")
     try:
         opts = op.options.model_validate(body.options)
     except ValidationError as e:
