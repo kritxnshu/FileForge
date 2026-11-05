@@ -3,5 +3,6 @@
 const loader = () => ({ className: "", style: { fontFamily: "serif" }, variable: "" });
 
 export const Dancing_Script = loader;
-export const Bricolage_Grotesque = loader;
-export const Instrument_Sans = loader;
+export const Geist = loader;
+export const Inter = loader;
+export const JetBrains_Mono = loader;

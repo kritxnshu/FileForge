@@ -1,6 +1,6 @@
 # Security
 
-Universal Converter accepts files from anyone and feeds them to large native parsers (FFmpeg, LibreOffice, Pandoc,
+FileForge accepts files from anyone and feeds them to large native parsers (FFmpeg, LibreOffice, Pandoc,
 Chromium, Pillow, PDF libraries). Every upload is treated as hostile. This document covers the threat model, what
 the code does about each threat, and the test that proves it. The tests are the source of truth. Run them with
 `make test`.

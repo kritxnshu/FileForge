@@ -1,17 +1,28 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import {
+  ArrowLeftRight, Binary, Braces, Clock, Code, Database, FileCode, HardDrive, Image, Link2, Palette, QrCode, Ruler, ShieldCheck, Wrench,
+  type LucideIcon,
+} from "lucide-react";
 import { ClientTool } from "@/components/ClientTool";
 import { RecordRecent } from "@/components/History";
+import { PageHeader } from "@/components/PageHeader";
 import { fmtShort, toolEntries } from "@/lib/caps";
 import { serverCaps } from "@/lib/server";
 
 type Props = { params: Promise<{ slug: string }> };
 
+const OP_ICON: Record<string, LucideIcon> = {
+  "dev.json_format": Braces, "dev.data_convert": ArrowLeftRight, "dev.code_format": Code, "dev.html_markdown": FileCode,
+  "dev.csv_to_sql": Database, "dev.base64": Binary, "dev.url": Link2, "dev.timestamp": Clock, "util.image_base64": Image,
+  "util.color": Palette, "util.units": Ruler, "util.bytes": HardDrive, "util.qr": QrCode,
+};
+
 async function find(slug: string) {
   const caps = await serverCaps();
-  const e = caps ? toolEntries(caps).find((x) => x.slug === slug && x.op.runtime === "client") : undefined;
-  return { caps, e };
+  const all = caps ? toolEntries(caps).filter((x) => x.op.runtime === "client") : [];
+  return { caps, all, e: all.find((x) => x.slug === slug) };
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
@@ -23,24 +34,40 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function ToolPage({ params }: Props) {
   const { slug } = await params;
-  const { caps, e } = await find(slug);
+  const { caps, all, e } = await find(slug);
   if (!caps) return <p className="py-10 text-muted">The service is unavailable. Reload the page in a moment.</p>;
   if (!e) notFound();
+  // one tab per browser tool, linking to its first page
+  const tabs = all.filter((x, i) => all.findIndex((y) => y.op.id === x.op.id) === i);
+  const title = e.kind === "convert" ? `${fmtShort(caps, e.pair.source)} to ${fmtShort(caps, e.pair.target)}` : e.op.label;
   return (
-    <div className="pb-10 pt-4">
-      <nav aria-label="Breadcrumb" className="text-[0.92rem] text-muted">
-        <Link href="/tools" className="hover:text-ink">All tools</Link>
-        <span aria-hidden="true"> / </span>
-        <span>{e.op.label}</span>
+    <>
+      <nav aria-label="Browser tools" className="rise no-scrollbar card mb-6 flex gap-1 overflow-x-auto p-1">
+        {tabs.map((t) => {
+          const Icon = OP_ICON[t.op.id] ?? Wrench;
+          const on = t.op.id === e.op.id;
+          return (
+            <Link key={t.op.id} href={`/tools/${t.slug}`} aria-current={on ? "page" : undefined}
+              className={`flex shrink-0 items-center gap-2 rounded-lg px-3 py-2 text-[0.85rem] font-medium transition-colors duration-150 ${
+                on ? "bg-accent-soft text-accent" : "text-muted hover:bg-surface-2 hover:text-ink"
+              }`}>
+              <Icon size={15} aria-hidden="true" /> {t.op.label}
+            </Link>
+          );
+        })}
       </nav>
-      <h1 className="mt-3 font-display text-[clamp(2.25rem,6vw,4rem)] font-bold leading-none">
-        {e.kind === "convert" ? `${fmtShort(caps, e.pair.source)} to ${fmtShort(caps, e.pair.target)}` : e.op.label}
-      </h1>
-      <p className="mt-4 max-w-2xl text-lg text-muted">{e.description}</p>
-      <div className="mt-8">
-        <ClientTool opId={e.op.id} source={e.pair.source} target={e.pair.target} />
-      </div>
-      <RecordRecent slug={e.slug} title={e.kind === "convert" ? `${fmtShort(caps, e.pair.source)} to ${fmtShort(caps, e.pair.target)}` : e.op.label} href={`/tools/${e.slug}`} />
-    </div>
+      <PageHeader
+        crumbs={[["All tools", "/tools"], [e.category === "developer" ? "Developer tools" : "Utilities"]]}
+        title={title}
+        description={e.description}
+        aside={
+          <span className="chip !h-auto !border-transparent !bg-ok-soft !py-1 !text-ok">
+            <ShieldCheck size={13} aria-hidden="true" /> Runs in your browser · nothing uploaded
+          </span>
+        }
+      />
+      <ClientTool opId={e.op.id} source={e.pair.source} target={e.pair.target} />
+      <RecordRecent slug={e.slug} title={title} href={`/tools/${e.slug}`} />
+    </>
   );
 }

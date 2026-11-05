@@ -1,24 +1,27 @@
 import type { Metadata, Viewport } from "next";
-import { Bricolage_Grotesque, Instrument_Sans } from "next/font/google";
+import { Geist, Inter, JetBrains_Mono } from "next/font/google";
 import { headers } from "next/headers";
-import { Footer, Header } from "@/components/chrome";
+import { CommandPalette } from "@/components/CommandPalette";
+import { Footer, Shell } from "@/components/chrome";
 import { CapabilitiesProvider, MotionProvider, themeBootScript, WorkspaceProvider } from "@/components/providers";
 import { serverCaps } from "@/lib/server";
 import "./globals.css";
 
-const display = Bricolage_Grotesque({ subsets: ["latin"], variable: "--font-display-face", axes: ["wdth", "opsz"] });
-const text = Instrument_Sans({ subsets: ["latin"], variable: "--font-text" });
+const display = Geist({ subsets: ["latin"], variable: "--font-display-face" });
+const text = Inter({ subsets: ["latin"], variable: "--font-text" });
+const code = JetBrains_Mono({ subsets: ["latin"], variable: "--font-code" });
 
 export const metadata: Metadata = {
-  title: { default: "Universal Converter: convert any file in one place", template: "%s | Universal Converter" },
+  title: { default: "FileForge: convert any file in one place", template: "%s | FileForge" },
   description:
     "Convert images, PDFs, Word, Excel, PowerPoint, audio, video, archives and fonts in one place. Files are deleted automatically.",
+  icons: { icon: { url: "/logo.svg", type: "image/svg+xml" } }, // app/favicon.ico is linked automatically
 };
 
 export const viewport: Viewport = {
   themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#f4f6f8" },
-    { media: "(prefers-color-scheme: dark)", color: "#0f171c" },
+    { media: "(prefers-color-scheme: light)", color: "#fafafa" },
+    { media: "(prefers-color-scheme: dark)", color: "#09090b" },
   ],
 };
 
@@ -28,7 +31,7 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
   const caps = await serverCaps();
   const nonce = (await headers()).get("x-nonce") ?? undefined;
   return (
-    <html lang="en" className={`${display.variable} ${text.variable}`} suppressHydrationWarning>
+    <html lang="en" className={`${display.variable} ${text.variable} ${code.variable}`} suppressHydrationWarning>
       <head>
         <script nonce={nonce} dangerouslySetInnerHTML={{ __html: themeBootScript }} />
       </head>
@@ -36,11 +39,13 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
         <CapabilitiesProvider initial={caps}>
           <MotionProvider>
             <WorkspaceProvider>
-              <Header />
-              <main id="main" className="mx-auto w-full max-w-6xl px-4 sm:px-6">
-                {children}
-              </main>
-              <Footer />
+              <Shell>
+                <main id="main" className="mx-auto w-full max-w-[1240px] px-4 pb-10 pt-5 sm:px-6 lg:px-8">
+                  {children}
+                </main>
+                <Footer />
+              </Shell>
+              <CommandPalette />
             </WorkspaceProvider>
           </MotionProvider>
         </CapabilitiesProvider>

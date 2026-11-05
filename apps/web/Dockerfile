@@ -1,5 +1,5 @@
 # Next.js web app (standalone output). Build from the repo root:
-#   docker build -f apps/web/Dockerfile -t universal-converter-web .
+#   docker build -f apps/web/Dockerfile -t fileforge-web .
 
 FROM node:22-bookworm-slim AS build
 WORKDIR /src

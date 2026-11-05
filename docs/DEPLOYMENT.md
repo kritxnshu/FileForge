@@ -1,6 +1,6 @@
 # Deployment
 
-Universal Converter is one web app, one API service with two worker processes, and one Redis-compatible queue,
+FileForge is one web app, one API service with two worker processes, and one Redis-compatible queue,
 behind Caddy on a single origin. The supported production shape is **one Linux VM running Docker Compose**.
 
 > The Dockerfiles and `docker-compose.yml` were written alongside the native setup but couldn't be built in the
@@ -14,7 +14,7 @@ Requirements: a Linux VM (4+ vCPU and 8 GB RAM is comfortable; video and office 
 Engine with the Compose plugin, a DNS name pointing at the VM, and ports 80 and 443 open.
 
 ```sh
-git clone <your fork> universal-converter && cd universal-converter
+git clone <your fork> fileforge && cd fileforge
 cat > .env <<'EOF'
 UC_SITE_ADDRESS=convert.example.com
 PUBLIC_BASE_URL=https://convert.example.com

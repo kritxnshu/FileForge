@@ -224,12 +224,14 @@ function Field({ name, schema, value, onChange, context }: { name: string; schem
   );
 }
 
-export function OptionsForm({ schema, target, values, onChange, context }: {
+export function OptionsForm({ schema, target, values, onChange, context, grid = false }: {
   schema: JsonSchema;
   target: string | null;
   values: OptionValues;
   onChange: (v: OptionValues) => void;
   context?: FormContext;
+  /** Lay fields out in columns (the browser tools' settings bar). */
+  grid?: boolean;
 }) {
   const [open, setOpen] = useState(false);
   const fields = visibleFields(schema, target);
@@ -238,17 +240,17 @@ export function OptionsForm({ schema, target, values, onChange, context }: {
   if (!fields.length) return <p className="text-muted">No settings needed for this conversion.</p>;
   const set = (k: string) => (v: unknown) => onChange({ ...values, [k]: v });
   return (
-    <div className="flex flex-col gap-5" data-testid="options-form">
+    <div className={grid ? "grid gap-x-6 gap-y-4 sm:grid-cols-2 lg:grid-cols-3" : "flex flex-col gap-5"} data-testid="options-form">
       {basic.map(([k, s]) => <Field key={k} name={k} schema={s} value={values[k] ?? s.default} onChange={set(k)} context={context} />)}
       {advanced.length > 0 && (
-        <div className="border-t border-line pt-3">
+        <div className="col-span-full border-t border-line pt-3">
           <button type="button" aria-expanded={open} onClick={() => setOpen(!open)}
             className="flex items-center gap-1.5 rounded-md font-medium text-muted hover:text-ink">
             <ChevronDown size={16} className={`transition-transform duration-150 ${open ? "rotate-180" : ""}`} aria-hidden="true" />
             Advanced
           </button>
           {open && (
-            <div className="mt-4 flex flex-col gap-5">
+            <div className={grid ? "mt-4 grid gap-x-6 gap-y-4 sm:grid-cols-2 lg:grid-cols-3" : "mt-4 flex flex-col gap-5"}>
               {advanced.map(([k, s]) => <Field key={k} name={k} schema={s} value={values[k] ?? s.default} onChange={set(k)} context={context} />)}
             </div>
           )}

@@ -1,4 +1,4 @@
-"""Universal Converter conversion engine."""
+"""FileForge conversion engine."""
 
 from __future__ import annotations
 

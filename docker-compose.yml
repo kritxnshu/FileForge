@@ -1,4 +1,4 @@
-# Universal Converter: single-VM deployment.
+# FileForge: single-VM deployment.
 #   docker compose up -d --build          → http://localhost:8080
 #   UC_SITE_ADDRESS=convert.example.com docker compose up -d --build   → https with automatic TLS (ports 80/443)
 # See docs/DEPLOYMENT.md (TLS, isolation, scaling workers, upgrading engines) and docs/ENV.md (every variable).
@@ -54,7 +54,7 @@ services:
   api:
     <<: *hardened
     build: { context: ., dockerfile: services/api/Dockerfile, args: { WITH_OCR: "${WITH_OCR:-false}" } }
-    image: universal-converter-api
+    image: fileforge-api
     environment: *api-env
     volumes: ["jobs:/data"]
     networks: [internal, edge]
@@ -64,7 +64,7 @@ services:
   # or your LAN even if an engine is tricked into trying. Root filesystem read-only; only the job volume is writable.
   worker-fast:
     <<: *hardened
-    image: universal-converter-api
+    image: fileforge-api
     command: ["arq", "worker.FastWorker"]
     stop_grace_period: 30s   # > WORKER_SHUTDOWN_GRACE_S, so running jobs can finish on deploys
     environment: *api-env
@@ -75,7 +75,7 @@ services:
 
   worker-heavy:
     <<: *hardened
-    image: universal-converter-api
+    image: fileforge-api
     command: ["arq", "worker.HeavyWorker"]
     stop_grace_period: 30s   # > WORKER_SHUTDOWN_GRACE_S, so running jobs can finish on deploys
     environment: *api-env
@@ -88,7 +88,7 @@ services:
   web:
     <<: *hardened
     build: { context: ., dockerfile: apps/web/Dockerfile }
-    image: universal-converter-web
+    image: fileforge-web
     tmpfs: ["/tmp:size=64m,mode=1777", "/app/.next/cache:size=128m,mode=1777"]   # Next.js runtime cache
     environment:
       INTERNAL_API_URL: http://api:8000

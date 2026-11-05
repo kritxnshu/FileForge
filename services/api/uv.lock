@@ -551,6 +551,114 @@ wheels = [
 ]
 
 [[package]]
+name = "fileforge-api"
+version = "0.1.0"
+source = { virtual = "." }
+default-groups = ["dev", "ocr"]
+dependencies = [
+    { name = "arq" },
+    { name = "brotli" },
+    { name = "charset-normalizer" },
+    { name = "defusedxml" },
+    { name = "fastapi" },
+    { name = "fonttools", extra = ["woff"] },
+    { name = "img2pdf" },
+    { name = "libarchive-c" },
+    { name = "markdown-it-py" },
+    { name = "odfpy" },
+    { name = "olefile" },
+    { name = "openpyxl" },
+    { name = "pandas" },
+    { name = "pdfplumber" },
+    { name = "pikepdf" },
+    { name = "pillow" },
+    { name = "pillow-heif" },
+    { name = "playwright" },
+    { name = "py7zr" },
+    { name = "pydantic" },
+    { name = "pydantic-settings" },
+    { name = "pypdf" },
+    { name = "pypdfium2" },
+    { name = "python-docx" },
+    { name = "python-multipart" },
+    { name = "python-pptx" },
+    { name = "pyyaml" },
+    { name = "redis" },
+    { name = "reportlab" },
+    { name = "resvg-py" },
+    { name = "segno" },
+    { name = "sse-starlette" },
+    { name = "tomli-w" },
+    { name = "uvicorn", extra = ["standard"] },
+    { name = "vtracer" },
+    { name = "xlrd" },
+    { name = "zipstream-ng" },
+]
+
+[package.dev-dependencies]
+dev = [
+    { name = "httpx" },
+    { name = "pytest" },
+    { name = "pytest-asyncio" },
+    { name = "pytest-timeout" },
+    { name = "zxing-cpp" },
+]
+ocr = [
+    { name = "ocrmypdf" },
+]
+
+[package.metadata]
+requires-dist = [
+    { name = "arq", specifier = ">=0.26" },
+    { name = "brotli", specifier = ">=1.1" },
+    { name = "charset-normalizer", specifier = ">=3.3" },
+    { name = "defusedxml", specifier = ">=0.7" },
+    { name = "fastapi", specifier = ">=0.115" },
+    { name = "fonttools", extras = ["woff"], specifier = ">=4.53" },
+    { name = "img2pdf", specifier = ">=0.5" },
+    { name = "libarchive-c", specifier = ">=5.3" },
+    { name = "markdown-it-py", specifier = ">=3.0" },
+    { name = "odfpy", specifier = ">=1.4" },
+    { name = "olefile", specifier = ">=0.47" },
+    { name = "openpyxl", specifier = ">=3.1" },
+    { name = "pandas", specifier = ">=2.2" },
+    { name = "pdfplumber", specifier = ">=0.11" },
+    { name = "pikepdf", specifier = ">=9.0" },
+    { name = "pillow", specifier = ">=11.0" },
+    { name = "pillow-heif", specifier = ">=0.18" },
+    { name = "playwright", specifier = ">=1.47" },
+    { name = "py7zr", specifier = ">=0.22" },
+    { name = "pydantic", specifier = ">=2.8" },
+    { name = "pydantic-settings", specifier = ">=2.4" },
+    { name = "pypdf", specifier = ">=5.0" },
+    { name = "pypdfium2", specifier = ">=4.30" },
+    { name = "python-docx", specifier = ">=1.1" },
+    { name = "python-multipart", specifier = ">=0.0.9" },
+    { name = "python-pptx", specifier = ">=1.0" },
+    { name = "pyyaml", specifier = ">=6.0" },
+    { name = "redis", specifier = ">=5.0" },
+    { name = "reportlab", specifier = ">=4.2" },
+    { name = "resvg-py", specifier = ">=0.2" },
+    { name = "segno", specifier = ">=1.6" },
+    { name = "sse-starlette", specifier = ">=2.1" },
+    { name = "tomli-w", specifier = ">=1.0" },
+    { name = "uvicorn", extras = ["standard"], specifier = ">=0.30" },
+    { name = "vtracer", specifier = ">=0.6" },
+    { name = "xlrd", specifier = ">=2.0" },
+    { name = "zipstream-ng", specifier = ">=1.7" },
+]
+
+[package.metadata.requires-dev]
+dev = [
+    { name = "httpx", specifier = ">=0.27" },
+    { name = "pytest", specifier = ">=8.3" },
+    { name = "pytest-asyncio", specifier = ">=0.24" },
+    { name = "pytest-timeout", specifier = ">=2.3" },
+    { name = "zxing-cpp", specifier = ">=2.2" },
+]
+ocr = [{ name = "ocrmypdf", specifier = ">=16,<18" }]
+
+[[package]]
 name = "fonttools"
 version = "4.68.0"
 source = { registry = "https://pypi.org/simple" }
@@ -2483,114 +2591,6 @@ wheels = [
     { url = "https://files.pythonhosted.org/packages/f1/26/ebfbc5df754583763ce6dd9a4e8ccff6c114a7828faa7db9417a2e6fe48c/uharfbuzz-0.57.0-pp312-pypy312_pp80-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl", hash = "sha256:ee112dc87b4e78a8c2d8e475d214d29788aacce0daa0192806d4778b671dc658", size = 1971028, upload-time = "2026-10-23T18:06:38.908Z" },
     { url = "https://files.pythonhosted.org/packages/e2/0e/115317707d668096ab817c0e6955f43577b573f4a80fc0806cfb41e1b263/uharfbuzz-0.57.0-pp312-pypy312_pp80-win_amd64.whl", hash = "sha256:293f38debeb78498e80626f04158563e3cddc7aa49e223d55d7615b285a5ad17", size = 1681128, upload-time = "2026-10-23T18:06:40.366Z" },
 ]
-
-[[package]]
-name = "universal-converter-api"
-version = "0.1.0"
-source = { virtual = "." }
-default-groups = ["dev", "ocr"]
-dependencies = [
-    { name = "arq" },
-    { name = "brotli" },
-    { name = "charset-normalizer" },
-    { name = "defusedxml" },
-    { name = "fastapi" },
-    { name = "fonttools", extra = ["woff"] },
-    { name = "img2pdf" },
-    { name = "libarchive-c" },
-    { name = "markdown-it-py" },
-    { name = "odfpy" },
-    { name = "olefile" },
-    { name = "openpyxl" },
-    { name = "pandas" },
-    { name = "pdfplumber" },
-    { name = "pikepdf" },
-    { name = "pillow" },
-    { name = "pillow-heif" },
-    { name = "playwright" },
-    { name = "py7zr" },
-    { name = "pydantic" },
-    { name = "pydantic-settings" },
-    { name = "pypdf" },
-    { name = "pypdfium2" },
-    { name = "python-docx" },
-    { name = "python-multipart" },
-    { name = "python-pptx" },
-    { name = "pyyaml" },
-    { name = "redis" },
-    { name = "reportlab" },
-    { name = "resvg-py" },
-    { name = "segno" },
-    { name = "sse-starlette" },
-    { name = "tomli-w" },
-    { name = "uvicorn", extra = ["standard"] },
-    { name = "vtracer" },
-    { name = "xlrd" },
-    { name = "zipstream-ng" },
-]
-
-[package.dev-dependencies]
-dev = [
-    { name = "httpx" },
-    { name = "pytest" },
-    { name = "pytest-asyncio" },
-    { name = "pytest-timeout" },
-    { name = "zxing-cpp" },
-]
-ocr = [
-    { name = "ocrmypdf" },
-]
-
-[package.metadata]
-requires-dist = [
-    { name = "arq", specifier = ">=0.26" },
-    { name = "brotli", specifier = ">=1.1" },
-    { name = "charset-normalizer", specifier = ">=3.3" },
-    { name = "defusedxml", specifier = ">=0.7" },
-    { name = "fastapi", specifier = ">=0.115" },
-    { name = "fonttools", extras = ["woff"], specifier = ">=4.53" },
-    { name = "img2pdf", specifier = ">=0.5" },
-    { name = "libarchive-c", specifier = ">=5.3" },
-    { name = "markdown-it-py", specifier = ">=3.0" },
-    { name = "odfpy", specifier = ">=1.4" },
-    { name = "olefile", specifier = ">=0.47" },
-    { name = "openpyxl", specifier = ">=3.1" },
-    { name = "pandas", specifier = ">=2.2" },
-    { name = "pdfplumber", specifier = ">=0.11" },
-    { name = "pikepdf", specifier = ">=9.0" },
-    { name = "pillow", specifier = ">=11.0" },
-    { name = "pillow-heif", specifier = ">=0.18" },
-    { name = "playwright", specifier = ">=1.47" },
-    { name = "py7zr", specifier = ">=0.22" },
-    { name = "pydantic", specifier = ">=2.8" },
-    { name = "pydantic-settings", specifier = ">=2.4" },
-    { name = "pypdf", specifier = ">=5.0" },
-    { name = "pypdfium2", specifier = ">=4.30" },
-    { name = "python-docx", specifier = ">=1.1" },
-    { name = "python-multipart", specifier = ">=0.0.9" },
-    { name = "python-pptx", specifier = ">=1.0" },
-    { name = "pyyaml", specifier = ">=6.0" },
-    { name = "redis", specifier = ">=5.0" },
-    { name = "reportlab", specifier = ">=4.2" },
-    { name = "resvg-py", specifier = ">=0.2" },
-    { name = "segno", specifier = ">=1.6" },
-    { name = "sse-starlette", specifier = ">=2.1" },
-    { name = "tomli-w", specifier = ">=1.0" },
-    { name = "uvicorn", extras = ["standard"], specifier = ">=0.30" },
-    { name = "vtracer", specifier = ">=0.6" },
-    { name = "xlrd", specifier = ">=2.0" },
-    { name = "zipstream-ng", specifier = ">=1.7" },
-]
-
-[package.metadata.requires-dev]
-dev = [
-    { name = "httpx", specifier = ">=0.27" },
-    { name = "pytest", specifier = ">=8.3" },
-    { name = "pytest-asyncio", specifier = ">=0.24" },
-    { name = "pytest-timeout", specifier = ">=2.3" },
-    { name = "zxing-cpp", specifier = ">=2.2" },
-]
-ocr = [{ name = "ocrmypdf", specifier = ">=16,<18" }]
 
 [[package]]
 name = "uvicorn"

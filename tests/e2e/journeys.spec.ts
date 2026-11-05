@@ -18,7 +18,7 @@ test("convert a batch of 3 mixed files and download them as one ZIP", async ({ p
   await page.getByTestId("target-image.convert-jpg").click();
   await page.getByTestId("target-doc.office-pdf").click();
   await page.getByTestId("target-data.convert-json").click();
-  await expect(page.getByTestId("convert")).toHaveText("Convert 3 files");
+  await expect(page.getByTestId("convert")).toContainText("Convert 3 files");
   await page.getByTestId("convert").click();
 
   const cards = page.getByTestId("job-card");
@@ -185,18 +185,18 @@ test("switch to dark mode and keep it across reloads", async ({ page }) => {
   await expect(page.getByTestId("theme-dark")).toHaveAttribute("aria-checked", "true");
   const dark = await paper();
   expect(dark).not.toBe(light);
-  expect(dark).toBe("rgb(15, 23, 28)");
+  expect(dark).toBe("rgb(9, 9, 11)");
 
   await page.reload();
   await expect(page.locator("html")).toHaveAttribute("data-theme", "dark");
-  expect(await paper()).toBe("rgb(15, 23, 28)");
+  expect(await paper()).toBe("rgb(9, 9, 11)");
 
   // "System" follows the OS preference
   await page.getByTestId("theme-system").click();
   await expect(page.locator("html")).not.toHaveAttribute("data-theme", /.+/);
   expect(await paper()).toBe(light);
   await page.emulateMedia({ colorScheme: "dark" });
-  expect(await paper()).toBe("rgb(15, 23, 28)");
+  expect(await paper()).toBe("rgb(9, 9, 11)");
 });
 
 test.describe("mobile (390 px)", () => {

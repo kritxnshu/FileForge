@@ -1,5 +1,5 @@
 # API + worker image (one image, three commands: api, worker-fast, worker-heavy).
-# Build from the repo root:  docker build -f services/api/Dockerfile -t universal-converter-api .
+# Build from the repo root:  docker build -f services/api/Dockerfile -t fileforge-api .
 #
 # Engines: FFmpeg (Debian build: GPL, includes libx264), LibreOffice (MPL), Pandoc (GPL), Chromium (via Playwright),
 # bsdtar, bubblewrap. All CLI engines run as separate processes (THIRD_PARTY_LICENSES.md).

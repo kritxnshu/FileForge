@@ -16,8 +16,8 @@ export default async function FormatsPage() {
   const entries = toolEntries(caps);
   return (
     <div className="pb-10 pt-4">
-      <h1 className="font-display text-4xl font-bold sm:text-5xl">Supported formats</h1>
-      <p className="mt-4 max-w-2xl text-lg text-muted">
+      <h1 className="font-display text-[1.75rem] font-semibold leading-tight tracking-[-0.025em] sm:text-[2rem]">Supported formats</h1>
+      <p className="mt-2 max-w-2xl text-[0.95rem] text-muted">
         Everything listed here is backed by an automated test that opens the result with an independent parser.
         <span className="font-medium text-ink"> Partial</span> means it works with a stated loss of fidelity.
       </p>
@@ -26,8 +26,8 @@ export default async function FormatsPage() {
         if (!fmts.length) return null;
         return (
           <section key={fam} className="mt-10" aria-labelledby={`f-${fam}`}>
-            <h2 id={`f-${fam}`} className="font-display text-2xl font-semibold">{label}</h2>
-            <div className="mt-3 overflow-x-auto rounded-[var(--radius-panel)] border border-line">
+            <h2 id={`f-${fam}`} className="font-display text-xl font-semibold">{label}</h2>
+            <div className="card mt-3 overflow-x-auto">
               <table className="w-full min-w-[560px] text-left text-[0.95rem]">
                 <thead className="bg-surface-2 text-[0.88rem] text-muted">
                   <tr><th className="px-4 py-2 font-medium">Format</th><th className="px-4 py-2 font-medium">Converts to</th><th className="px-4 py-2 font-medium">Tools</th></tr>
@@ -60,7 +60,7 @@ export default async function FormatsPage() {
         );
       })}
       <section className="mt-10" aria-labelledby="unsupported-h">
-        <h2 id="unsupported-h" className="font-display text-2xl font-semibold">Not supported</h2>
+        <h2 id="unsupported-h" className="font-display text-xl font-semibold">Not supported</h2>
         <ul className="mt-3 list-disc pl-5 text-muted">
           <li>Creating RAR archives: RAR is a proprietary format, so RAR files can be opened and repacked but not created.</li>
           <li>Removing passwords you don&apos;t know, or DRM: we never guess or crack passwords.</li>

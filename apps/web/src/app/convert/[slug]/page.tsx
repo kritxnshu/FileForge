@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { HistoryPanel, RecordRecent } from "@/components/History";
+import { PageHeader } from "@/components/PageHeader";
 import { Workspace } from "@/components/Workspace";
 import { conversionsFrom, findBySlug, fmtLabel, fmtShort, unsupportedPair } from "@/lib/caps";
 import type { Capabilities } from "@/lib/api";
@@ -38,29 +39,19 @@ export default async function ConversionPage({ params }: Props) {
     return <Unsupported caps={caps} source={u.source} target={u.target} />;
   }
   return (
-    <div className="pb-10 pt-4">
-      <nav aria-label="Breadcrumb" className="text-[0.92rem] text-muted">
-        <Link href="/tools" className="hover:text-ink">All tools</Link>
-        <span aria-hidden="true"> / </span>
-        <span>{e.title}</span>
-      </nav>
-      {e.kind === "convert" ? (
-        <h1 className="mt-3 font-display text-[clamp(3rem,10vw,6.5rem)] font-bold leading-none" style={{ fontVariationSettings: '"wdth" 75' }}>
-          {fmtShort(caps, e.pair.source)} <span className="text-accent" aria-hidden="true">→</span>
-          <span className="sr-only">to</span> {fmtShort(caps, e.pair.target)}
-        </h1>
-      ) : (
-        <h1 className="mt-3 font-display text-[clamp(2.5rem,7vw,4.5rem)] font-bold leading-none">{e.title}</h1>
-      )}
-      <p className="mt-4 max-w-2xl text-lg text-muted">
-        {e.kind === "convert" ? `${fmtLabel(caps, e.pair.source)} to ${fmtLabel(caps, e.pair.target)}. ${e.description}` : e.description}
-      </p>
-      <div className="mt-8">
-        <Workspace preset={{ opId: e.op.id, source: e.pair.source, target: e.pair.target }} />
-      </div>
+    <>
+      <PageHeader
+        crumbs={[["All tools", "/tools"], [e.title]]}
+        eyebrow={e.kind === "convert" ? "Conversion" : "Tool"}
+        title={e.kind === "convert" ? (
+          <>{fmtShort(caps, e.pair.source)} <span className="text-accent" aria-hidden="true">→</span><span className="sr-only">to</span> {fmtShort(caps, e.pair.target)}</>
+        ) : e.title}
+        description={e.kind === "convert" ? `${fmtLabel(caps, e.pair.source)} to ${fmtLabel(caps, e.pair.target)}. ${e.description}` : e.description}
+      />
+      <Workspace preset={{ opId: e.op.id, source: e.pair.source, target: e.pair.target }} />
       <RecordRecent slug={e.slug} title={e.title} />
-      <HistoryPanel />
-    </div>
+      <div className="mt-10"><HistoryPanel /></div>
+    </>
   );
 }
 
@@ -70,12 +61,9 @@ function Unsupported({ caps, source, target }: { caps: Capabilities; source: str
   const s = fmtShort(caps, source);
   const t = fmtShort(caps, target);
   return (
-    <div className="pb-10 pt-4">
-      <nav aria-label="Breadcrumb" className="text-[0.92rem] text-muted">
-        <Link href="/tools" className="hover:text-ink">All tools</Link>
-      </nav>
-      <h1 className="mt-3 font-display text-4xl font-bold sm:text-5xl">{s} to {t} isn&apos;t supported</h1>
-      <div className="mt-6 max-w-2xl rounded-[var(--radius-panel)] border border-line bg-surface p-5" role="status" data-testid="unsupported">
+    <>
+      <PageHeader crumbs={[["All tools", "/tools"]]} title={<>{s} to {t} isn&apos;t supported</>} />
+      <div className="card max-w-2xl p-5" role="status" data-testid="unsupported">
         <p className="text-lg">
           {source === target
             ? `${fmtLabel(caps, source)} files are already ${t}.`
@@ -87,7 +75,7 @@ function Unsupported({ caps, source, target }: { caps: Capabilities; source: str
             <ul className="mt-2 flex flex-wrap gap-2" data-testid="alternatives">
               {options.map((o) => (
                 <li key={o.slug}>
-                  <Link href={`/convert/${o.slug}`} className="block rounded-full border border-line px-3 py-1 hover:border-line-strong">
+                  <Link href={`/convert/${o.slug}`} className="block rounded-md border border-line bg-surface-2 px-2.5 py-1 font-mono text-[0.8rem] font-medium transition-colors duration-150 hover:border-accent hover:text-accent">
                     {fmtShort(caps, o.pair.target)}
                   </Link>
                 </li>
@@ -101,6 +89,6 @@ function Unsupported({ caps, source, target }: { caps: Capabilities; source: str
           See every <Link href="/formats" className="text-accent underline underline-offset-4 hover:decoration-2">supported format</Link>.
         </p>
       </div>
-    </div>
+    </>
   );
 }

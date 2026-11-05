@@ -1,4 +1,4 @@
-# Universal Converter: web app
+# FileForge: web app
 
 Next.js 16 (App Router). Run the whole stack from the repo root with `make dev` (see the root `README.md`). This
 app expects the API on the same origin at `/api` (Caddy), and on `INTERNAL_API_URL` for server rendering.

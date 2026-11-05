@@ -4,6 +4,8 @@ import { dropFiles, fixture, waitReady } from "./helpers";
 
 /** WCAG 2.1 A + AA rules from axe-core; any violation fails with a readable summary. */
 async function audit(page: Page, label: string) {
+  // audit the settled page: let entrance animations (fades) finish; endless ones (spinners) are skipped
+  await page.evaluate(() => Promise.all(document.getAnimations().filter((a) => a.effect?.getTiming().iterations !== Infinity).map((a) => a.finished.catch(() => {}))));
   const r = await new AxeBuilder({ page }).withTags(["wcag2a", "wcag2aa", "wcag21a", "wcag21aa"]).analyze();
   const summary = r.violations.map((v) => `${v.id} (${v.impact}): ${v.help}\n    ${v.nodes.slice(0, 4).map((n) => n.target.join(" ")).join("\n    ")}`);
   expect(summary, `${label}\n${summary.join("\n")}`).toEqual([]);
@@ -72,9 +74,9 @@ test("the drop zone and controls work from the keyboard, with visible focus", as
   await expect(skip).toBeFocused();
   await expect(skip).toBeInViewport();
 
-  // Tab through to "Browse files"; Enter opens the file chooser
-  const browse = page.getByRole("button", { name: "Browse files" });
-  for (let i = 0; i < 15 && !(await browse.evaluate((el) => el === document.activeElement)); i++) await page.keyboard.press("Tab");
+  // Tab through the sidebar to "Choose files"; Enter opens the file chooser
+  const browse = page.getByRole("button", { name: "Choose files" });
+  for (let i = 0; i < 60 && !(await browse.evaluate((el) => el === document.activeElement)); i++) await page.keyboard.press("Tab");
   await expect(browse).toBeFocused();
   const ring = await browse.evaluate((el) => {
     const s = getComputedStyle(el);

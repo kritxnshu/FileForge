@@ -1,11 +1,12 @@
 "use client";
 
-import { AlertTriangle, CheckCircle2, Download, Info, RotateCcw, X } from "lucide-react";
+import { AlertTriangle, Download, Info, RotateCcw, X } from "lucide-react";
 import { motion } from "motion/react";
 import { useEffect, useState } from "react";
 import { outputTable, outputUrl, uploadRawUrl, type Job, type JobOutput, type TablePreview } from "@/lib/api";
-import { formatBytes, sizeDelta } from "@/lib/caps";
+import { fmtShort, formatBytes, sizeDelta } from "@/lib/caps";
 import { PdfThumbs } from "./PageOrder";
+import { useCaps } from "./providers";
 
 const BROWSER_IMAGES = new Set(["png", "jpg", "gif", "webp", "avif", "bmp", "ico", "svg"]);
 const AUDIO = new Set(["mp3", "wav", "aac", "flac", "ogg", "m4a", "opus"]);
@@ -167,7 +168,7 @@ function Progress({ job }: { job: Job | null }) {
   const pct = p && p.total ? Math.min(100, Math.round((p.done / p.total) * 100)) : null;
   return (
     <div className="mt-3">
-      <div className="flex justify-between text-[0.9rem] text-muted">
+      <div className="flex justify-between font-mono text-[11px] text-muted">
         <span data-testid="job-stage">{stage}</span>
         {p && <span className="tabular-nums">{Number.isInteger(p.done) && p.total > 1 ? `${p.done} of ${p.total}` : `${pct}%`}</span>}
       </div>
@@ -176,36 +177,58 @@ function Progress({ job }: { job: Job | null }) {
         aria-label="Conversion progress"
         aria-valuetext={pct !== null ? `${pct}%` : stage}
         {...(pct !== null ? { "aria-valuenow": pct, "aria-valuemin": 0, "aria-valuemax": 100 } : {})}
-        className={`mt-1.5 h-1.5 rounded-full bg-surface-2 ${pct === null ? "indeterminate" : ""}`}
+        className={`mt-1.5 h-1 overflow-hidden rounded-full bg-surface-2 ${pct === null ? "indeterminate" : ""}`}
       >
-        {pct !== null && <div className="h-full rounded-full bg-accent transition-[width] duration-200" style={{ width: `${pct}%` }} />}
+        {pct !== null && <div className="h-full origin-left rounded-full bg-accent transition-transform duration-300 ease-out" style={{ transform: `scaleX(${pct / 100})` }} />}
       </div>
     </div>
   );
 }
 
+const STATUS: Record<string, { text: string; cls: string; pulse?: boolean }> = {
+  queued: { text: "Queued", cls: "bg-surface-2 text-muted", pulse: true },
+  running: { text: "Processing", cls: "bg-warn-soft text-warn", pulse: true },
+  succeeded: { text: "Complete", cls: "bg-ok-soft text-ok" },
+  failed: { text: "Failed", cls: "bg-danger-soft text-danger" },
+  cancelled: { text: "Cancelled", cls: "bg-surface-2 text-muted" },
+  expired: { text: "Expired", cls: "bg-surface-2 text-muted" },
+};
+
 export function JobCard({ run, onCancel, onRetry }: { run: RunView; onCancel: () => void; onRetry: () => void }) {
+  const { caps } = useCaps();
   const j = run.job;
   const state = j?.state ?? "queued";
   const title = run.fileNames.length > 1 ? `${run.fileNames.length} files` : run.fileNames[0];
+  const src = caps ? fmtShort(caps, run.sourceFormat) : run.sourceFormat.toUpperCase();
+  const status = STATUS[state] ?? STATUS.queued;
   return (
-    <motion.li initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}
-      className="rounded-[var(--radius-panel)] border border-line bg-surface p-4 sm:p-5" data-testid="job-card" data-state={state}>
-      <div className="flex items-start justify-between gap-3">
-        <div className="min-w-0">
+    <motion.li initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.25, ease: [0.2, 0.7, 0.2, 1] }}
+      className="card p-4 sm:p-5" data-testid="job-card" data-state={state}>
+      <div className="flex items-start gap-3">
+        <span className="grid h-10 w-10 shrink-0 place-items-center rounded-lg bg-accent-soft font-mono text-[10px] font-semibold text-accent" aria-hidden="true">{src.slice(0, 5)}</span>
+        <div className="min-w-0 flex-1">
           <p className="truncate font-medium" title={title}>{title}</p>
-          <p className="text-[0.9rem] text-muted">{run.transform ? run.targetLabel : `to ${run.targetLabel}`}</p>
+          <p className="mt-0.5 flex flex-wrap items-center gap-1.5 text-[0.85rem] text-muted">
+            {run.transform ? (
+              <span className="chip">{run.targetLabel}</span>
+            ) : (
+              <><span className="chip">{src}</span><span aria-hidden="true">→</span><span className="sr-only">to</span><span className="chip !border-transparent !bg-accent-soft !text-accent">{run.targetLabel}</span></>
+            )}
+          </p>
         </div>
+        <span className={`chip !border-transparent ${status.cls}`}>
+          <span className={`h-1.5 w-1.5 rounded-full bg-current ${status.pulse ? "pulse-dot" : ""}`} aria-hidden="true" />
+          {status.text}
+        </span>
         {(state === "queued" || state === "running") && (
-          <button onClick={onCancel} className="flex items-center gap-1 rounded-md px-2 py-1 text-[0.9rem] text-muted hover:text-ink">
-            <X size={15} aria-hidden="true" /> Cancel
+          <button onClick={onCancel} aria-label="Cancel" title="Cancel" className="grid h-7 w-7 place-items-center rounded-md text-muted transition-colors duration-150 hover:bg-surface-2 hover:text-ink">
+            <X size={15} aria-hidden="true" />
           </button>
         )}
-        {state === "succeeded" && <CheckCircle2 className="shrink-0 text-accent" size={22} aria-label="Done" />}
       </div>
       <Progress job={j} />
       {state === "failed" && j?.error && (
-        <div className="mt-3 flex items-start gap-2 rounded-[var(--radius-control)] bg-danger-soft p-3 text-[0.92rem]" role="alert">
+        <div className="mt-3 flex items-start gap-2 rounded-[var(--radius-control)] bg-danger-soft p-3 text-[0.9rem]" role="alert">
           <AlertTriangle size={17} className="mt-0.5 shrink-0 text-danger" aria-hidden="true" />
           <div className="flex-1">
             <p>{j.error.message}</p>
@@ -215,10 +238,10 @@ export function JobCard({ run, onCancel, onRetry }: { run: RunView; onCancel: ()
           </div>
         </div>
       )}
-      {state === "cancelled" && <p className="mt-3 text-[0.92rem] text-muted">Cancelled. Nothing was kept.</p>}
-      {state === "expired" && <p className="mt-3 text-[0.92rem] text-muted">This result has expired and was deleted.</p>}
+      {state === "cancelled" && <p className="mt-3 text-[0.9rem] text-muted">Cancelled. Nothing was kept.</p>}
+      {state === "expired" && <p className="mt-3 text-[0.9rem] text-muted">This result has expired and was deleted.</p>}
       {j && (j.notices.length > 0 || j.warnings.length > 0) && state === "succeeded" && (
-        <ul className="mt-3 flex flex-col gap-1.5 text-[0.9rem]">
+        <ul className="mt-3 flex flex-col gap-1.5 text-[0.88rem]">
           {j.warnings.map((w) => (
             <li key={w} className="flex gap-2 rounded-[var(--radius-control)] bg-warn-soft px-3 py-2"><AlertTriangle size={16} className="mt-0.5 shrink-0 text-warn" aria-hidden="true" />{w}</li>
           ))}
@@ -228,7 +251,7 @@ export function JobCard({ run, onCancel, onRetry }: { run: RunView; onCancel: ()
         </ul>
       )}
       {state === "succeeded" && j && (
-        <ul className="mt-4 flex flex-col gap-4">
+        <ul className="mt-4 flex flex-col gap-3 border-t border-line pt-4">
           {j.outputs.slice(0, 50).map((o) => {
             const delta = j.outputs.length === 1 ? sizeDelta(j.input_size, o.size) : null;
             return (
@@ -236,15 +259,15 @@ export function JobCard({ run, onCancel, onRetry }: { run: RunView; onCancel: ()
                 {j.outputs.length <= 4 && <Preview run={run} output={o} />}
                 <div className="flex flex-wrap items-center justify-between gap-3">
                   <div className="min-w-0">
-                    <p className="truncate" title={o.name}>{o.label ?? o.name}</p>
-                    <p className="text-[0.88rem] text-muted tabular-nums">
-                      {formatBytes(o.size)}
-                      {delta?.text && <> (was {formatBytes(j.input_size)}, {delta.text})</>}
+                    <p className="truncate text-[0.92rem]" title={o.name}>{o.label ?? o.name}</p>
+                    <p className="font-mono text-[11px] text-muted tabular-nums">
+                      {delta?.text ? (
+                        <>{formatBytes(j.input_size)} → {formatBytes(o.size)} <span className={delta.smaller ? "text-ok" : ""}>({delta.text})</span></>
+                      ) : formatBytes(o.size)}
                     </p>
                   </div>
-                  <a href={outputUrl(run.jobId, o.index)} download data-testid="download"
-                    className="flex items-center gap-1.5 rounded-[var(--radius-control)] bg-accent px-4 py-2 font-medium text-accent-ink hover:opacity-90">
-                    <Download size={16} aria-hidden="true" /> Download
+                  <a href={outputUrl(run.jobId, o.index)} download data-testid="download" className="btn btn-primary">
+                    <Download size={15} aria-hidden="true" /> Download
                   </a>
                 </div>
               </li>

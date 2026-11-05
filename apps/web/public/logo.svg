@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="FileForge">
+  <defs>
+    <linearGradient id="doc" x1="12" y1="6" x2="52" y2="56" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#22d3ee"/>
+      <stop offset=".4" stop-color="#3b82f6"/>
+      <stop offset=".75" stop-color="#7c3aed"/>
+      <stop offset="1" stop-color="#c026d3"/>
+    </linearGradient>
+    <linearGradient id="ring" x1="2" y1="50" x2="60" y2="26" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#22d3ee"/>
+      <stop offset=".5" stop-color="#6366f1"/>
+      <stop offset="1" stop-color="#d946ef"/>
+    </linearGradient>
+    <linearGradient id="blade" x1="43" y1="21" x2="13" y2="60" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#a78bfa"/>
+      <stop offset=".5" stop-color="#7c3aed"/>
+      <stop offset="1" stop-color="#db2777"/>
+    </linearGradient>
+    <path id="docShape" d="M21 8H37L47 18V48A6 6 0 0 1 41 54H21A6 6 0 0 1 15 48V14A6 6 0 0 1 21 8Z"/>
+    <path id="F" d="M26 21H43L38.5 27H31L28.27 32H38L33.9 37.5H25.27L13 60Z"/>
+    <path id="ringShape" fill-rule="evenodd" transform="translate(31 40) rotate(-20)"
+      d="M-29 0a29 11 0 1 0 58 0a29 11 0 1 0-58 0ZM-27-1.8a27 8 0 1 0 54 0a27 8 0 1 0-54 0Z"/>
+    <clipPath id="back"><rect x="-40" y="-40" width="80" height="40" transform="translate(31 40) rotate(-20)"/></clipPath>
+    <clipPath id="front"><rect x="-40" y="0" width="80" height="40" transform="translate(31 40) rotate(-20)"/></clipPath>
+    <!-- the ring's back half hides behind the page; F cuts a gap so it sits in front -->
+    <mask id="ringMask" maskUnits="userSpaceOnUse" x="0" y="0" width="64" height="64">
+      <rect width="64" height="64" fill="#fff"/>
+      <use href="#docShape" clip-path="url(#back)" fill="#000" stroke="#000" stroke-width="7"/>
+      <use href="#F" fill="#000" stroke="#000" stroke-width="3" stroke-linejoin="round"/>
+    </mask>
+    <!-- the ring's front half and the F cut gaps in the page outline -->
+    <mask id="docMask" maskUnits="userSpaceOnUse" x="0" y="0" width="64" height="64">
+      <rect width="64" height="64" fill="#fff"/>
+      <use href="#ringShape" clip-path="url(#front)" fill="#000" stroke="#000" stroke-width="3"/>
+      <use href="#F" fill="#000" stroke="#000" stroke-width="3" stroke-linejoin="round"/>
+    </mask>
+  </defs>
+  <g mask="url(#docMask)" fill="url(#doc)">
+    <use href="#docShape" fill="none" stroke="url(#doc)" stroke-width="4" stroke-linejoin="round"/>
+    <path d="M37 8V14A4 4 0 0 0 41 18H47Z"/>
+  </g>
+  <use href="#ringShape" fill="url(#ring)" mask="url(#ringMask)"/>
+  <use href="#F" fill="url(#blade)"/>
+  <path fill="#d946ef" d="M56.5 13.5Q57.3 18.7 62.5 19.5Q57.3 20.3 56.5 25.5Q55.7 20.3 50.5 19.5Q55.7 18.7 56.5 13.5Z"/>
+</svg>

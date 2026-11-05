@@ -186,7 +186,7 @@ export function SignaturePad({ open, onClose, onDone }: { open: boolean; onClose
     <dialog ref={dialog} onClose={onClose} aria-labelledby="sig-h"
       className="m-auto w-[min(640px,calc(100vw-32px))] rounded-[var(--radius-panel)] border border-line bg-surface p-0 text-ink backdrop:bg-black/50">
       <div className="p-5 sm:p-6" data-testid="signature-pad">
-        <h2 id="sig-h" className="font-display text-2xl font-semibold">Create your signature</h2>
+        <h2 id="sig-h" className="font-display text-xl font-semibold">Create your signature</h2>
         <div role="tablist" aria-label="How to sign" className="mt-4 flex gap-1 rounded-full border border-line bg-surface-2 p-1">
           {tabs.map(({ id, label, Icon }) => (
             <button key={id} type="button" role="tab" aria-selected={tab === id} onClick={() => setTab(id)}

@@ -1,6 +1,8 @@
-# Universal Converter
-
 <div align="center">
+
+<img src="apps/web/public/logo.svg" width="112" height="112" alt="FileForge logo">
+
+# FileForge
 
 **One workspace. Every file. Real conversions.**
 
@@ -16,9 +18,9 @@ Convert, edit, secure, and optimize files without moving between tools.
 
 ---
 
-## Why Universal Converter?
+## Why FileForge?
 
-Universal Converter is a production-focused, self-hostable file toolbox built around a simple promise:
+FileForge is a production-focused, self-hostable file toolbox built around a simple promise:
 **if the interface offers a conversion, it really works.**
 
 Every advertised conversion is validated by opening the generated result with an independent parser. Unsupported

@@ -34,5 +34,5 @@ else
   (cd "$ROOT/apps/web" && exec pnpm dev -p 3000 -H 127.0.0.1) >"$LOGS/web.log" 2>&1 & pids+=($!)
 fi
 caddy run --config "$ROOT/deploy/Caddyfile" --adapter caddyfile >"$LOGS/caddy.log" 2>&1 & pids+=($!)
-echo "Universal Converter: http://localhost:8080   (logs in .data/logs)"
+echo "FileForge: http://localhost:8080   (logs in .data/logs)"
 wait

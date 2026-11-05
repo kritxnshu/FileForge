@@ -65,7 +65,7 @@ export function ScanCapture() {
 
   return (
     <section aria-labelledby="scan-h" className="rounded-[var(--radius-panel)] border border-line bg-surface p-4 sm:p-6" data-testid="scan">
-      <h2 id="scan-h" className="font-display text-2xl font-semibold">Capture pages</h2>
+      <h2 id="scan-h" className="font-display text-xl font-semibold">Capture pages</h2>
       <p className="mt-1 text-[0.95rem] text-muted">
         Lay the page flat in good light, fill the frame, and take one photo per page. They&apos;re added below in order.
       </p>

@@ -28,7 +28,7 @@ async function runAndDownload(page: Page) {
 
 test("the PDF hub lists, searches and filters its tools", async ({ page }) => {
   await page.goto("/");
-  await expect(page.getByTestId("home-pdf").getByTestId("pdf-tool")).not.toHaveCount(0);
+  await expect(page.getByTestId("quick-actions").getByRole("link", { name: /PDF suite/ })).toHaveAttribute("href", "/pdf");
   await page.getByTestId("nav-pdf").click();
   await expect(page).toHaveURL(/\/pdf$/);
 

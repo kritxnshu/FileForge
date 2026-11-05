@@ -9,7 +9,7 @@ export default function TermsPage() {
         <span className="font-medium">Template.</span> These terms are a starting point for the operator of this site. Have them reviewed for
         your jurisdiction and add your organisation&apos;s details before relying on them.
       </p>
-      <h1 className="mt-6 font-display text-4xl font-bold sm:text-5xl">Terms of use</h1>
+      <h1 className="mt-6 font-display text-[1.75rem] font-semibold leading-tight tracking-[-0.025em] sm:text-[2rem]">Terms of use</h1>
       <ol className="mt-6 flex list-decimal flex-col gap-4 pl-5 leading-relaxed text-muted">
         <li>You may use this service to convert files you have the right to use and process.</li>
         <li>Don&apos;t upload content that is illegal, or try to disrupt, overload or attack the service. Usage limits apply.</li>

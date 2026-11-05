@@ -3,7 +3,7 @@ import { dropFiles, fixture, readDownload, waitReady } from "./helpers";
 
 test("drag a PNG onto the home page, convert to JPG, download it", async ({ page }) => {
   await page.goto("/");
-  await expect(page.getByRole("heading", { level: 1 })).toContainText("One Platform.");
+  await expect(page.getByRole("heading", { level: 1 })).toContainText("What do you want to create today?");
   await dropFiles(page, "[data-testid=dropzone]", [{ path: fixture("image.png"), name: "holiday.png", type: "image/png" }]);
   await expect(page).toHaveURL(/\/convert$/);
   await waitReady(page, 1);

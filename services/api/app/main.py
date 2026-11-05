@@ -37,7 +37,7 @@ async def lifespan(app: FastAPI):
     await store.close_redis()
 
 
-app = FastAPI(title="Universal Converter API", lifespan=lifespan, docs_url="/api/docs", openapi_url="/api/openapi.json",
+app = FastAPI(title="FileForge API", lifespan=lifespan, docs_url="/api/docs", openapi_url="/api/openapi.json",
               redoc_url=None)
 app.include_router(router)
 
